@@ -9,7 +9,7 @@ class Supervisor(Node):
         super().__init__('supervisor')
         timer_period = 0.01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.state_publisher_ = self.create_publisher(Bool, 'is_okay', 10)
+        self.state_publisher_ = self.create_publisher(Bool, '~/is_okay', 10)
 
         self.declare_parameter('required_nodes')
 
