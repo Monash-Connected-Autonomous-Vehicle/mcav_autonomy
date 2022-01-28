@@ -1,4 +1,4 @@
-# Supervisor
+# 🦺 Supervisor
 
 The supervisor monitors the health of the software and hardware stack on the StreetDrone.
 
