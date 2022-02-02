@@ -1,21 +1,32 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String
+import numpy as np
+
+from std_msgs.msg import Header
+from sensor_msgs.msg import PointCloud2 as PCL2
+from sensor_msgs.msg import PointField
+from sensor_msgs_py import point_cloud2
 
 class PCL2Subscriber(Node):
 
     def __init__(self):
         super(PCL2Subscriber, self).__init__('pcl2_subscriber')
         self.subscription = self.create_subscription(
-            String,
-            'topic1',
-            self.listener_callback,
+            PCL2,
+            'pcl2conversion',
+            self._callback,
             10
         )
 
-    def listener_callback(self, msg):
-        self.get_logger().info(f'I heard {msg.data}')
+    def _callback(self, msg):
+        """Subscriber callback. Receives PCL2 message and converts it to points"""
+        cloud_generator = point_cloud2.read_points(msg)
+        # TODO figure out what to do with generator properly
+        cloud = list(cloud_generator)
+        self.get_logger().info(f"Received, first point: {cloud[0]}")
+        return cloud
+        
 
 
 def main(args=None):
