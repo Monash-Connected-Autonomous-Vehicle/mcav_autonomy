@@ -22,9 +22,9 @@ class PCL2Subscriber(Node):
     def _callback(self, msg):
         """Subscriber callback. Receives PCL2 message and converts it to points"""
         cloud_generator = point_cloud2.read_points(msg)
-        # TODO figure out what to do with generator properly
+        
         cloud = list(cloud_generator)
-        self.get_logger().info(f"Received, first point: {cloud[0]}")
+        self.get_logger().info(f"Received pcl2 message: {cloud[0]}")
         return cloud
         
 

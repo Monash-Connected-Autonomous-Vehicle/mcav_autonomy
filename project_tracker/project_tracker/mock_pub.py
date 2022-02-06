@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 import numpy as np
+import glob 
 
 from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2 as PCL2
@@ -14,20 +15,23 @@ class PointCloudToPCL2(Node):
         super(PointCloudToPCL2, self).__init__('point_cloud_to_pcl2')
         self._publisher = self.create_publisher(PCL2, 'pcl2conversion', 10)
 
-        # TODO -> figure out way to have this callback executed when next .bin file
-        #         is available and not on a timer
         timer_period = 0.5
         self.timer = self.create_timer(timer_period, self.publish_pcl2)
-        self.velodyne_file_path = '/home/benca/mcav-dev/src/project_tracker/data/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/0000000000.bin'
-        
+
+        self.velodyne_file_paths = glob.glob('install/project_tracker/lib/project_tracker/data/velodyne_points/*.bin')
+
     def publish_pcl2(self):
         """Callback to publish"""
-        msg = self.convert_bin_to_PCL2(self.velodyne_file_path) # TODO replace this with .bin file path coming in
-        self._publisher.publish(msg)
+        
+        if self.velodyne_file_paths:
+            msg = self.convert_bin_to_PCL2(self.velodyne_file_paths.pop())
+            self._publisher.publish(msg)
+        else:
+            self.get_logger().info("no more velodyne points to publish...")
 
     def convert_bin_to_PCL2(self, velodyne_file_path):
         """Method to convert Lidar data in binary format to PCL2 message"""
-        # TODO is this in the right format for a cloud?
+        
         cloud = np.fromfile(velodyne_file_path, np.float32)
         cloud = cloud.reshape((-1, 4))
         # x, y, z, r = cloud[::4], cloud[1::4], cloud[2::4], cloud[3::4]
