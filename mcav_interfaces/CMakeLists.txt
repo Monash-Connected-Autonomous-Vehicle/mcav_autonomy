@@ -26,6 +26,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 	"msg/Waypoint.msg"
   "msg/WaypointArray.msg"
   "msg/DetectedObject.msg"
+  "msg/DetectedObjectArray.msg"
   DEPENDENCIES geometry_msgs
 )
 
