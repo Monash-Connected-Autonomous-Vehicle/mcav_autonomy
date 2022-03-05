@@ -4,7 +4,6 @@ from rclpy.node import Node
 import numpy as np
 import logging
 import time
-
 from itertools import chain
 
 from std_msgs.msg import Header
@@ -12,7 +11,16 @@ from sensor_msgs.msg import PointCloud2 as PCL2
 from sensor_msgs.msg import PointField
 from sensor_msgs_py import point_cloud2
 # from mcav_interfaces import DetectedObjectArray
+
 from sklearn.neighbors import KDTree
+import open3d as o3d
+import pcl
+
+import os
+print(pcl.__file__)
+print(os.path.abspath(pcl.__file__))
+
+import glob
 
 class PCL2Subscriber(Node):
 
@@ -48,14 +56,123 @@ class PCL2Subscriber(Node):
         cloud_time = time.time() - start
         self.get_logger().info(f"Took {cloud_time:.5f} to receive pcl2 message: {self.no_samples, self.no_axes}\n{self.cloud[0]}\n")
 
+
+        ## sklearn
         # create kd-tree
         tree = KDTree(self.cloud, leaf_size=2)
         start = time.time()
         self.euclidean_clustering(tree)
         clustering_time = time.time() - start
-        self.get_logger().info(f"Took {clustering_time:.5f} to find {len(self.clusters)} clusters.")
+        self.get_logger().info(f"Sklearn KDTree took {clustering_time:.5f} to find {len(self.clusters)} clusters.")
         # for i, cluster in enumerate(self.clusters):
             # self.get_logger().info(f"Cluster {i+1}: {len(cluster)} points")
+
+        # ## open3d
+        # # create kd-tree
+        # tree = o3d.geometry.KDTreeFlann(self.cloud)
+        # start = time.time()
+        # self.euclidean_clustering_o3d(tree)
+        # clustering_o3d_time = time.time() - start
+        # self.get_logger().info(f"Open3d kdtree took {clustering_o3d_time:.5f} to find {len(self.clusters_o3d)} clusters.")
+
+        ## python3-pcl binding octree
+        # create octree
+        octree_cloud = pcl.PointCloud()
+        octree_cloud.from_array(self.cloud)
+        tree = octree_cloud.make_octreeSearch(0.05) # 0.05 is resolution -> length of smallest voxels at lowest octree level
+        tree.add_points_from_input_cloud()
+        start = time.time()
+        self.euclidean_clustering_octree(tree)
+        clustering_octree_time = time.time() - start
+        self.get_logger().info(f"PCL binding octree took {clustering_octree_time:.5f} to find {len(self.clusters_octree)} clusters.")
+        
+        ## python3-pcl binding euclidean clustering
+        # create kdtree
+        ec_cloud = pcl.PointCloud()
+        print(self.cloud.shape)
+        ec_cloud.from_array(self.cloud)
+        ec_tree = ec_cloud.make_kdtree()
+        start = time.time()
+
+        ec = ec_cloud.make_EuclideanClusterExtraction()
+        ec.set_ClusterTolerance(0.3)
+        ec.set_MinClusterSize(5)
+        ec.set_MaxClusterSize(25000)
+        breakpoint()
+        ec.set_SearchMethod(ec_tree)
+        cluster_indices = ec.Extract()
+        print("created clusters")
+
+        print('cluster_indices : ' + str(len(cluster_indices)) + " count.")
+        clustering_ec_time = time.time() - start
+        self.get_logger().info(f"PCL binding ec took {clustering_ec_time:.5f} to find {len(self.clusters_octree)} clusters.")
+
+    def euclidean_clustering_octree(self, tree):
+        self.clusters_octree = []
+        self.processed = [False] * self.no_samples # track whether point in tree already processed
+        for index, point in enumerate(self.cloud):
+            if not self.processed[index]:
+                # create set here to not reset it at every recursive call to find_clusters
+                base_cluster = set()
+                self.find_clusters_octree(point, index, base_cluster, tree)
+                try:
+                    if len(base_cluster) > self.min_cluster_size:
+                        self.clusters_octree.append(base_cluster)
+                except TypeError as e:
+                    print(e)
+                    self.get_logger().debug("base_cluster not a set.")
+        
+        return self.clusters
+
+    def find_clusters_octree(self, point, ind, base_cluster, tree):
+        if not self.processed[ind]:
+            self.processed[ind] = True # point now been processed
+            base_cluster.add(ind)
+            # tuple format for searching
+            search_point_tup = (point[0], point[1], point[2])
+            [nearby_indices, sqdist] = tree.radius_search(search_point_tup, 0.3)
+            # self.get_logger().debug(f"Point: {ind} has {len(nearby_indices[0])}")
+            for nearby_ind in nearby_indices:
+                nearby_ind_int = int(nearby_ind)
+                if nearby_ind_int != ind:
+                    if not self.processed[nearby_ind_int]:
+                        # self.get_logger().debug(f"Single indice {nearby_ind}")
+                        self.find_clusters_octree(self.cloud[nearby_ind_int], nearby_ind_int, base_cluster, tree)
+        
+    def euclidean_clustering_o3d(self, tree):
+        self.clusters_o3d = []
+        self.processed = [False] * self.no_samples # track whether point in tree already processed
+        for index, point in enumerate(self.cloud):
+            if not self.processed[index]:
+                # create set here to not reset it at every recursive call to find_clusters
+                base_cluster = set()
+                self.find_clusters_o3d(point, index, base_cluster, tree)
+
+                try:
+                    if len(base_cluster) > self.min_cluster_size:
+                        self.clusters_o3d.append(base_cluster)
+                except TypeError as e:
+                    print(e)
+                    self.get_logger().debug("base_cluster not a set.")
+        
+        return self.clusters_o3d
+
+    def find_clusters_o3d(self, point, ind, base_cluster, tree):
+        if not self.processed[ind]:
+            self.processed[ind] = True # point now been processed
+            base_cluster.add(ind)
+            point_exp = np.transpose(np.expand_dims(point, 0)) # required shape for query_radius
+            print(point.shape)
+            print(point_exp.shape)
+            [k, nearby_indices, _] = tree.search_radius_vector_3d(point_exp, 0.3,)# return_distance=True)
+            # self.get_logger().debug(f"Point: {ind} has {len(nearby_indices[0])}")
+            for nearby_ind in nearby_indices[0]:
+                nearby_ind_int = int(nearby_ind)
+                if nearby_ind_int != ind:
+                    if not self.processed[nearby_ind_int]:
+                        # self.get_logger().debug(f"Single indice {nearby_ind}")
+                        self.find_clusters_o3d(self.cloud[nearby_ind_int], nearby_ind_int, base_cluster, tree)
+        
 
     def euclidean_clustering(self, tree):
         """
