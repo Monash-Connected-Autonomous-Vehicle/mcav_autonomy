@@ -15,12 +15,6 @@ from sensor_msgs_py import point_cloud2
 from sklearn.neighbors import KDTree
 import pcl
 
-import os
-print(pcl.__file__)
-print(os.path.abspath(pcl.__file__))
-
-import glob
-
 class PCL2Subscriber(Node):
 
     def __init__(self):
