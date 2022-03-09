@@ -27,7 +27,7 @@ class PCL2Subscriber(Node):
         )
 
         # TODO create cloud cluster publisher via creating a custom msg
-        # self._cloud_cluster_publisher = self.create_publisher(PCL2, '/cloud_clusters', )
+        self._cloud_cluster_publisher = self.create_publisher(PCL2, 'clustered_pointclouds', 10)
         # self._detected_objects_publisher = self.create_publisher(DetectedObjectArray, 10)
 
         # parameters for Euclidean Clustering
@@ -44,7 +44,8 @@ class PCL2Subscriber(Node):
         cloud_np = np.fromiter(chain.from_iterable(cloud_generator), np.float32)
         cloud_np = cloud_np.reshape((-1, 4))
         # discard reflectance
-        self.cloud = cloud_np[:, :3]
+        self.full_cloud = cloud_np
+        self.cloud = cloud_np[:, :3] 
         self.cloud = self.cloud[:2000]
         self.no_samples, self.no_axes = self.cloud.shape
         cloud_time = time.time() - start
@@ -57,24 +58,24 @@ class PCL2Subscriber(Node):
         # ! - using builtin euclidean clustering method from PCL
         ###
 
-        ## sklearn
-        # create kd-tree
-        tree = KDTree(self.cloud, leaf_size=2)
-        start = time.time()
-        self.euclidean_clustering_sklearn(tree)
-        clustering_time = time.time() - start
-        self.get_logger().info(f"Sklearn KDTree took {clustering_time:.5f} to find {len(self.clusters)} clusters.")
+        # ## sklearn
+        # # create kd-tree
+        # tree = KDTree(self.cloud, leaf_size=2)
+        # start = time.time()
+        # self.euclidean_clustering_sklearn(tree)
+        # clustering_time = time.time() - start
+        # self.get_logger().info(f"Sklearn KDTree took {clustering_time:.5f} to find {len(self.clusters)} clusters.")
 
-        ## python3-pcl binding octree
-        # create octree
-        octree_cloud = pcl.PointCloud()
-        octree_cloud.from_array(self.cloud)
-        tree = octree_cloud.make_octreeSearch(0.05) # 0.05 is resolution -> length of smallest voxels at lowest octree level
-        tree.add_points_from_input_cloud()
-        start = time.time()
-        self.euclidean_clustering_octree(tree)
-        clustering_octree_time = time.time() - start
-        self.get_logger().info(f"PCL binding octree took {clustering_octree_time:.5f} to find {len(self.clusters_octree)} clusters.")
+        # ## python3-pcl binding octree
+        # # create octree
+        # octree_cloud = pcl.PointCloud()
+        # octree_cloud.from_array(self.cloud)
+        # tree = octree_cloud.make_octreeSearch(0.05) # 0.05 is resolution -> length of smallest voxels at lowest octree level
+        # tree.add_points_from_input_cloud()
+        # start = time.time()
+        # self.euclidean_clustering_octree(tree)
+        # clustering_octree_time = time.time() - start
+        # self.get_logger().info(f"PCL binding octree took {clustering_octree_time:.5f} to find {len(self.clusters_octree)} clusters.")
         
         ## python3-pcl binding euclidean clustering
         ec_cloud = pcl.PointCloud()
@@ -84,6 +85,27 @@ class PCL2Subscriber(Node):
         self.euclidean_clustering_ec(ec_cloud, ec_tree)
         clustering_ec_time = time.time() - start
         self.get_logger().info(f"PCL binding ec took {clustering_ec_time:.5f} to find {len(self.clusters_ec)} clusters.")
+
+        # convert and publish clustered pointcloud
+        # stupid way of doing this
+        cluster_indices = set()
+        for single_cluster_indices in self.clusters_ec:
+            cluster_indices.update(single_cluster_indices)
+        clustered_np_array = self.full_cloud[list(cluster_indices)]
+        # publish message
+        header = Header()
+        header.frame_id = 'clustered_pointclouds'
+        header.stamp = self.get_clock().now().to_msg()
+        
+        fields = [
+            PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
+            PointField(name='y', offset=4, datatype=PointField.FLOAT32, count=1),
+            PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1),
+            PointField(name='r', offset=12, datatype=PointField.FLOAT32, count=1)
+        ]
+
+        pcl2_msg = point_cloud2.create_cloud(header, fields, clustered_np_array)
+        self._cloud_cluster_publisher.publish(pcl2_msg)
 
     def euclidean_clustering_ec(self, ec_cloud, ec_tree):
         """

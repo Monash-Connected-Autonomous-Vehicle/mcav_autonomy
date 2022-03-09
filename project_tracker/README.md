@@ -35,6 +35,18 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
     ros2 run project_tracker mock_sub
     ```
 
+#### Clustering instructions
+
+```bash
+sudo apt install python3-pcl
+pip3 install sklearn
+```
+
+* Parameters to modify: self.min_cluster_size, self.max_search_radius
+* Subscribing to `pcl2conversion`
+* Publishing to `clustered_pointclouds`
+
+
 ## Contact
 Amir Toosi - amir.ghalb@gmail.com
 
