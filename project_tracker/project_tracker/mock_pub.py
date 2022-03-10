@@ -9,17 +9,19 @@ from sensor_msgs.msg import PointCloud2 as PCL2
 from sensor_msgs.msg import PointField
 from sensor_msgs_py import point_cloud2
 
+from project_tracker.utils import numpy_2_PCL2
+
 class PointCloudToPCL2(Node):
 
     def __init__(self):
         super(PointCloudToPCL2, self).__init__('point_cloud_to_pcl2')
-        self._publisher = self.create_publisher(PCL2, 'pcl2conversion', 10)
+        self._publisher = self.create_publisher(PCL2, '/velodyne_points', 10)
 
         timer_period = 0.5
         self.timer = self.create_timer(timer_period, self.publish_pcl2)
 
-        self.velodyne_file_paths = glob.glob('install/project_tracker/lib/project_tracker/data/velodyne_points/*.bin')
-
+        self.velodyne_file_paths = glob.glob('/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/*.bin')
+        
     def publish_pcl2(self):
         """Callback to publish"""
         
@@ -34,20 +36,9 @@ class PointCloudToPCL2(Node):
         
         cloud = np.fromfile(velodyne_file_path, np.float32)
         cloud = cloud.reshape((-1, 4))
-        # x, y, z, r = cloud[::4], cloud[1::4], cloud[2::4], cloud[3::4]
 
-        header = Header()
-        header.frame_id = 'velodyne'
-        header.stamp = self.get_clock().now().to_msg()
-        
-        fields = [
-            PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
-            PointField(name='y', offset=4, datatype=PointField.FLOAT32, count=1),
-            PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1),
-            PointField(name='r', offset=12, datatype=PointField.FLOAT32, count=1)
-        ]
-
-        pcl2_msg = point_cloud2.create_cloud(header, fields, cloud)
+        timestamp =  self.get_clock().now().to_msg()
+        pcl2_msg = numpy_2_PCL2(cloud, timestamp)
 
         self.get_logger().info(f"Publishing, first point: {cloud[0:5]}")
 
