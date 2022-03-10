@@ -23,7 +23,7 @@ setup(
     entry_points={
         'console_scripts': [
             'mock_pub = project_tracker.mock_pub:main',
-            'mock_sub = project_tracker.mock_sub:main',
+            'cluster = project_tracker.cluster:main',
         ],
     },
 )
