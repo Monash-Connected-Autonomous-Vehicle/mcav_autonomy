@@ -22,7 +22,7 @@ class PCL2Subscriber(Node):
         super(PCL2Subscriber, self).__init__('pcl2_subscriber')
         self.subscription = self.create_subscription(
             PCL2,
-            '/velodyne_points',
+            '/velodyne_filtered',
             self._callback,
             10
         )
