@@ -39,12 +39,12 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 
 ```bash
 sudo apt install python3-pcl
-pip3 install sklearn
+sudo apt-get install ros-galactic-sensor-msgs-py
 ```
 
-* Parameters to modify: self.min_cluster_size, self.max_search_radius
+* Parameters to modify: self.min_cluster_size, self.max_cluster_size, self.max_search_radius
 * Subscribing to `pcl2conversion`
-* Publishing to `clustered_pointclouds`
+* Publishing to `clustered_pointclouds` -> publishes coloured pointclouds to show clusters
 
 
 ## Contact
