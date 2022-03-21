@@ -25,7 +25,7 @@ class PointCloudToPCL2(Node):
 
         while True:
             self.publish_pcl2()
-            time.sleep(0.01) # don't overcook the CPU 
+            time.sleep(0.05) # don't overcook the CPU 
 
     def publish_pcl2(self):
         """Callback to publish"""

@@ -40,6 +40,7 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 ```bash
 sudo apt install python3-pcl
 sudo apt-get install ros-galactic-sensor-msgs-py
+sudo pip3 install transforms3d
 ```
 
 * Parameters to modify: self.min_cluster_size, self.max_cluster_size, self.max_search_radius

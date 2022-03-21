@@ -69,9 +69,12 @@ def PCL2_2_numpy(pcl2_msg, reflectance=True):
 def create_colour_list():
     """Create list of colours in ROS float format for use in ROS PCL2 messages"""
     colour_list = []
+    rgb_list = []
     for i in range(300):
-        colour_list.append(rgb_to_float(random_color_gen()))
-    return colour_list
+        rgb = random_color_gen()
+        rgb_list.append(rgb)
+        colour_list.append(rgb_to_float(rgb))
+    return rgb_list, colour_list
 
 def random_color_gen():
     """ Generates a random color
@@ -112,13 +115,16 @@ def rgb_to_float(color):
 
 
 def pcl_to_ros(pcl_array, timestamp):
-    """ Converts a pcl PointXYZRGB to a ROS PointCloud2 message
-    
-        Args:
-            pcl_array (PointCloud_PointXYZRGB): A PCL XYZRGB point cloud
-            
-        Returns:
-            PointCloud2: A ROS point cloud
+    """ 
+    Converts a pcl PointXYZRGB to a ROS PointCloud2 message
+
+    Args:
+        pcl_array (PointCloud_PointXYZRGB): A PCL XYZRGB point cloud
+        
+    Returns:
+        PointCloud2: A ROS point cloud
+
+    https://github.com/mithi/point-cloud-clusters/blob/master/src/sensor_stick/scripts/pcl_helper.py
     """
     ros_msg = PCL2()
 
