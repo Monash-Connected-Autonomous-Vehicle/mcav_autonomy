@@ -3,11 +3,9 @@ from rclpy.node import Node
 
 import logging
 import time
+from math import sqrt
 
-from std_msgs.msg import Header
 from sensor_msgs.msg import PointCloud2 as PCL2
-from sensor_msgs.msg import PointField
-from sensor_msgs_py import point_cloud2
 from visualization_msgs.msg import MarkerArray, Marker
 from transforms3d.quaternions import mat2quat
 
@@ -37,7 +35,7 @@ class PCL2Subscriber(Node):
         # parameters for Euclidean Clustering
         self.min_cluster_size = 10
         self.max_cluster_size = 600
-        self.max_search_radius = 0.4 # range from 0.5 -> 0.7 seems suitable. Test more when have more data
+        self.cluster_tolerance = 0.4 # range from 0.5 -> 0.7 seems suitable. Test more when have more data
 
         # colour list for publishing different clusters
         self.rgb_list, self.colour_list = create_colour_list()
@@ -57,9 +55,9 @@ class PCL2Subscriber(Node):
         self.get_logger().info(f"Took {cloud_time:.5f} to receive pcl2 message: {self.no_samples, self.no_axes}\n{self.cloud[0]}\n")
 
         ## python3-pcl binding euclidean clustering
-        ec_cloud = pcl.PointCloud()
+        ec_cloud = pcl.PointCloud() # create empty pcl.PointCloud to use C++ bindings to PCL 
         ec_cloud.from_array(self.cloud)
-        ec_tree = ec_cloud.make_kdtree()
+        ec_tree = ec_cloud.make_kdtree() # make kdtree from our tree
         start = time.time()
         self.euclidean_clustering_ec(ec_cloud, ec_tree)
         clustering_ec_time = time.time() - start
@@ -77,25 +75,15 @@ class PCL2Subscriber(Node):
                     self.cloud[indice][2],
                     self.colour_list[j]
                 ])
-
+        # convert to pcl.PointCloud_PointXYZRGB for visualisation in RViz
         cluster_colour_cloud = pcl.PointCloud_PointXYZRGB()
         cluster_colour_cloud.from_list(self.colour_cluster_point_list)
         timestamp = self.get_clock().now().to_msg()
-        pcl2_msg = pcl_to_ros(cluster_colour_cloud, timestamp)
+        pcl2_msg = pcl_to_ros(cluster_colour_cloud, timestamp) # convert the pcl to a ROS PCL2 message
         self._cloud_cluster_publisher.publish(pcl2_msg)
 
-        self.fit_bounding_boxes()
-
-        # COMBINING ALL INTO SINGLE POINTCLOUD
-        # cluster_indices = set()
-        # for single_cluster_indices in self.clusters_ec:
-        #     cluster_indices.update(single_cluster_indices)
-        # clustered_np_array = self.full_cloud[list(cluster_indices)]
-
-        # # publish message
-        # timestamp = self.get_clock().now().to_msg()
-        # pcl2_msg = numpy_2_PCL2(clustered_np_array, timestamp, reflectance=False)
-        # self._cloud_cluster_publisher.publish(pcl2_msg)
+        # fit bounding boxes to the clustered pointclouds
+        self.fit_bounding_boxes() 
 
     def euclidean_clustering_ec(self, ec_cloud, ec_tree):
         """
@@ -111,7 +99,7 @@ class PCL2Subscriber(Node):
         # make euclidean cluster extraction method
         ec = ec_cloud.make_EuclideanClusterExtraction()
         # set parameters
-        ec.set_ClusterTolerance(self.max_search_radius)
+        ec.set_ClusterTolerance(self.cluster_tolerance)
         ec.set_MinClusterSize(self.min_cluster_size + 1)
         ec.set_MaxClusterSize(self.max_cluster_size)
         ec.set_SearchMethod(ec_tree)
@@ -157,7 +145,7 @@ class PCL2Subscriber(Node):
             marker.color.g = self.rgb_list[cluster_idx][1]/255.
             marker.color.b = self.rgb_list[cluster_idx][2]/255.
 
-            # # axis-aligned version
+            #### axis-aligned version
             # marker.scale.x = float(abs(max_point_AABB[0,0]-min_point_AABB[0,0]))
             # marker.scale.y = float(abs(max_point_AABB[0,1]-min_point_AABB[0,1]))
             # marker.scale.z = float(abs(max_point_AABB[0,2]-min_point_AABB[0,2]))
@@ -165,16 +153,17 @@ class PCL2Subscriber(Node):
             # marker.pose.position.x = float(max_point_AABB[0,0]+min_point_AABB[0,0])/2
             # marker.pose.position.y = float(max_point_AABB[0,1]+min_point_AABB[0,1])/2
             # marker.pose.position.z = float(max_point_AABB[0,2]+min_point_AABB[0,2])/2
-            # oriented version
+            #### oriented version
             # size -> 2 times the max_point from centre
             marker.scale.x = 2*float(max_point_OBB[0,0])
             marker.scale.y = 2*float(max_point_OBB[0,1])
             marker.scale.z = 2*float(max_point_OBB[0,2])
-            marker.pose.orientation.w = 1.
-            # marker.pose.orientation.w = float(quat[0])
-            # marker.pose.orientation.x = float(quat[1])
-            # marker.pose.orientation.y = float(quat[2])
-            # marker.pose.orientation.z = float(quat[3])
+            # marker.pose.orientation.w = 1.
+            mag = sqrt(quat[0]**2 + quat[3]**2)
+            marker.pose.orientation.w = float(quat[0]/mag)
+            marker.pose.orientation.x = 0.#float(quat[1])
+            marker.pose.orientation.y = 0.#float(quat[2]/mag)
+            marker.pose.orientation.z = float(quat[2]/mag)#float(quat[3])
             marker.pose.position.x = float(position_OBB[0,0])
             marker.pose.position.y = float(position_OBB[0,1])
             marker.pose.position.z = float(position_OBB[0,2])
