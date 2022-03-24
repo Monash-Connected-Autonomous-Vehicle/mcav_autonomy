@@ -15,7 +15,7 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 ### Installation
 
 1. Download synced+rectified data from [here](http://www.cvlibs.net/datasets/kitti/raw_data.php) or to download the data directly, press [this](https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data/2011_09_26_drive_0048/2011_09_26_drive_0048_sync.zip) download button
-2. After the download is complete, navigate to ```/home/mcav/DATASETS/KITTI/``` and unzip the folder named `2011_09_26` into the `KITTI` directory. Your tree for the binary files should then look like: `/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/`
+2. After the download is complete, navigate to ```/home/mcav/DATASETS/KITTI/```, unzip the downloaded zip and copy the folder named `2011_09_26` into the `KITTI` directory. Your tree for the binary files should then look like: `/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/`
 3. Install dependencies
     ```sh
     sudo apt install python3-pcl
