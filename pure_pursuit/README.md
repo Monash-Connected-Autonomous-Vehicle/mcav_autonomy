@@ -39,7 +39,7 @@ Pure Pursuit is a tracking algorithm which works by calculating the amount of cu
 ### 6. Run simple pure pursuit controller
     cd <path-to-workspace>
     source install/setup.bash
-    ros2 run pure_pursuit ppsimple_node.py
+    ros2 run pure_pursuit ppsimple_node
 
 # Contact
 Sheng (Senman) Qiu - sqiu0004@student.monash.edu; senmanqiu@gmail.com

@@ -18,7 +18,7 @@ class PurePursuitNode(Node):
         self.pp_subscriber = self.create_subscription(
                              WaypointArray, '/vel_waypoints', 
                              self.subscriber_callback, 10)
-        self.pp_subscriber # prevent unused variable warning
+        self.pp_subscriber # prevent 'unused variable' warning
         self.pp_publisher = self.create_publisher(Twist, '/carla/ego_vehicle/twist', 10)
         self.timer_period = 0.01
         self.spinner = self.create_timer(self.timer_period, self.publisher_callback)
@@ -33,8 +33,8 @@ class PurePursuitNode(Node):
     
     def publisher_callback(self):   
         if self.waypoints: 
-            v_linear, v_angular = self.purepursuit()
             twist_msg = Twist()
+            v_linear, v_angular = self.purepursuit()
             twist_msg.linear.x = v_linear
             twist_msg.angular.z = v_angular
             self.pp_publisher.publish(twist_msg)
@@ -52,6 +52,7 @@ class PurePursuitNode(Node):
         return v_linear, v_angular
 
 
+    # Searches for target point relating to lookahead distance
     def target_searcher(self, L):
         wp_x = np.array([wp.pose.position.x for wp in (self.waypoints).waypoints])
         wp_y = np.array([wp.pose.position.y for wp in (self.waypoints).waypoints])
@@ -82,12 +83,13 @@ class PurePursuitNode(Node):
             ## quadratic formula to find intercept point, hence target coordinates
             tx_1 = (-b + math.sqrt(b**2 - 4*a*c))/(2*a)
             tx_2 = (-b - math.sqrt(b**2 - 4*a*c))/(2*a)
-            if x1 < tx_1 < x2:
+            
+            if x1 < tx_1 < x2: # this assumes x1 will always be closer than x2
                 tx = tx_1
             else:
                 tx = tx_2
             ty = gradient*tx + y_inter
-        else:
+        else: # target final point if there are no points beyond lookahead distance
             tx = wp_x[-1]
             ty = wp_y[-1]
         
@@ -97,7 +99,7 @@ class PurePursuitNode(Node):
     
     
     def steer_control(self, x, y, L):
-        gamma = 2*y/(L**2)
+        gamma = 2*y/(L**2) # gamma = 1/r
         
         return gamma
 
