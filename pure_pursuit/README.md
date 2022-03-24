@@ -11,7 +11,7 @@ Pure Pursuit is a tracking algorithm which works by calculating the amount of cu
 - [MCAV interfaces](https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces)
 
 # How to launch simulation:
-## 1. Launch CARLA (new terminal)
+### 1. Launch CARLA (new terminal)
     cd <path-to-carla>
     ./CarlaUE4.sh
 ### 2. Launch ROS bridge (new terminal)
