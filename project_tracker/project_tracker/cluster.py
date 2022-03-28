@@ -10,6 +10,7 @@ from visualization_msgs.msg import MarkerArray, Marker
 from transforms3d.quaternions import mat2quat
 
 from project_tracker.utils import numpy_2_PCL2, PCL2_2_numpy, create_colour_list, pcl_to_ros
+from project_tracker.tracking import Tracker
 
 from mcav_interfaces.msg import DetectedObject, DetectedObjectArray
 
@@ -36,6 +37,9 @@ class PCL2Subscriber(Node):
         self.min_cluster_size = 10
         self.max_cluster_size = 600
         self.cluster_tolerance = 0.4 # range from 0.5 -> 0.7 seems suitable. Test more when have more data
+
+        # create tracker for identifying and following objects over time
+        self.tracker = Tracker()
 
         # colour list for publishing different clusters
         self.rgb_list, self.colour_list = create_colour_list()
@@ -83,7 +87,11 @@ class PCL2Subscriber(Node):
         self._cloud_cluster_publisher.publish(pcl2_msg)
 
         # fit bounding boxes to the clustered pointclouds
-        self.fit_bounding_boxes() 
+        detected_objects = self.fit_bounding_boxes() 
+
+        # track objects over time
+        tracked_objects = self.tracker.update(detected_objects)
+        self._detected_objects_publisher.publish(tracked_objects)
 
     def euclidean_clustering_ec(self, ec_cloud, ec_tree):
         """
@@ -172,7 +180,7 @@ class PCL2Subscriber(Node):
 
             # create detected object
             detected_object = DetectedObject()
-            detected_object.object_id = cluster_idx
+            detected_object.object_id = cluster_idx # dummy value until we track the objects
             detected_object.frame_id = 'velodyne'
             # pose -> assume of center point
             detected_object.pose.orientation.w = 1.
@@ -192,8 +200,8 @@ class PCL2Subscriber(Node):
 
         print(f"{len(bounding_boxes.markers)} bounding boxes found")
         self._bounding_boxes_publisher.publish(bounding_boxes)
-        self._detected_objects_publisher.publish(objects)
 
+        return objects
 
 
 
