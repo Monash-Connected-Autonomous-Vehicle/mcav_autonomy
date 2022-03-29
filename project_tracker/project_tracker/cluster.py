@@ -32,6 +32,7 @@ class PCL2Subscriber(Node):
         self._cloud_cluster_publisher = self.create_publisher(PCL2, 'clustered_pointclouds', 10)
         self._bounding_boxes_publisher = self.create_publisher(MarkerArray, 'bounding_boxes', 10)
         self._detected_objects_publisher = self.create_publisher(DetectedObjectArray, 'detected_objects', 10)
+        
 
         # parameters for Euclidean Clustering
         self.min_cluster_size = 10
@@ -39,7 +40,7 @@ class PCL2Subscriber(Node):
         self.cluster_tolerance = 0.4 # range from 0.5 -> 0.7 seems suitable. Test more when have more data
 
         # create tracker for identifying and following objects over time
-        self.tracker = Tracker()
+        self.tracker = Tracker(dist_threshold=4, max_frames_before_forget=2, max_frames_length=30)
 
         # colour list for publishing different clusters
         self.rgb_list, self.colour_list = create_colour_list()
@@ -90,8 +91,49 @@ class PCL2Subscriber(Node):
         detected_objects = self.fit_bounding_boxes() 
 
         # track objects over time
-        tracked_objects = self.tracker.update(detected_objects)
-        self._detected_objects_publisher.publish(tracked_objects)
+        tracked_detected_objects = self.tracker.update(detected_objects)
+        # add labels
+        print(f"Number of tracked objects: {len(tracked_detected_objects.detected_objects)}")
+        # add a marker for every tracked object
+        for d_o in tracked_detected_objects.detected_objects:
+            object_marker = Marker()
+            object_marker.id = d_o.object_id
+            object_marker.ns = 'object_id'
+            object_marker.header.frame_id = 'velodyne'
+            object_marker.type = Marker.TEXT_VIEW_FACING
+            object_marker.action = object_marker.ADD
+            object_marker.pose.position.x = d_o.pose.position.x
+            object_marker.pose.position.y = d_o.pose.position.y + 0.5
+            object_marker.pose.position.z = d_o.pose.position.z
+            object_marker.color.a = 1.
+            object_marker.color.r = 1.
+            object_marker.color.g = 1.
+            object_marker.color.b = 1.
+            object_marker.scale.x = 1.
+            object_marker.scale.y = 0.8
+            object_marker.scale.z = 0.5
+            object_marker.text = f"{d_o.object_id}"
+            self.bounding_box_markers.markers.append(object_marker)
+        # remove the old markers from the previous frame
+        try:
+            tracked_ids = [obj.object_id for obj in tracked_detected_objects.detected_objects]
+            marker_ids = [marker.id for marker in self.bounding_box_markers.markers]
+            print(f"Tracked IDs: {tracked_ids}")
+            print(f"Marker IDs: {marker_ids}")
+            for old_id in range(max(tracked_ids)):
+                if old_id not in marker_ids:
+                    del_marker = Marker()
+                    del_marker.ns = 'object_id'
+                    del_marker.header.frame_id = 'velodyne'
+                    del_marker.id = old_id
+                    del_marker.action = Marker.DELETE
+                    self.bounding_box_markers.markers.append(del_marker)
+        except:
+            pass
+        
+        print(f"Number of bounding box markers: {len(self.bounding_box_markers.markers)}")
+        self._bounding_boxes_publisher.publish(self.bounding_box_markers)
+        self._detected_objects_publisher.publish(tracked_detected_objects)
 
     def euclidean_clustering_ec(self, ec_cloud, ec_tree):
         """
@@ -122,7 +164,7 @@ class PCL2Subscriber(Node):
         Tutorial at PCL docs helps with make_MomentOfInertiaEstimation aspect
         https://pcl.readthedocs.io/projects/tutorials/en/master/moment_of_inertia.html#moment-of-inertia
         """
-        bounding_boxes = MarkerArray() # list of markers for visualisations of boxes
+        self.bounding_box_markers = MarkerArray() # list of markers for visualisations of boxes
         objects = DetectedObjectArray()
 
         for cluster_idx, indices in enumerate(self.clusters_ec):
@@ -144,7 +186,8 @@ class PCL2Subscriber(Node):
 
             # create marker box for visualisation
             marker = Marker()
-            marker.id = cluster_idx
+            marker.id = cluster_idx + 1000
+            marker.ns = 'bounding_boxes'
             marker.header.frame_id = 'velodyne'
             marker.type = marker.CUBE
             marker.action = marker.ADD
@@ -176,7 +219,7 @@ class PCL2Subscriber(Node):
             marker.pose.position.y = float(position_OBB[0,1])
             marker.pose.position.z = float(position_OBB[0,2])
 
-            bounding_boxes.markers.append(marker)
+            self.bounding_box_markers.markers.append(marker)
 
             # create detected object
             detected_object = DetectedObject()
@@ -197,9 +240,18 @@ class PCL2Subscriber(Node):
 
             objects.detected_objects.append(detected_object)
 
+        bounding_ids = [marker.id for marker in self.bounding_box_markers.markers]
+        for old_id in range(1000, 1000+40):
+            if old_id not in bounding_ids:
+                del_marker = Marker()
+                del_marker.ns = 'bounding_boxes'
+                del_marker.header.frame_id = 'velodyne'
+                del_marker.id = old_id
+                del_marker.action = Marker.DELETE
+                self.bounding_box_markers.markers.append(del_marker)
 
-        print(f"{len(bounding_boxes.markers)} bounding boxes found")
-        self._bounding_boxes_publisher.publish(bounding_boxes)
+        print(f"{len(self.bounding_box_markers.markers)} bounding boxes found")
+        
 
         return objects
 
