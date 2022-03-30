@@ -23,6 +23,9 @@ setup(
             'ppsimple_node = pure_pursuit.ppsimple_node:main',
             'ppcarla_node = pure_pursuit.ppcarla_node:main',
             'carlaSpawnerWaypoint_node = pure_pursuit.carlaSpawnerWaypoint_node:main',
+            'carlaSpawnerWaypoint_node_v2 = pure_pursuit.carlaSpawnerWaypoint_node_v2:main',
+            'carlaSpawner = pure_pursuit.carlaSpawner:main',
+            'carlaGlobalPathGenerator_node = pure_pursuit.carlaGlobalPathGenerator_node:main',
         ],
     },
 )

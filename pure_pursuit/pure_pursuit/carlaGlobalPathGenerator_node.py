@@ -5,7 +5,8 @@ import rclpy
 from rclpy.node import Node
 import carla
 from carla import Transform, Location, Rotation, World
-from mcav_interfaces.msg import WaypointArray, DetectedObjectArray, Waypoint
+from mcav_interfaces.msg import WaypointArray, Waypoint
+from geometry_msgs.msg import PoseWithCovarianceStamped, Pose
 
 
 class WaypointPublisher(Node):
@@ -13,7 +14,8 @@ class WaypointPublisher(Node):
 
     def __init__(self):
         super().__init__('waypoint_publisher')
-        self.waypoints_pub = self.create_publisher(WaypointArray, '/velocity_planner/local_waypoints', 10)
+        self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, '/initialpose', 10)
+        self.waypoints_pub = self.create_publisher(WaypointArray, '/global_waypoints', 10)
         timer_period = 0.5  # seconds
         self.spinner = self.create_timer(timer_period, self.waypoints_callback)
         
@@ -23,20 +25,18 @@ class WaypointPublisher(Node):
         self.vehicle = None
         self.vehicle_pos = None
         self.path = None
-        self.length_path = 50 # variable
-        self.length_seg = 10  # variable; must be shorter than length_path
-        self.target_vel = 2.0 # target velocity (m/s)
+        self.length_path = 143 # variable
+        self.target_vel = 3.0 # target velocity (m/s)
 
 
     # Main callback function for publishing waypoints
     def waypoints_callback(self):
         self.vehicle_pos = self.vehicle.get_transform() # record vehicle pose on each loop
         wp_list_msg = WaypointArray()
-        path_seg = self.waypoints_seg() # get a segment of the waypoint path
-        wp_list_msg.waypoints = self.waypoints2msg(path_seg) # converts segment to WaypointArray message
+        wp_list_msg.waypoints, pose_msg = self.waypoints2msg(self.path) # converts to WaypointArray message
         self.draw_waypoints(self.path, carla.Color(0, 0, 255)) # highlight waypoint path blue
-        self.draw_waypoints(path_seg, carla.Color(255, 0, 0)) # highlight segment red
         (self.waypoints_pub).publish(wp_list_msg) 
+        (self.pose_pub).publish(pose_msg)
 
 
     # Generates waypoint path
@@ -51,24 +51,18 @@ class WaypointPublisher(Node):
             wp_next = wp[0]
 
         return wp_list
-              
-                
-    # Gets waypoint segment from waypoint path
-    def waypoints_seg(self):
-        # start point, s, is the point closest to the vehicle
-        wp_x = np.array([wp.transform.location.x - self.vehicle_pos.location.x for wp in self.path])
-        wp_y = np.array([wp.transform.location.y - self.vehicle_pos.location.y for wp in self.path])
-        wp_d = np.hypot(wp_x, wp_y)
-        s = np.argmin(wp_d)
-
-        e = s + self.length_seg
-        path_seg = self.path[s:e]
-        
-        return path_seg
     
     
     # Converts waypoint to Waypoint message
     def waypoints2msg(self, waypoints):
+        pose_msg = PoseWithCovarianceStamped()
+#        pose_msg.pose.pose.position.x = self.vehicle_pos.location.x
+#        pose_msg.pose.pose.position.y = self.vehicle_pos.location.y
+#        pose_msg.pose.pose.position.z = self.vehicle_pos.location.z 
+        pose_msg.pose.pose.position.x = 0.0
+        pose_msg.pose.pose.position.y = 0.0
+        pose_msg.pose.pose.position.z = 0.0
+        pose_msg.pose.pose.orientation.z = self.vehicle_pos.rotation.yaw*(math.pi/180)
         wp_msg_list = [None]*len(waypoints)
         
         for i in range(len(wp_msg_list)):
@@ -80,6 +74,7 @@ class WaypointPublisher(Node):
             wp_x = waypoints[i].transform.location.x
             wp_y = waypoints[i].transform.location.y
             wp_z = waypoints[i].transform.location.z
+            wp_yaw = waypoints[i].transform.rotation.yaw
             
             # transform waypoint coordinates to vehicle frame
             rad_factor = math.pi/180
@@ -88,6 +83,7 @@ class WaypointPublisher(Node):
             wp_msg.pose.position.y = ((wp_x-v_x)*math.sin(-v_yaw*rad_factor)
                                      +(wp_y-v_y)*math.cos(-v_yaw*rad_factor))
             wp_msg.pose.position.z = wp_z
+            wp_msg.pose.orientation.z = wp_yaw*(math.pi/180)
             
             # waypoint velocity is zero upon reaching last waypoint
             if i == len(wp_msg_list)-1:
@@ -96,8 +92,8 @@ class WaypointPublisher(Node):
                 wp_msg.velocity.linear.x = self.target_vel
                 
             wp_msg_list[i] = wp_msg  
-       
-        return wp_msg_list
+
+        return wp_msg_list, pose_msg
         
         
     # Visualises waypoint paths    
@@ -116,40 +112,10 @@ def main(args=None):
     try:
         # create a client to communicate with the server
         client = carla.Client('localhost', 2000)
-        client.set_timeout(10.0) # seconds
-        world = client.load_world("Town02")
-        # client.load_world('Town02')
-        # client.reload_world()
-
-        # spawn subaru
-        blueprint_library = world.get_blueprint_library()
-        sub_bp = blueprint_library.filter("model3")[0]
-        sub_bp.set_attribute("role_name", "ego_vehicle")
-        spawn_point = Location(x=46.100533, y=236.447159, z=0.5)
-        sub_tf = Transform(spawn_point, Rotation(0,-90,0))
-        vehicle = world.spawn_actor(sub_bp, sub_tf)
-
-        # enable built-in autopilot
-        vehicle.set_autopilot(False)
-
-        # keep track of actors
-        actor_list = []
-        actor_list.append(vehicle)
-        
-        # set the spectator view
-        top_down_view = True
-        if top_down_view:
-		        spectator_transform = vehicle.get_transform()
-		        spectator_transform.location += carla.Location(x = -30.0, y=-30.0, z = 50.0)
-		        spectator_transform.rotation = carla.Rotation(pitch=-90, yaw=180)
-        else:
-            spectator_transform = vehicle.get_transform()
-            spectator_transform.location += carla.Location(x = 0, y=10, z = 6)
-            spectator_transform.rotation = carla.Rotation(pitch=-30, yaw=-90)
-        world.get_spectator().set_transform(spectator_transform)	
+        world = client.get_world()
+        vehicle = (world.get_actors())[0]	
 		       
         #set node parameters and spin
-        world = client.get_world()
         wp_pub.debug = world.debug
         wp_pub.map = world.get_map()
         wp_pub.vehicle = vehicle
@@ -163,10 +129,6 @@ def main(args=None):
         print("shutting down node")
         wp_pub.destroy_node()
         rclpy.shutdown()
-        print("destroying actors")
-        for actor in actor_list:
-            actor.destroy()
-        # ego_cam.destroy()
         print("done.")
 
 

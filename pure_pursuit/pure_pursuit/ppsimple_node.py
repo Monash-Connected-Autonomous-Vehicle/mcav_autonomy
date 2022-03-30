@@ -16,7 +16,7 @@ class PurePursuitNode(Node):
     def __init__(self):
         super().__init__('purepursuit_node')
         self.pp_subscriber = self.create_subscription(
-                             WaypointArray, '/vel_waypoints', 
+                             WaypointArray, '/velocity_planner/local_waypoints', 
                              self.subscriber_callback, 10)
         self.pp_subscriber # prevent 'unused variable' warning
         self.pp_publisher = self.create_publisher(Twist, '/carla/ego_vehicle/twist', 10)
@@ -24,7 +24,7 @@ class PurePursuitNode(Node):
         self.spinner = self.create_timer(self.timer_period, self.publisher_callback)
         
         self.waypoints = []
-        self.Lfc = 3.0  # [m] default look-ahead distance
+        self.Lfc = 4.0  # [m] default look-ahead distance
     
     
     def subscriber_callback(self, wp_msg):
