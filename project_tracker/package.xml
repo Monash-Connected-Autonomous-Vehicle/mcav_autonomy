@@ -4,20 +4,37 @@
   <name>project_tracker</name>
   <version>0.0.0</version>
   <description>Package to take LiDAR sensor data and inputs from Multi-Task Panoptic Perception model to create accurate pose and velocity estimates of an object over time in 3D space.</description>
+  <maintainer email="amir@gmail.come">amir</maintainer>
   <maintainer email="bedw0004@student.monash.edu">bened-wards</maintainer>
   <license>The MIT License</license>
 
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <depend>sensor_msgs</depend> 
+  
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
-  <exec_depend>rclpy</exec_depend>
+
+  <build_depend>rclcpp</build_depend>
+  <build_depend>libpcl-all-dev</build_depend>
+  <build_depend>pcl_conversions</build_depend>
+
+  <exec_depend>rclcpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>libpcl-all</exec_depend>
+  <exec_depend>pcl_conversions</exec_depend>
+
+  <exec_depend>rclpy</exec_depend>
   <exec_depend>sensor_msgs_py</exec_depend>
   <exec_depend>transforms3d</exec_depend>
   <exec_depend>mcav_interfaces</exec_depend>
 
   <export>
-    <build_type>ament_python</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>
