@@ -2,7 +2,7 @@ uint32 object_id
 string frame_id
 geometry_msgs/Pose pose
 geometry_msgs/Twist velocity
-geometry_msgs/Vector3 dimensions
+geometry_msgs/Vector3 dimensions # distance from face to face along each axis
 
 uint8 CLASS_CAR = 0 
 uint8 CLASS_BICYCLE = 1 
