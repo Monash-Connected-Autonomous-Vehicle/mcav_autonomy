@@ -30,6 +30,14 @@ Pure Pursuit is a tracking algorithm which works by calculating the amount of cu
     cd <path-to-workspace>
     git clone https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces.git
     colcon build
+## With velocity planner:
+### 5. Spawn vehicle and generate waypoints on predefined course (new terminal)
+    cd <path-to-workspace>
+    export CARLA_ROOT=<path-to-carla>
+    export PYTHONPATH=$PYTHONPATH:$CARLA_ROOT/PythonAPI/carla/dist/carla-<carla_version_and_arch>.egg:$CARLA_ROOT/PythonAPI/carla
+    source install/setup.bash
+    ros2 launch carla_twist_to_control carla_twist_to_control.launch.py
+## Without velocity planner:
 ### 5. Spawn vehicle and generate waypoints on predefined course (new terminal)
     cd <path-to-workspace>
     export CARLA_ROOT=<path-to-carla>

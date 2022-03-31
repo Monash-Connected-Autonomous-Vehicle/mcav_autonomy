@@ -22,7 +22,7 @@ def main():
         sub_bp = blueprint_library.filter("model3")[0]
         sub_bp.set_attribute("role_name", "ego_vehicle")
 #        spawn_point = Location(x=-52.0, y=30.0, z=0.5)
-        spawn_point = Location(x=46.100533, y=236.447159, z=0.5)
+        spawn_point = Location(x=46.100533, y=231.447159, z=0.5)
         sub_tf = Transform(spawn_point, Rotation(0,-90,0))
         vehicle = world.spawn_actor(sub_bp, sub_tf)
         

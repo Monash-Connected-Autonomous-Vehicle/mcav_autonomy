@@ -58,7 +58,7 @@ class PurePursuitNode(Node):
         wp_y = np.array([wp.pose.position.y for wp in (self.waypoints).waypoints])
         wp_d = np.hypot(wp_x, wp_y)
         
-        if (wp_d >  L).any():
+        if (wp_d >  L).any() and (wp_d <  L).any():
             L_less = wp_d[wp_d <= L] # distance of points within lookahead range
             L_more = wp_d[wp_d >  L] # distance of points beyond lookahead range
             d_prev_i = np.argmax(L_less)
@@ -89,9 +89,14 @@ class PurePursuitNode(Node):
             else:
                 tx = tx_2
             ty = gradient*tx + y_inter
-        else: # target final point if there are no points beyond lookahead distance
+        elif (wp_d <  L).any(): 
+            # target final point if there are no points beyond lookahead distance
             tx = wp_x[-1]
             ty = wp_y[-1]
+        elif (wp_d >  L).any():
+            # target first point if there are no points before lookahead distance
+            tx = wp_x[0]
+            ty = wp_y[0]        
         
         print("x: ", tx ,", y: ", ty)
         

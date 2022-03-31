@@ -1,3 +1,5 @@
+import os
+from glob import glob
 from setuptools import setup
 
 package_name = 'pure_pursuit'
@@ -10,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name), glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -21,10 +24,8 @@ setup(
     entry_points={
         'console_scripts': [
             'ppsimple_node = pure_pursuit.ppsimple_node:main',
-            'ppcarla_node = pure_pursuit.ppcarla_node:main',
             'carlaSpawnerWaypoint_node = pure_pursuit.carlaSpawnerWaypoint_node:main',
-            'carlaSpawnerWaypoint_node_v2 = pure_pursuit.carlaSpawnerWaypoint_node_v2:main',
-            'carlaSpawner = pure_pursuit.carlaSpawner:main',
+            'carlaSpawner_node = pure_pursuit.carlaSpawner_node:main',
             'carlaGlobalPathGenerator_node = pure_pursuit.carlaGlobalPathGenerator_node:main',
         ],
     },

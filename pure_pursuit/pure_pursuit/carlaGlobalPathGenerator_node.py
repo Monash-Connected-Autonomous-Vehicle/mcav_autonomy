@@ -7,6 +7,7 @@ import carla
 from carla import Transform, Location, Rotation, World
 from mcav_interfaces.msg import WaypointArray, Waypoint
 from geometry_msgs.msg import PoseWithCovarianceStamped, Pose
+import time
 
 
 class WaypointPublisher(Node):
@@ -14,7 +15,7 @@ class WaypointPublisher(Node):
 
     def __init__(self):
         super().__init__('waypoint_publisher')
-        self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, '/initialpose', 10)
+        self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, '/current_pose', 10)
         self.waypoints_pub = self.create_publisher(WaypointArray, '/global_waypoints', 10)
         timer_period = 0.5  # seconds
         self.spinner = self.create_timer(timer_period, self.waypoints_callback)
@@ -25,7 +26,7 @@ class WaypointPublisher(Node):
         self.vehicle = None
         self.vehicle_pos = None
         self.path = None
-        self.length_path = 143 # variable
+        self.length_path = 318 # variable
         self.target_vel = 3.0 # target velocity (m/s)
 
 
@@ -64,10 +65,8 @@ class WaypointPublisher(Node):
         pose_msg.pose.pose.position.z = 0.0
         pose_msg.pose.pose.orientation.z = self.vehicle_pos.rotation.yaw*(math.pi/180)
         wp_msg_list = [None]*len(waypoints)
-        
+
         for i in range(len(wp_msg_list)):
-            wp_msg = Waypoint()
-            
             v_yaw = self.vehicle_pos.rotation.yaw
             v_x = self.vehicle_pos.location.x
             v_y = self.vehicle_pos.location.y
@@ -76,7 +75,9 @@ class WaypointPublisher(Node):
             wp_z = waypoints[i].transform.location.z
             wp_yaw = waypoints[i].transform.rotation.yaw
             
-            # transform waypoint coordinates to vehicle frame
+            # transform waypoint coordinates to vehicle frame        
+            wp_msg = Waypoint()
+            wp_msg.frame_id = 'map'
             rad_factor = math.pi/180
             wp_msg.pose.position.x = ((wp_x-v_x)*math.cos(-v_yaw*rad_factor)
                                      -(wp_y-v_y)*math.sin(-v_yaw*rad_factor))
@@ -92,7 +93,7 @@ class WaypointPublisher(Node):
                 wp_msg.velocity.linear.x = self.target_vel
                 
             wp_msg_list[i] = wp_msg  
-
+          
         return wp_msg_list, pose_msg
         
         
@@ -108,6 +109,7 @@ def main(args=None):
     #Node initialisation
     rclpy.init(args=args)
     wp_pub = WaypointPublisher()
+    time.sleep(2) # wait to make sure the map is loaded before the path is generated
 
     try:
         # create a client to communicate with the server
