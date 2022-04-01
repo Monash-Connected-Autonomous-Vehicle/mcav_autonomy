@@ -1,19 +1,13 @@
 from rclpy.node import Node
 
+import logging
+
 from collections import deque
 import copy
-from hashlib import new
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
 from mcav_interfaces.msg import DetectedObjectArray
-
-
-"""
-TODO
-* Use TrackedObject to keep track of which objects are still in the frame
-* Base largely off the github code continue to develop it out
-"""
 
 class TrackedObject():
 
@@ -37,7 +31,9 @@ class TrackedObject():
 
 class Tracker(Node):
 
-    def __init__(self, dist_threshold, max_frames_before_forget, max_frames_length):
+    def __init__(self, max_frames_before_forget, max_frames_length, tracking_method="centre_distance", 
+                 dist_threshold=5, iou_threshold=0.8
+        ):
         """
         Class to track objects through frames using Hungarian Algorithm.
 
@@ -49,12 +45,23 @@ class Tracker(Node):
             Number of frames to iterate over without seeing DetectedObject before forgetting it
         max_frames_length : int
             Maximum memory back in time through frames
+        tracking_method : str
+            One of "centre_distance" or "iou". 
+            - "centre_distance" measures distances between centre points
+                of the detected objects. 
+            - "iou" looks at a birds eye view and measures IOU (intersection over union)
+                between the two rectangles. Note, it moves the bounding boxes to axis-
+                aligned by taking the top left point and the width and height of the rectangle
         """
         super(Tracker, self).__init__('tracker_dummy_node')
+        
+        self.tracking_method = tracking_method
+        if tracking_method == "centre_distance":
+            self.threshold = dist_threshold
+        elif tracking_method == "iou":
+            self.threshold = iou_threshold
 
-        self.dist_threshold = dist_threshold
         self.max_frames_before_forget = max_frames_before_forget
-
         self.max_frames_length = max_frames_length
         self.frames = deque(maxlen=max_frames_length)
 
@@ -62,6 +69,8 @@ class Tracker(Node):
         self.tracked_id_count = 0
 
         self.updated_centres = []
+
+        self.get_logger().set_level(logging.INFO)
 
     def update(self, new_detects):
         """
@@ -86,7 +95,8 @@ class Tracker(Node):
         # 1. Create cost matrix
         try:
             prev_detects = [obj.detected_object for obj in self.frames[-1]]
-        except IndexError: # if only 1 frame
+        except IndexError: # if only frames empty
+            self.get_logger().debug("Frame empty, creating initial frame")
             for i, detected_object in enumerate(new_detects.detected_objects):
                 detected_object.object_id = self.tracked_id_count
                 new_track = TrackedObject(detected_object, self.tracked_id_count)
@@ -97,62 +107,71 @@ class Tracker(Node):
             tracked_object_array = self.create_detected_object_array()
             return tracked_object_array
 
-        distances = np.zeros(shape=(len(prev_detects), len(new_detects.detected_objects)))
+        metrics = np.zeros(shape=(len(prev_detects), len(new_detects.detected_objects)))
         for i, old_detected_object in enumerate(prev_detects):
             old_pos = old_detected_object.pose.position
+            old_dim = old_detected_object.dimensions
+            new_bbs = []
             for j, new_detected_object in enumerate(new_detects.detected_objects):
                 new_pos = new_detected_object.pose.position
-                distances[i][j] = np.sqrt(
-                    (old_pos.x - new_pos.x)**2 + (old_pos.y - new_pos.y)**2 + 
-                    (old_pos.z - new_pos.z)**2
-                )
+                new_dim = new_detected_object.dimensions
+                if self.tracking_method == "centre_distance":
+                    metrics[i][j] = np.sqrt(
+                        (old_pos.x - new_pos.x)**2 + (old_pos.y - new_pos.y)**2 + 
+                        (old_pos.z - new_pos.z)**2
+                    )
+                else:
+                    top_l_x = new_pos.x - 0.5 * new_dim.x
+                    top_l_y = new_pos.y - 0.5 * new_dim.y
+                    new_bbs.append([top_l_x, top_l_y, new_dim.x, new_dim.y])
+            if self.tracking_method == "iou":
+                new_bbs = np.asarray(new_bbs, dtype=np.float64)
+                top_l_x = old_pos.x - 0.5 * old_dim.x
+                top_l_y = old_pos.y - 0.5 * old_dim.y
+                old_bb = np.array([top_l_x, top_l_y, old_dim.x, old_dim.y], dtype=np.float64)
+                metrics[i] = 1.0  - self.iou(old_bb, new_bbs)
 
         # 2. Perform Hungarian Algorithm assignment
-        row_ind, col_ind = linear_sum_assignment(cost_matrix=distances)
+        row_ind, col_ind = linear_sum_assignment(cost_matrix=metrics)
         col_assignment = [-1 for _ in range(len(prev_detects))]
         for row, col in zip(row_ind, col_ind):
             col_assignment[row] = col
 
-        self.distances = distances
-        self.row_ind = row_ind
-        self.col_ind = col_ind
-        self.get_logger().info(f"Row inds and col inds: {row_ind, col_ind}")
-        self.get_logger().info(f"Column assignment: {col_assignment} with length {len(col_assignment)}")
+        self.get_logger().debug(f"Row inds and col inds: {row_ind, col_ind}")
+        self.get_logger().debug(f"Column assignment: {col_assignment} with length {len(col_assignment)}")
         # see if any tracks are missing from the assignment
         for i in range(len(col_assignment)):
             if col_assignment[i] != -1: # if assigned
                 # if assignment is above some distance threshold then 
                 # un assign the tracked object
-                if distances[i][col_assignment[i]] > self.dist_threshold:
+                if metrics[i][col_assignment[i]] > self.threshold:
                     col_assignment[i] = -1
                 else:
+                    # reset skipped frames to 0
                     self.tracked_objects[i].skipped_frames = 0
+                    # update the detected object reference e.g. update centre coordinates
+                    new_detects.detected_objects[col_assignment[i]].object_id = self.tracked_objects[i].object_id
+                    self.tracked_objects[i].detected_object = new_detects.detected_objects[col_assignment[i]]
             else: # if not assigned, add a frame skipped
                 self.tracked_objects[i].skipped_frames += 1
         
         # delete objects that shouldn't be tracked any more
+        self.deleted_ids = [] # store for use in removing markers from RViz in cluster.py
         for i, tracked_object in enumerate(self.tracked_objects):
             if tracked_object.skipped_frames > self.max_frames_before_forget:
-                self.tracked_objects.pop(i)
+                deleted_object = self.tracked_objects.pop(i)
+                self.deleted_ids.append(deleted_object.object_id)
                 col_assignment.pop(i)
         
         # start tracking new items
+        old_tracked_id_count = self.tracked_id_count
         for i, detected_object in enumerate(new_detects.detected_objects):
             if i not in col_assignment:
                 detected_object.object_id = self.tracked_id_count
                 new_track = TrackedObject(detected_object, self.tracked_id_count)
                 self.tracked_id_count += 1
                 self.tracked_objects.append(new_track)
-
-        # update centre coordinates for detected objects that are tracked
-        self.updated_centres = []
-        for tracked_object in self.tracked_objects:
-            for detected_object in new_detects.detected_objects:
-                if tracked_object.object_id == detected_object.object_id:
-                    old = tracked_object.detected_object.pose.position
-                    new = detected_object.pose.position
-                    self.updated_centres.append([old.x, old.y, old.z, new.x, new.y, new.z])
-                    tracked_object.detected_object = detected_object
+        self.get_logger().debug(f"Added {self.tracked_id_count - old_tracked_id_count} objects to tracking.")
 
         # store previous frames for use in comparison
         tracked_copy = copy.deepcopy(self.tracked_objects)
@@ -168,3 +187,39 @@ class Tracker(Node):
         tracked_object_array = DetectedObjectArray()
         tracked_object_array.detected_objects = [obj.detected_object for obj in self.tracked_objects]
         return tracked_object_array
+
+    def iou(self, bbox, candidates):
+        """
+        FROM: https://github.com/nwojke/deep_sort/blob/master/deep_sort/iou_matching.py
+
+        Computer intersection over union.
+        Parameters
+        ----------
+        bbox : ndarray
+            A bounding box in format `(top left x, top left y, width, height)`.
+        
+        candidates : ndarray
+            A matrix of candidate bounding boxes (one per row) in the same format
+            as `bbox`.
+        Returns
+        -------
+        ndarray
+            The intersection over union in [0, 1] between the `bbox` and each
+            candidate. A higher score means a larger fraction of the `bbox` is
+            occluded by the candidate.
+        """
+        bbox_tl, bbox_br = bbox[:2], bbox[:2] + bbox[2:]
+        candidates_tl = candidates[:, :2]
+        candidates_br = candidates[:, :2] + candidates[:, 2:]
+
+        tl = np.c_[np.maximum(bbox_tl[0], candidates_tl[:, 0])[:, np.newaxis],
+                np.maximum(bbox_tl[1], candidates_tl[:, 1])[:, np.newaxis]]
+        br = np.c_[np.minimum(bbox_br[0], candidates_br[:, 0])[:, np.newaxis],
+                np.minimum(bbox_br[1], candidates_br[:, 1])[:, np.newaxis]]
+        wh = np.maximum(0., br - tl)
+
+        area_intersection = wh.prod(axis=1)
+        area_bbox = bbox[2:].prod()
+        area_candidates = candidates[:, 2:].prod(axis=1)
+        return area_intersection / (area_bbox + area_candidates - area_intersection)
+

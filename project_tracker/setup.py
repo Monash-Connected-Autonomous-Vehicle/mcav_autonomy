@@ -1,3 +1,4 @@
+import os
 from setuptools import setup
 import glob
 
@@ -12,6 +13,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('lib/' + package_name +'/data/velodyne_points/', glob.glob('data/velodyne_points/*')),
+        (os.path.join('share', package_name), glob.glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
