@@ -60,6 +60,10 @@ class Tracker(Node):
             self.threshold = dist_threshold
         elif tracking_method == "iou":
             self.threshold = iou_threshold
+        elif tracking_method == "both":
+            self.iou_dist_factor = 5.0 # if choose both
+            self.threshold = self.iou_dist_factor * iou_threshold + dist_threshold
+  
 
         self.max_frames_before_forget = max_frames_before_forget
         self.max_frames_length = max_frames_length
@@ -77,11 +81,12 @@ class Tracker(Node):
         Callback to update the tracked DetectedObject's when receiving a new frame.
 
         Works by:
-        1. Calculating cost matrix for distance between DetectedObject's previous 2 frames
+        1. Calculating cost matrix for some metric between DetectedObject's previous 2 frames
         2. Using scipy.optimize.linear_sum_assignment (Hungarian Algorithm) to assign new
             DetectedObject's to previously identified DetectedObject's
-        3. 
-        4. 
+        3. If metric is bigger than some threshold, unassign the row/column pair
+        4. If undetected object for greater than some threshold, delete from tracked objects
+        5. Add new detected objects that don't have assignments
 
         Parameters
         ----------
@@ -115,21 +120,24 @@ class Tracker(Node):
             for j, new_detected_object in enumerate(new_detects.detected_objects):
                 new_pos = new_detected_object.pose.position
                 new_dim = new_detected_object.dimensions
-                if self.tracking_method == "centre_distance":
+                if self.tracking_method in ["centre_distance", "both"]:
                     metrics[i][j] = np.sqrt(
                         (old_pos.x - new_pos.x)**2 + (old_pos.y - new_pos.y)**2 + 
                         (old_pos.z - new_pos.z)**2
                     )
-                else:
+                if self.tracking_method in ["iou", "both"]:
                     top_l_x = new_pos.x - 0.5 * new_dim.x
                     top_l_y = new_pos.y - 0.5 * new_dim.y
-                    new_bbs.append([top_l_x, top_l_y, new_dim.x, new_dim.y])
-            if self.tracking_method == "iou":
+                    new_bbs.append([top_l_x, top_l_y, new_dim.x, new_dim.y])                    
+            if self.tracking_method == "iou" or self.tracking_method == "both":
                 new_bbs = np.asarray(new_bbs, dtype=np.float64)
                 top_l_x = old_pos.x - 0.5 * old_dim.x
                 top_l_y = old_pos.y - 0.5 * old_dim.y
                 old_bb = np.array([top_l_x, top_l_y, old_dim.x, old_dim.y], dtype=np.float64)
-                metrics[i] = 1.0  - self.iou(old_bb, new_bbs)
+                if self.tracking_method == "iou":
+                    metrics[i] = 1.0  - self.iou(old_bb, new_bbs)
+                else: # both
+                    metrics[i] += self.iou_dist_factor * (1.0  - self.iou(old_bb, new_bbs))
 
         # 2. Perform Hungarian Algorithm assignment
         row_ind, col_ind = linear_sum_assignment(cost_matrix=metrics)

@@ -43,9 +43,12 @@ class PCL2Subscriber(Node):
         self.cluster_tolerance = 0.4 # range from 0.5 -> 0.7 seems suitable. Test more when have more data
 
         # create tracker for identifying and following objects over time
-        # TODO distances
-        # self.tracker = Tracker(dist_threshold=5, max_frames_before_forget=2, max_frames_length=30)
-        self.tracker = Tracker(max_frames_before_forget=2, max_frames_length=30, tracking_method="iou", iou_threshold=0.9)
+        # self.tracker = Tracker(max_frames_before_forget=2, max_frames_length=30, tracking_method="centre_distance", dist_threshold=5)
+        # self.tracker = Tracker(max_frames_before_forget=2, max_frames_length=30, tracking_method="iou", iou_threshold=0.85)
+        self.tracker = Tracker(
+            max_frames_before_forget=2, max_frames_length=30, tracking_method="both", 
+            iou_threshold=0.85, dist_threshold = 5
+        )
 
         # colour list for publishing different clusters
         self.rgb_list, self.colour_list = create_colour_list()
@@ -156,16 +159,17 @@ class PCL2Subscriber(Node):
             # oriented bounding box
             [min_point_OBB, max_point_OBB, position_OBB,
                 rotational_matrix_OBB] = feature_extractor.get_OBB()
-            # convert rotational matrix to quaternion for use in ROS pose
-            roll, pitch, yaw = mat2euler(rotational_matrix_OBB)
-            while not(-10. < yaw*180/np.pi < 10.):
-                yaw -= np.sign(yaw) * 0.15
-            quat = euler2quat(0., 0., yaw)
 
             # create detected object
             detected_object = DetectedObject()
             detected_object.object_id = cluster_idx # dummy value until we track the objects
             detected_object.frame_id = 'velodyne'
+
+            # convert rotational matrix to quaternion for use in pose
+            roll, pitch, yaw = mat2euler(rotational_matrix_OBB)
+            while not(-10. < yaw*180/np.pi < 10.):
+                yaw -= np.sign(yaw) * 0.15
+            quat = euler2quat(0., 0., yaw)
             # pose -> assume of center point
             detected_object.pose.orientation.w = quat[0]
             detected_object.pose.orientation.x = quat[1]
