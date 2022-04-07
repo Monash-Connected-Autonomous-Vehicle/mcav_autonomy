@@ -5,13 +5,13 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='pure_pursuit',
-            executable='carlaSpawner_node',
+            executable='carla_spawner',
             name='carla_spawner',
         ),
         Node(
             package='pure_pursuit',
-            executable='carlaGlobalPathGenerator_node',
-            name='carla_global_path_generator',
+            executable='carla_global_planner',
+            name='carla_global_planner',
         ),
         Node(
             package='velocity_planner',
@@ -20,11 +20,12 @@ def generate_launch_description():
             parameters=[{
                 'max_acceleration': 0.5,
                 'local_plan_max_length': 25,
+                'max_velocity': 3.0,
             }]
         ),
         Node(
             package='pure_pursuit',
-            executable='ppsimple_node',
-            name='simple_pure_pursuit',
+            executable='purepursuit',
+            name='purepursuit',
         ),
     ])

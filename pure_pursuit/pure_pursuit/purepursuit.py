@@ -7,19 +7,19 @@ import rclpy
 import time as tim
 from geometry_msgs.msg import Twist
 from rclpy.node import Node
-from mcav_interfaces.msg import WaypointArray, DetectedObjectArray, Waypoint
+from mcav_interfaces.msg import WaypointArray, Waypoint
 
 
 # Node Class - subscribes to waypoints; publishes twist commands    
 class PurePursuitNode(Node):
 
     def __init__(self):
-        super().__init__('purepursuit_node')
-        self.pp_subscriber = self.create_subscription(
-                             WaypointArray, '/velocity_planner/local_waypoints', 
-                             self.subscriber_callback, 10)
-        self.pp_subscriber # prevent 'unused variable' warning
-        self.pp_publisher = self.create_publisher(Twist, '/carla/ego_vehicle/twist', 10)
+        super().__init__('purepursuit')
+        self.wp_subscriber = self.create_subscription(
+                             WaypointArray, 'local_baselink_waypoints', 
+                             self.wp_subscriber_callback, 1)
+        self.wp_subscriber # prevent 'unused variable' warning
+        self.pp_publisher = self.create_publisher(Twist, '/carla/ego_vehicle/twist', 1)
         self.timer_period = 0.01
         self.spinner = self.create_timer(self.timer_period, self.publisher_callback)
         
@@ -27,9 +27,9 @@ class PurePursuitNode(Node):
         self.Lfc = 4.0  # [m] default look-ahead distance
     
     
-    def subscriber_callback(self, wp_msg):
-        self.waypoints = wp_msg
-    
+    def wp_subscriber_callback(self, wp_msg):
+        self.waypoints = wp_msg.waypoints
+ 
     
     def publisher_callback(self):   
         if self.waypoints: 
@@ -47,15 +47,15 @@ class PurePursuitNode(Node):
         tx, ty = self.target_searcher(self.Lfc) # finds local coordinate of target point
         gamma = self.steer_control(tx, ty, self.Lfc) # finds curvature of lookahead arc
         
-        v_linear = (self.waypoints).waypoints[0].velocity.linear.x
+        v_linear = self.waypoints[0].velocity.linear.x
         v_angular = -v_linear*gamma
         return v_linear, v_angular
 
 
     # Searches for target point relating to lookahead distance
     def target_searcher(self, L):
-        wp_x = np.array([wp.pose.position.x for wp in (self.waypoints).waypoints])
-        wp_y = np.array([wp.pose.position.y for wp in (self.waypoints).waypoints])
+        wp_x = np.array([wp.pose.position.x for wp in self.waypoints])
+        wp_y = np.array([wp.pose.position.y for wp in self.waypoints])
         wp_d = np.hypot(wp_x, wp_y)
         
         if (wp_d >  L).any() and (wp_d <  L).any():

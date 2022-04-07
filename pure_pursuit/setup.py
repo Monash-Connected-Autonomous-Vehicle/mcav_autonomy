@@ -23,10 +23,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'ppsimple_node = pure_pursuit.ppsimple_node:main',
-            'carlaSpawnerWaypoint_node = pure_pursuit.carlaSpawnerWaypoint_node:main',
-            'carlaSpawner_node = pure_pursuit.carlaSpawner_node:main',
-            'carlaGlobalPathGenerator_node = pure_pursuit.carlaGlobalPathGenerator_node:main',
+            'purepursuit                 = pure_pursuit.purepursuit:main',
+            'carla_spawner_local_planner = pure_pursuit.carla_spawner_local_planner:main',
+            'carla_spawner               = pure_pursuit.carla_spawner:main',
+            'carla_global_planner        = pure_pursuit.carla_global_planner:main',
         ],
     },
 )

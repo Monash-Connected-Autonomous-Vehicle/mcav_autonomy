@@ -3,12 +3,17 @@ Project Pure Pursuit will be our base for our control algorithm for the street d
 
 Pure Pursuit is a tracking algorithm which works by calculating the amount of curvature required to move a vehicle from its current position to some goal position. It tracks a reference path (made of waypoints) using the geometry of the vehicle kinematics as well as a fixed distance known as the look ahead distance. Ultimately, the vehicle chases a look ahead point which constantly changes as the vehicle moves. This look ahead point changes based on the current position of the vehicle until the last waypoint on the path and has a minimum distance of the look ahead relative to the vehicle. 
 
+# General notes regarding this package
+- The package currently spawns at a specific location and map. The carla_spawner node as well as any waypoints .csv (if used) file will have to be modified to change these.
+- This package was designed to be compatible with MCAV's velocity_planner package which is capable of generating local waypoints. 
+
 # Requirements:
 - Ubuntu 20.0.4
 - [ROS2 Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
 - [CARLA 0.9.13](https://carla.readthedocs.io/en/latest/start_quickstart/#carla-installation) 
 - [CARLA ROS Bridge](https://carla.readthedocs.io/projects/ros-bridge/en/latest/ros_installation_ros2/)
-- [MCAV interfaces](https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces)
+- [MCAV interfaces](https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces) should be in the same workspace
+- (Optional) [Velocity planner](https://github.com/Monash-Connected-Autonomous-Vehicle/velocity_planner) should be in the same workspace
 
 # How to launch simulation:
 ### 1. Launch CARLA (new terminal)
@@ -31,23 +36,28 @@ Pure Pursuit is a tracking algorithm which works by calculating the amount of cu
     git clone https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces.git
     colcon build
 ## With velocity planner:
+### Important: 
+velocity_planner's waypoint_reader node is able to publish global waypoints from a .csv file. In order for that script to work properly with pure_pursuit, a section of carla_global_planner's callback function will have to be commented out. The secton is annotated by a "TODO" note in the commenting. Otherwise, carla_global_planner.py should be able to generate its own waypoints in CARLA and publish them as a global_wapoints topic to be fed to velocity_planner.py.
 ### 5. Spawn vehicle and generate waypoints on predefined course (new terminal)
     cd <path-to-workspace>
     export CARLA_ROOT=<path-to-carla>
     export PYTHONPATH=$PYTHONPATH:$CARLA_ROOT/PythonAPI/carla/dist/carla-<carla_version_and_arch>.egg:$CARLA_ROOT/PythonAPI/carla
     source install/setup.bash
-    ros2 launch carla_twist_to_control carla_twist_to_control.launch.py
+    ros2 launch pure_pursuit purepursuit_simulation.launch.py
+### 6. Generate global waypoints from a .csv file once the necessary section in carla_global_planner.py has been commented out (new terminal)
+    cd <path-to-workspace>
+    ros2 run velocity_planner waypoint_reader <path-to-ws>/src/pure_pursuit/misc/town01_path2.csv
 ## Without velocity planner:
 ### 5. Spawn vehicle and generate waypoints on predefined course (new terminal)
     cd <path-to-workspace>
     export CARLA_ROOT=<path-to-carla>
     export PYTHONPATH=$PYTHONPATH:$CARLA_ROOT/PythonAPI/carla/dist/carla-<carla_version_and_arch>.egg:$CARLA_ROOT/PythonAPI/carla
     source install/setup.bash
-    ros2 run pure_pursuit carlaSpawnerWaypoint_node
-### 6. Run simple pure pursuit controller
+    ros2 run pure_pursuit carla_spawner_local_planner
+### 6. Run simple pure pursuit controller (new terminal)
     cd <path-to-workspace>
     source install/setup.bash
-    ros2 run pure_pursuit ppsimple_node
+    ros2 run pure_pursuit purepursuit
 
 # Contact
 Sheng (Senman) Qiu - sqiu0004@student.monash.edu; senmanqiu@gmail.com
