@@ -4,6 +4,7 @@ import random
 
 def attach_camera(actor, world):
     cam_bp = world.get_blueprint_library().find('sensor.camera.rgb')
+    cam_bp.set_attribute("role_name", "front/rgb_front")
     cam_location = carla.Location(0, 0, 2.5)
     cam_rotation = carla.Rotation(0, 0, 0)
     cam_transform = carla.Transform(cam_location,cam_rotation)
@@ -11,6 +12,7 @@ def attach_camera(actor, world):
 
 def attach_lidar(actor, world):
     lidar_bp = world.get_blueprint_library().find('sensor.lidar.ray_cast')
+    lidar_bp.set_attribute("role_name", "front/lidar")
     lidar_location = carla.Location(0, 0, 2.4)
     lidar_rotation = carla.Rotation(0, 0, 0)
     lidar_bp.set_attribute("channels", "16")
@@ -22,7 +24,7 @@ def attach_lidar(actor, world):
     lidar_transform = carla.Transform(lidar_location, lidar_rotation)
     lidar = world.spawn_actor(lidar_bp, lidar_transform, attach_to=actor, attachment_type=carla.AttachmentType.Rigid)
 
-def setup_tracking_scenario():
+def main():
     try:
         # Create a client to communicate with the server
         client = carla.Client('localhost', 2000)
@@ -32,7 +34,7 @@ def setup_tracking_scenario():
         # Spawn streetdrone
         blueprint_library = world.get_blueprint_library()
         sdrone_bp = blueprint_library.filter("cooper_s_2021")[0]
-        sdrone_bp.set_attribute("role_name", "hero")
+        sdrone_bp.set_attribute("role_name", "ego_vehicle")
         spawn_points = world.get_map().get_spawn_points()
         spawn_point = spawn_points[random.randint(0,len(spawn_points)-1)]
         sdrone = world.spawn_actor(sdrone_bp, spawn_point)
@@ -61,4 +63,4 @@ def setup_tracking_scenario():
 
 
 if __name__ == '__main__':
-    setup_tracking_scenario()
+    main()

@@ -59,6 +59,18 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 |`bounding_boxes`|`visualization_msgs.msg MarkerArray`|View bounding boxes over identified clusters for visualisation|`project_tracker::cluster` publishes|
 |`detected_objects`|`mcav_interfaces::DetectedObjectArray`|Emit detected objects for use in other MCAV nodes e.g. path planning|`project_tracker::cluster` publishes|
 
+## Carla Integration
+
+1. Start Carla Agent `/opt/carla-simulator/CarlaUE4.sh`
+2. Source carla_ros_bridge repo
+```bash
+cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, the beast it is ~/liam_ws/carla_ros_bridge, I think)
+source  ./install/setup.bash
+```
+3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py`
+4. Run python setup script `python3 <PATH-TO-project_tracker>/project_tracker/tracking_carla_setup.py`
+5. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/front/lidar` and camera from `/carla/ego_vehicle/front/rgb_front`
+
 ## Contact
 Amir Toosi - amir.ghalb@gmail.com
 

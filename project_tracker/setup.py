@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'mock_pub = project_tracker.mock_pub:main',
             'cluster = project_tracker.cluster:main',
+            'tracking_carla_setup = project_tracker.tracking_carla_setup:main'
         ],
     },
 )
