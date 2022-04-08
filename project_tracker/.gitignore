@@ -1,2 +1,4 @@
 .vscode
 data
+bag_files
+__pycache__

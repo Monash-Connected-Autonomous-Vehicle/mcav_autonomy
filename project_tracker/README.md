@@ -68,8 +68,10 @@ cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, t
 source  ./install/setup.bash
 ```
 3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py`
-4. Run python setup script `python3 <PATH-TO-project_tracker>/project_tracker/tracking_carla_setup.py`
-5. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/front/lidar` and camera from `/carla/ego_vehicle/front/rgb_front`
+4. Run python setup script `python3 <PATH-TO-project_tracker>/carla_integration/tracking_carla_setup.py`
+5. Spawn NPCs (vehicles and pedestrians) `python3 <PATH-TO-project_tracker>/carla_integration/generate_traffic.py -n 50 -w 50 --no-rendering`
+6. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/front/lidar` and camera from `/carla/ego_vehicle/front/rgb_front`
+7. Optionally record ROS bags for later use
 
 ## Contact
 Amir Toosi - amir.ghalb@gmail.com
