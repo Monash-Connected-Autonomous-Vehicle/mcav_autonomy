@@ -75,7 +75,7 @@ install(PROGRAMS
   ${PROJECT_NAME}/mock_pub.py
   ${PROJECT_NAME}/cluster.py
   ${PROJECT_NAME}/mock_image_pub.py
-  ${PROJECT_NAME}/image_classification.py
+  ${PROJECT_NAME}/object_detection.py
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

@@ -12,12 +12,12 @@ from cv_bridge import CvBridge
 import torch
 
 
-class ImageClassification(Node):
+class ObjectDetection(Node):
     def __init__(self):
-        super(ImageClassification, self).__init__('imageClassification')
+        super(ObjectDetection, self).__init__('object_detection')
         
         self.subscription = self.create_subscription(Image, '/camera', self._callback, 10)
-        self._publisher = self.create_publisher(Image, '/classified_image', 10)
+        self._publisher = self.create_publisher(Image, '/object_detected_image', 10)
 
         self.get_logger().set_level(logging.DEBUG)
 
@@ -46,15 +46,15 @@ class ImageClassification(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    imageClassification = ImageClassification()
+    object_detection = ObjectDetection()
 
     try:
-        rclpy.spin(imageClassification)
+        rclpy.spin(object_detection)
     except KeyboardInterrupt:
-        imageClassification.get_logger().debug("Keyboard interrupt")
+        object_detection.get_logger().debug("Keyboard interrupt")
 
     # destroy node explicity
-    imageClassification.destroy_node()
+    object_detection.destroy_node()
     rclpy.shutdown()
 
 
