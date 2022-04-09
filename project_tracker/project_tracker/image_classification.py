@@ -24,16 +24,20 @@ class ImageClassification(Node):
     def _callback(self, msg: Image):
         # Model
         model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x, custom
-        
-        img = np.reshape(msg.data, (msg.height, msg.step)) # or file, Path, PIL, OpenCV, numpy, list
+
+        # convert ros2 image to cv_image to allow for processing through yolo
+        bridge = CvBridge()
+        cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
 
         # Inference
-        results = model(img)
+        results = model(cv_image)
         
+        # print objects found in the console
         results.print()  # or .show(), .save(), .crop(), .pandas(), etc.
+        
+        # numpy array representing the classified image
         image_array = np.array(results.render())[0]
 
-        bridge = CvBridge()
         image_message = bridge.cv2_to_imgmsg(image_array, encoding="passthrough")
 
         self._publisher.publish(image_message)
