@@ -37,7 +37,12 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
     . install/setup.bash
     ros2 run project_tracker mock_pub
     ```
-6.  Refer to the [pcl_bind](https://github.com/Monash-Connected-Autonomous-Vehicle/pcl_bind) package to run the `filter` node to reduce the number of LiDAR points.
+6.  In a new terminal, navigate to the root of your workspace and call the `filter` node to reduce the number of LiDAR points.
+	```sh
+    cd YOUR_WORKSPACE_ROOT
+    . install/setup.bash
+    ros2 run project_tracker filter
+    ```
 7.  In a new terminal, call the clustering node to produce clusters, bounding boxes and `DetectedObjectArray`
     ```sh
     . install/setup.bash
@@ -54,7 +59,7 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 ##### Topics
 |Topic|Type|Objective|Nodes interacting|
 ------|----|---------|-----------------|
-|`/velodyne_points`|`sensor_msgs.msg PCL2`|Publish mock LiDAR data|`project_tracker::mock_pub` publishes, `pcl_bind::filter` subscribes|
+|`/velodyne_points`|`sensor_msgs.msg PCL2`|Publish mock LiDAR data|`project_tracker::mock_pub` publishes, `project_tracker::filter` subscribes|
 |`clustered_pointclouds`|`sensor_msgs.msg PCL2`|View clustered pointclouds in PCL2 format for visualisation|`project_tracker::cluster` publishes|
 |`bounding_boxes`|`visualization_msgs.msg MarkerArray`|View bounding boxes over identified clusters for visualisation|`project_tracker::cluster` publishes|
 |`detected_objects`|`mcav_interfaces::DetectedObjectArray`|Emit detected objects for use in other MCAV nodes e.g. path planning|`project_tracker::cluster` publishes|
