@@ -178,6 +178,7 @@ def main():
         if not args.asynch:
             traffic_manager.set_synchronous_mode(True)
             if not settings.synchronous_mode:
+                logging.warning("Thinks it is the master")
                 synchronous_master = True
                 settings.synchronous_mode = True
                 settings.fixed_delta_seconds = 0.05

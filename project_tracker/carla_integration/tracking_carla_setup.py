@@ -22,6 +22,7 @@ def attach_lidar(actor, world):
     lidar_bp.set_attribute("upper_fov", "15.")
     lidar_bp.set_attribute("range", "100")
     lidar_bp.set_attribute("points_per_second", "300000")
+    lidar_bp.set_attribute("rotation_frequency", "20.0")
     lidar_bp.set_attribute("dropoff_general_rate", "0.10")
     lidar_transform = carla.Transform(lidar_location, lidar_rotation)
     lidar = world.spawn_actor(lidar_bp, lidar_transform, attach_to=actor, attachment_type=carla.AttachmentType.Rigid)

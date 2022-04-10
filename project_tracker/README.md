@@ -61,6 +61,8 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 
 ## Carla Integration
 
+### Previous version - lidar asynch (not full pointcloud)
+
 1. Start Carla Agent `/opt/carla-simulator/CarlaUE4.sh`
 2. Source carla_ros_bridge repo
 ```bash
@@ -72,6 +74,20 @@ source  ./install/setup.bash
 5. Spawn NPCs (vehicles and pedestrians) `python3 <PATH-TO-project_tracker>/carla_integration/generate_traffic.py -n 50 -w 50 --no-rendering`
 6. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/front/lidar` and camera from `/carla/ego_vehicle/front/rgb_front`
 7. Optionally record ROS bags for later use
+
+### New version - need to figure out how to get auto-pilot cars/pedestrians in that don't crash
+
+1. Start Carla Agent `/opt/carla-simulator/CarlaUE4.sh`
+2. Source carla_ad_demo repo
+```bash
+cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, the beast it is ~/liam_ws/carla_ros_bridge, I think)
+source  ./install/setup.bash
+```
+3. Launch carla_ad_demo `ros2 launch carla_ad_demo carla_ad_demo.launch.py`
+    Must make sure to modify the `'objects_definition_file'` in carla_ad_demo.launch.py to reflect where .json objects file is stored
+4. **TODO:** Spawn NPCs -> currently they crash as soon as they are spawned which makes it impossible for the AD to drive
+5. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/front/lidar` and camera from `/carla/ego_vehicle/front/rgb_front`
+6. Optionally record ROS bags for later use
 
 ## Contact
 Amir Toosi - amir.ghalb@gmail.com
