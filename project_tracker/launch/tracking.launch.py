@@ -9,7 +9,7 @@ def generate_launch_description():
             name='mock_pub',
         ),
         Node(
-            package='pcl_bind',
+            package='project_tracker',
             executable='filter',
             name='filter',
         ),

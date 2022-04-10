@@ -90,6 +90,7 @@ class PCL2Subscriber(Node):
                     self.cloud[indice][2],
                     self.colour_list[j]
                 ])
+                
         # convert to pcl.PointCloud_PointXYZRGB for visualisation in RViz
         cluster_colour_cloud = pcl.PointCloud_PointXYZRGB()
         cluster_colour_cloud.from_list(self.colour_cluster_point_list)

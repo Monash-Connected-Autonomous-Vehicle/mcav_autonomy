@@ -23,7 +23,7 @@ class PointCloudToPCL2(Node):
         # timer_period = 0.5
         # self.timer = self.create_timer(timer_period, self.publish_pcl2)
 
-        self.velodyne_file_paths = glob.glob('/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/*.bin')
+        self.velodyne_file_paths = glob.glob('/home/home/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/*.bin')
 
         while True:
             self.publish_pcl2()
@@ -34,11 +34,10 @@ class PointCloudToPCL2(Node):
         
         if self.velodyne_file_paths:
             msg = self.convert_bin_to_PCL2(self.velodyne_file_paths.pop())
-            # msg = self.convert_bin_to_PCL2(self.velodyne_file_paths[0])
 
             self._publisher.publish(msg)
         else: # restart
-            self.velodyne_file_paths = glob.glob('/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/*.bin')
+            self.velodyne_file_paths = glob.glob('/home/home/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/*.bin')
             self.get_logger().info("Restarting from beginning")
 
     def convert_bin_to_PCL2(self, velodyne_file_path):

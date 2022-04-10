@@ -97,6 +97,7 @@ class Tracker(Node):
         DetectedObjectArray
 
         """
+        
         # 1. Create cost matrix
         try:
             prev_detects = [obj.detected_object for obj in self.frames[-1]]
