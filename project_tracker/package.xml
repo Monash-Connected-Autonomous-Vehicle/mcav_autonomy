@@ -33,6 +33,7 @@
   <exec_depend>sensor_msgs_py</exec_depend>
   <exec_depend>transforms3d</exec_depend>
   <exec_depend>mcav_interfaces</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
