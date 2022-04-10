@@ -48,6 +48,17 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
     . install/setup.bash
     ros2 run project_tracker cluster
     ```
+8.  In a new terminal, call the mock image publisher node to publish images to the /camera topic. this node takes two arguments from the command line. `Image_path` and `Frame_Id`
+    ```sh
+    . install/setub.bash
+    ros2 run project_tracker mock_image_pub.py <Image_Path> <Frame_Id>
+    eg. ros2 run project_tracker mock_image_pub.py /home/mcav/DATASETS/streetViewImages/ velodyne 
+    ```
+9. In a new terminal, call the object detection node to detect objects from the images published to the /camera topic.
+    ```sh
+    . install/setub.bash
+    ros2 run project_tracker object_detection.py
+    ```
 
 #### Parameters and ROS Info
 
@@ -63,6 +74,7 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 |`clustered_pointclouds`|`sensor_msgs.msg PCL2`|View clustered pointclouds in PCL2 format for visualisation|`project_tracker::cluster` publishes|
 |`bounding_boxes`|`visualization_msgs.msg MarkerArray`|View bounding boxes over identified clusters for visualisation|`project_tracker::cluster` publishes|
 |`detected_objects`|`mcav_interfaces::DetectedObjectArray`|Emit detected objects for use in other MCAV nodes e.g. path planning|`project_tracker::cluster` publishes|
+|`/camera`|`sensor_msgs.msg Image`|publish mock Images|`project_tracker::mock_image_pub` publishes, `project_tracker::object_detection` subscribes|
 
 ## Contact
 Amir Toosi - amir.ghalb@gmail.com
