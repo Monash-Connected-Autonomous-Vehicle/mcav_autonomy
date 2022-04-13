@@ -73,9 +73,10 @@ source  ./install/setup.bash
 4. Launch carla_spawn_npc `ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='./tracking.json'`
     Must make sure to modify the `'objects_definition_file'` in carla_ros_bridge.launch.py to reflect where .json objects file is stored
 5. Launch carla_manual_control `ros2 launch carla_manual_control carla_manual_control.launch.py`
-6. Drive the car using this manual control window
-7. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
-8. Optionally record ROS bags for later use
+6. Spawn vehicles and walkers `python3 ./carla_integration/generate_traffic.py -n 150 -w 100 --no-rendering`
+7. Drive the car using this manual control window
+8. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
+9. Optionally record ROS bags for later use
 ```bash
 ros2 bag record -o <TOPIC-NAME> `ros2 topic list | grep --regexp="/carla/*"` /tf
 ```
