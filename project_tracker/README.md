@@ -87,7 +87,7 @@ cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, t
 source  ./install/setup.bash
 ```
 3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py`
-4. Launch carla_spawn_npc `ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='./tracking.json'`
+4. Launch carla_spawn_npc `ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='<PATH-TO-project_tracker/carla_integration>/tracking.json'`
     Must make sure to modify the `'objects_definition_file'` in carla_ros_bridge.launch.py to reflect where .json objects file is stored
 5. Launch carla_manual_control `ros2 launch carla_manual_control carla_manual_control.launch.py`
 6. Spawn vehicles and walkers `python3 ./carla_integration/generate_traffic.py -n 150 -w 100 --no-rendering`
