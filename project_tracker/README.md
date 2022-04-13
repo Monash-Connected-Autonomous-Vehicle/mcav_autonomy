@@ -76,6 +76,59 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 |`detected_objects`|`mcav_interfaces::DetectedObjectArray`|Emit detected objects for use in other MCAV nodes e.g. path planning|`project_tracker::cluster` publishes|
 |`/camera`|`sensor_msgs.msg Image`|publish mock Images|`project_tracker::mock_image_pub` publishes, `project_tracker::object_detection` subscribes|
 
+## Carla Integration
+
+### Manual Control Workaround to Autopilot issue
+
+1. Start Carla Agent `/opt/carla-simulator/CarlaUE4.sh -quality-level=Low`
+2. Source carla_ros_bridge
+```bash
+cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, the beast it is ~/liam_ws/carla_ros_bridge, I think)
+source  ./install/setup.bash
+```
+3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py`
+4. Launch carla_spawn_npc `ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='./tracking.json'`
+    Must make sure to modify the `'objects_definition_file'` in carla_ros_bridge.launch.py to reflect where .json objects file is stored
+5. Launch carla_manual_control `ros2 launch carla_manual_control carla_manual_control.launch.py`
+6. Spawn vehicles and walkers `python3 ./carla_integration/generate_traffic.py -n 150 -w 100 --no-rendering`
+7. Drive the car using this manual control window
+8. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
+9. Optionally record ROS bags for later use
+```bash
+ros2 bag record -o <TOPIC-NAME> `ros2 topic list | grep --regexp="/carla/*"` /tf
+```
+9. Playing ROS bags back (at faster rate as recording lags a lot)
+```bash
+ros2 bag play <TOPIC-NAME> -r 2.0
+```
+
+
+## TODO
+
+### Generate autopilot traffic - need to figure out how to get auto-pilot cars/pedestrians in that don't crash (Traffic Manager issue)
+
+* Think issue stems from fact that traffic manager that is created with carla_ad_demo overrides the traffic manager created when spawning extra traffic with generate_traffic.py from PythonAPI/examples. Link below may help solve issue, but unsure whether anything is being done wrong
+https://carla.readthedocs.io/en/latest/adv_traffic_manager/
+
+**Steps**
+
+1. Start Carla Agent `/opt/carla-simulator/CarlaUE4.sh`
+2. Source carla_ad_demo repo
+```bash
+cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, the beast it is ~/liam_ws/carla_ros_bridge, I think)
+source  ./install/setup.bash
+```
+3. Launch carla_ad_demo `ros2 launch carla_ad_demo carla_ad_demo.launch.py`
+    Must make sure to modify the `'objects_definition_file'` in carla_ad_demo.launch.py to reflect where .json objects file is stored
+4. **TODO:** Spawn NPCs -> currently they crash as soon as they are spawned which makes it impossible for the AD to drive
+5. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
+6. Optionally record ROS bags for later use
+```bash
+ros2 bag record -o <TOPIC-NAME> `ros2 topic list | grep --regexp="/carla/*"` /tf
+```
+
+
+
 ## Contact
 Amir Toosi - amir.ghalb@gmail.com
 
