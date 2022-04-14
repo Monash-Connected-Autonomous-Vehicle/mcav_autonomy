@@ -77,6 +77,7 @@ install(TARGETS filter
 ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
+  carla_integration/carla_transforms.py
   ${PROJECT_NAME}/mock_pub.py
   ${PROJECT_NAME}/cluster.py
   ${PROJECT_NAME}/mock_image_pub.py
