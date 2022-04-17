@@ -1,6 +1,8 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 
+waypoint_filename = input("Waypoint directory: ")
+
 def generate_launch_description():
     return LaunchDescription([
         Node(
@@ -20,12 +22,24 @@ def generate_launch_description():
             parameters=[{
                 'max_acceleration': 0.5,
                 'local_plan_max_length': 25,
-                'max_velocity': 3.0,
             }]
         ),
         Node(
             package='pure_pursuit',
             executable='purepursuit',
             name='purepursuit',
+        ),
+        Node(
+            package='velocity_planner',
+            executable='waypoint_reader',
+            name='waypoint_reader',
+            parameters=[{
+                'waypoint_filename': waypoint_filename,
+            }]
+        ),
+        Node(
+            package='velocity_planner',
+            executable='waypoint_visualiser',
+            name='waypoint_visualiser',
         ),
     ])

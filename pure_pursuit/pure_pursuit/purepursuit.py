@@ -24,11 +24,15 @@ class PurePursuitNode(Node):
         self.spinner = self.create_timer(self.timer_period, self.publisher_callback)
         
         self.waypoints = []
-        self.Lfc = 4.0  # [m] default look-ahead distance
+        self.Lfc = None  # [m] default look-ahead distance
     
     
     def wp_subscriber_callback(self, wp_msg):
         self.waypoints = wp_msg.waypoints
+        v = self.waypoints[0].velocity.linear.x
+        # Lookahead distance dependent on velocity
+        self.Lfc = 4*v-8 if v > 2.75 else 3  # Tesla model3
+        # self.Lfc = 11.028*v - 63.5  # Nissan Micra
  
     
     def publisher_callback(self):   
@@ -48,7 +52,7 @@ class PurePursuitNode(Node):
         gamma = self.steer_control(tx, ty, self.Lfc) # finds curvature of lookahead arc
         
         v_linear = self.waypoints[0].velocity.linear.x
-        v_angular = -v_linear*gamma
+        v_angular = v_linear*gamma
         return v_linear, v_angular
 
 
