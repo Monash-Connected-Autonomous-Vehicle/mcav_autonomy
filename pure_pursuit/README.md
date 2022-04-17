@@ -37,6 +37,7 @@ Pure Pursuit is a tracking algorithm which works by calculating the amount of cu
 ### 5. Spawn vehicle and generate waypoints on predefined course (new terminal)
 #### Important: 
 velocity_planner's waypoint_reader node is able to publish global waypoints from a .csv file. In order for that script to work properly with pure_pursuit, a section of carla_global_planner's callback function will have to be commented out. The secton is annotated by a "TODO" note in the commenting. Otherwise, carla_global_planner.py should be able to generate its own waypoints in CARLA and publish them as a global_wapoints topic to be fed to velocity_planner.py.
+
     cd <path-to-workspace>
     export CARLA_ROOT=<path-to-carla>
     export PYTHONPATH=$PYTHONPATH:$CARLA_ROOT/PythonAPI/carla/dist/carla-<carla_version_and_arch>.egg:$CARLA_ROOT/PythonAPI/carla
