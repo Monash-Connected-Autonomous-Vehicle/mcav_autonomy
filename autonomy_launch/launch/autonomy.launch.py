@@ -4,6 +4,7 @@ from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, TextSubstitution
 from launch_ros.actions import Node
+import os
 
 
 def generate_launch_description():
@@ -15,6 +16,21 @@ def generate_launch_description():
     return LaunchDescription([
         # Arguments
         waypoint_file_launch_arg,
+        # Perception
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource([
+        #         os.path.join(get_package_share_directory('project_tracker'), 'launch', 'tracking.launch.py')]),
+        # ),
+        Node(
+            package='project_tracker',
+            executable='filter',
+            name='filter',
+        ),
+        Node(
+            package='project_tracker',
+            executable='cluster.py',
+            name='cluster',
+        ),
         # Planning
         Node(
             package='velocity_planner',
@@ -44,6 +60,13 @@ def generate_launch_description():
             executable='purepursuit',
             name='purepursuit',
         ),
+        # Visualisation
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            arguments=['-d' + os.path.join(get_package_share_directory('autonomy_launch'), 'autonomy.rviz')]
+        )
     ])
 
 
