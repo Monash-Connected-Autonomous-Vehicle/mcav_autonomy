@@ -30,11 +30,13 @@ mcav_ws
 To update the dependency list when adding or updating packages in the future, use `cd ~/mcav_ws/src/ && vcs export > mcav_autonomy/autonomy.rosinstall --exact`.
 
 # How to run
-Terminal 1:
+Terminal 1 (Launch CARLA server):
 - `/opt/carla-simulator/CarlaUE4.sh`
-Terminal 2:
+
+Terminal 2 (Launch CARLA ros-bridge):
 - `cd ~/mcav_ws && source install/setup.bash`
 - `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py`
-Terminal 3:
+
+Terminal 3 (Launch autonomy stack):
 - `cd ~/mcav_ws && source install/setup.bash`
 - `ros2 launch autonomy_launch carla.launch.py waypoint_filename:=/home/mcav/Sheng/control_ws/town01_path1.csv`
