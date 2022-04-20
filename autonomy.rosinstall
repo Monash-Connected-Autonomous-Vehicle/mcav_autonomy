@@ -11,6 +11,10 @@ repositories:
     type: git
     url: git@github.com:Monash-Connected-Autonomous-Vehicle/pure_pursuit.git
     version: 5cfa800e76f327bb070693cf9465bf88d28f8982
+  ros-bridge:
+    type: git
+    url: https://github.com/carla-simulator/ros-bridge.git
+    version: master
   velocity_planner:
     type: git
     url: git@github.com:Monash-Connected-Autonomous-Vehicle/velocity_planner.git
