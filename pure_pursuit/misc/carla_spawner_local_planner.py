@@ -13,7 +13,7 @@ class WaypointPublisher(Node):
 
     def __init__(self):
         super().__init__('waypoint_publisher')
-        self.waypoints_pub = self.create_publisher(WaypointArray, '/velocity_planner/local_waypoints', 10)
+        self.waypoints_pub = self.create_publisher(WaypointArray, 'local_baselink_waypoints', 10)
         timer_period = 0.5  # seconds
         self.spinner = self.create_timer(timer_period, self.waypoints_callback)
         
