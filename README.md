@@ -12,7 +12,7 @@ The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles t
 
 # Setup
 - Create a workspace: `mkdir -p ~/mcav_ws/src && cd ~/mcav_ws/src`
-- Clone this package: `git clone git@github.com:owenbrooks/mcav_autonomy.git`
+- Clone this package: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git`
 - Clone other mcav packages: `vcs import < src/mcav_autonomy/autonomy.rosinstall`
 - Install ROS dependencies: `rosdep install --from-paths src --ignore-src -r -y`
 - Build the packages: `colcon build --symlink-install`
