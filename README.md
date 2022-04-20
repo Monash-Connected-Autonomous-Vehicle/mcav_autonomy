@@ -1,4 +1,4 @@
-# mcav_autonomy
+# 💻 mcav_autonomy
 The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles team. Designed to run on a StreetDrone Twizy and in the CARLA simulation environment.
 
 # Requirements
@@ -21,11 +21,11 @@ This should result in a directory structure similar to the following:
 ```
 mcav_ws
 └── src
-    ├── mcav_autonomy
-    ├── mcav_interfaces
-    ├── project_tracker
-    ├── pure_pursuit
-    └── velocity_planner
+    ├── mcav_autonomy           # Launch files for entire stack and simulation setup
+    ├── mcav_interfaces         # Shared ROS Message and Service definitions
+    ├── project_tracker         # Object detection and tracking
+    ├── pure_pursuit            # Control system
+    └── velocity_planner        # Local planner
 ```
 To update the dependency list when adding or updating packages in the future, use `cd ~/mcav_ws/src/ && vcs export > mcav_autonomy/autonomy.rosinstall --exact`.
 
