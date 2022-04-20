@@ -10,20 +10,20 @@ def generate_launch_description():
         'waypoint_filename', default_value=TextSubstitution(text='/home/mcav/Sheng/control_ws/town01_path.csv'), 
         description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats"
     )
-    
+
     return LaunchDescription([
         waypoint_file_launch_arg,
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 get_package_share_directory('pure_pursuit'),
-                '/purepursuit.launch.py']),
+                '/purepursuit_simulation.launch.py']),
             launch_arguments={
                 "waypoint_filename": LaunchConfiguration('waypoint_filename'),
             }.items()
         ),
         Node(
             package='pure_pursuit',
-            executable='carla_global_planner',
-            name='carla_global_planner',
+            executable='carla_spawner',
+            name='carla_spawner',
         ),
     ])

@@ -168,11 +168,14 @@ def main(args=None):
         vehicle = None
         while vehicle == None:
             for actor in world.get_actors():
-                if actor.type_id == "vehicle.tesla.model3": # finds Nissan Micra
-                    vehicle = actor
-                    break 
-                else:
-                    print("Finding actor...")
+                try:
+                    if actor.attributes["role_name"] == "ego_vehicle": # finds main car
+                        vehicle = actor
+                        break 
+                    else:
+                        print("Unable to find vehicle. Make sure you have spawned a vehicle with role_name 'ego_vehicle'.")
+                except KeyError:
+                    print("Unable to find vehicle. Make sure you have spawned a vehicle with role_name 'ego_vehicle'.")
                 
         #set node parameters and spin
         wp_pub.debug = world.debug
