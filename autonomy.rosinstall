@@ -1,0 +1,17 @@
+repositories:
+  mcav_interfaces:
+    type: git
+    url: git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_interfaces.git
+    version: 4f5cfb50d777805fe962718e591301db24617fad
+  project_tracker:
+    type: git
+    url: git@github.com:Monash-Connected-Autonomous-Vehicle/project_tracker.git
+    version: c65f4b13000780e84e0825479ea536c4ee75ec48
+  pure_pursuit:
+    type: git
+    url: git@github.com:Monash-Connected-Autonomous-Vehicle/pure_pursuit.git
+    version: 5cfa800e76f327bb070693cf9465bf88d28f8982
+  velocity_planner:
+    type: git
+    url: git@github.com:Monash-Connected-Autonomous-Vehicle/velocity_planner.git
+    version: e3cd3f1dced0e9ea8e1120bd695dfb84519c7782
