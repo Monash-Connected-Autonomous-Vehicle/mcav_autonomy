@@ -20,6 +20,16 @@ def generate_launch_description():
             executable='carla_spawn',
             name='carla_spawn',
         ),
+        Node(
+            package='pure_pursuit',
+            executable='carla_global_planner',
+            name='carla_global_planner',
+        ),
+        Node(
+            package='carla_twist_to_control',
+            executable='carla_twist_to_control',
+            name='carla_twist_to_control',
+        ),
         # Autonomy stack
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
