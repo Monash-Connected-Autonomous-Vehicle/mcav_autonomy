@@ -21,6 +21,11 @@ def generate_launch_description():
             name='carla_spawn',
         ),
         Node(
+            package='simulation',
+            executable='generate_traffic',
+            name='generate_traffic',
+        ),
+        Node(
             package='pure_pursuit',
             executable='carla_global_planner',
             name='carla_global_planner',

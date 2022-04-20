@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'carla_spawn = simulation.carla_spawn:main',
+            'generate_traffic = simulation.generate_traffic:main',
         ],
     },
 )
