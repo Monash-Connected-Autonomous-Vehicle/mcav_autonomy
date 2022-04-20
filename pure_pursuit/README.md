@@ -39,7 +39,10 @@ Pure Pursuit is a tracking algorithm which works by calculating the amount of cu
     export CARLA_ROOT=<path-to-carla>
     export PYTHONPATH=$PYTHONPATH:$CARLA_ROOT/PythonAPI/carla/dist/carla-<carla_version_and_arch>.egg:$CARLA_ROOT/PythonAPI/carla
     source install/setup.bash
-    ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py
+    ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py 
+    
+Existing waypoints in a csv file can be specified as follows:
+    ```ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py waypoint_filename:=/home/mcav/Sheng/control_ws/town01_path1.csv```
     
 # Contact
 Sheng (Senman) Qiu - sqiu0004@student.monash.edu; senmanqiu@gmail.com
