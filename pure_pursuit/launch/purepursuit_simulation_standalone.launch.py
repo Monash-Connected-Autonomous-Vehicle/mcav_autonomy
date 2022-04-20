@@ -9,19 +9,19 @@ def generate_launch_description():
     waypoint_file_launch_arg = DeclareLaunchArgument(
         'waypoint_filename', default_value=TextSubstitution(text='/home/mcav/Sheng/control_ws/town01_path.csv')
     )
-    
+
     return LaunchDescription([
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 get_package_share_directory('pure_pursuit'),
-                '/purepursuit.launch.py']),
+                '/purepursuit_simulation.launch.py']),
             launch_arguments={
                 "waypoint_filename": LaunchConfiguration(waypoint_file_launch_arg),
             }
         ),
         Node(
             package='pure_pursuit',
-            executable='carla_global_planner',
-            name='carla_global_planner',
+            executable='carla_spawner',
+            name='carla_spawner',
         ),
     ])
