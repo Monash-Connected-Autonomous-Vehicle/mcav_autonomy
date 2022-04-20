@@ -13,8 +13,8 @@ The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles t
 # Setup
 - Create a workspace: `mkdir -p ~/mcav_ws/src && cd ~/mcav_ws/src`
 - Clone this package: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git`
-- Clone other mcav packages: `vcs import < src/mcav_autonomy/autonomy.rosinstall`
-- Install ROS dependencies: `rosdep install --from-paths src --ignore-src -r -y`
+- Clone other mcav packages: `vcs import < mcav_autonomy/autonomy.rosinstall`
+- Install ROS dependencies: `cd .. && rosdep install --from-paths src --ignore-src -r -y`
 - Build the packages: `colcon build --symlink-install`
 
 This should result in a directory structure similar to the following:
@@ -31,4 +31,6 @@ To update the dependency list when adding or updating packages in the future, us
 
 # How to run
 - `cd ~/mcav_ws && source install/setup.bash`
+- `/opt/carla-simulator/CarlaUE4.sh`
+- `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py`
 - `ros2 launch autonomy_launch carla.launch.py waypoint_filename:=/home/mcav/Sheng/control_ws/town01_path1.csv`
