@@ -20,6 +20,7 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
     ```sh
     sudo apt install python3-pcl
     sudo apt-get install ros-galactic-sensor-msgs-py
+    sudo apt-get install ros-galactic-tf-transformations
     sudo pip3 install transforms3d
     ```
 3. Navigate to the root folder of your workspace
@@ -78,34 +79,54 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 
 ## Carla Integration
 
-### Manual Control Workaround to Autopilot issue
+#### Recording ROS bags in Carla
+
+Manual Control Workaround to Autopilot issue
 
 1. Start Carla Agent `/opt/carla-simulator/CarlaUE4.sh -quality-level=Low`
-2. Source carla_ros_bridge
+2. Open a new terminal, source carla_ros_bridge
 ```bash
 cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, the beast it is ~/liam_ws/carla_ros_bridge, I think)
 source  ./install/setup.bash
 ```
+<<<<<<< HEAD
 3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py`
 4. Launch carla_spawn_npc `ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='<PATH-TO-project_tracker/carla_integration>/tracking.json'`
+=======
+3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py -timeout:=10`
+4. Open a new terminal, launch carla_spawn_npc `ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='./tracking.json'`
+>>>>>>> carla2
     Must make sure to modify the `'objects_definition_file'` in carla_ros_bridge.launch.py to reflect where .json objects file is stored
-5. Launch carla_manual_control `ros2 launch carla_manual_control carla_manual_control.launch.py`
-6. Spawn vehicles and walkers `python3 ./carla_integration/generate_traffic.py -n 150 -w 100 --no-rendering`
+5. Open a new terminal, launch carla_manual_control `ros2 launch carla_manual_control carla_manual_control.launch.py`
+6. Open a new terminal, spawn vehicles and walkers `python3 ./carla_integration/generate_traffic.py -n 150 -w 100 --no-rendering`
 7. Drive the car using this manual control window
-8. Open rviz and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
-9. Optionally record ROS bags for later use
+8. Open rviz2 in a new terminal and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
+9. Optionally record ROS bags for later use in a new terminal
 ```bash
 ros2 bag record -o <TOPIC-NAME> `ros2 topic list | grep --regexp="/carla/*"` /tf
 ```
-9. Playing ROS bags back (at faster rate as recording lags a lot)
+
+#### Playing back ROS bags with tracking
+
+1. Play ROS bags back (at faster rate as recording lags a lot)
 ```bash
-ros2 bag play <TOPIC-NAME> -r 2.0
+cd <PROJECT_TRACKER-PACKAGE>/bag_files
+ros2 bag play <BAG-NAME> -r 2.0
 ```
+2. Open a new terminal, source workspace setup file and run tracking_carla launch file
+```bash
+cd <WORKSPACE> 
+. install/setup.bash
+ros2 launch project_tracker tracking_carla.launch.py
+```
+3. Open a new terminal, launch rviz2 and set frame_id to 'velodyne'. Add relevant pointcloud/image topics
 
 
 ## TODO
 
-### Generate autopilot traffic - need to figure out how to get auto-pilot cars/pedestrians in that don't crash (Traffic Manager issue)
+### Carla ROS bags with self-driving ego_vehicle and autopilot traffic
+
+Need to figure out how to get auto-pilot cars/pedestrians in that don't crash (Traffic Manager issue)
 
 * Think issue stems from fact that traffic manager that is created with carla_ad_demo overrides the traffic manager created when spawning extra traffic with generate_traffic.py from PythonAPI/examples. Link below may help solve issue, but unsure whether anything is being done wrong
 https://carla.readthedocs.io/en/latest/adv_traffic_manager/
