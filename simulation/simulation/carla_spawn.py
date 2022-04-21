@@ -33,7 +33,7 @@ def main():
 
         # Spawn streetdrone
         blueprint_library = world.get_blueprint_library()
-        sdrone_bp = blueprint_library.filter("cooper_s_2021")[0]
+        sdrone_bp = blueprint_library.filter("model3")[0]
         sdrone_bp.set_attribute("role_name", "ego_vehicle")
         spawn_points = world.get_map().get_spawn_points()
         # spawn_point = spawn_points[random.randint(0,len(spawn_points)-1)]
