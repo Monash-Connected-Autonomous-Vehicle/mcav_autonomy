@@ -36,7 +36,7 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 	```sh
     cd YOUR_WORKSPACE_ROOT
     . install/setup.bash
-    ros2 run project_tracker mock_pub
+    ros2 run project_tracker mock_pub velodyne_file_path:=/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data
     ```
 6.  In a new terminal, navigate to the root of your workspace and call the `filter` node to reduce the number of LiDAR points.
 	```sh
