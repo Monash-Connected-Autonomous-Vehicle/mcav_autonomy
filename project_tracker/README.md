@@ -89,7 +89,7 @@ Manual Control Workaround to Autopilot issue
 cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, the beast it is ~/liam_ws/carla_ros_bridge, I think)
 source  ./install/setup.bash
 ```
-3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py`
+3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py -timeout:=10`
 4. Open a new terminal, launch carla_spawn_npc `ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='./tracking.json'`
     Must make sure to modify the `'objects_definition_file'` in carla_ros_bridge.launch.py to reflect where .json objects file is stored
 5. Open a new terminal, launch carla_manual_control `ros2 launch carla_manual_control carla_manual_control.launch.py`
