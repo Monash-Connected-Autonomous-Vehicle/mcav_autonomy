@@ -1,4 +1,4 @@
-# mcav-docker
+# 🐋 mcav-docker
 Contains Dockerfiles and a run script.
 
 The `run.sh` script automatically determines whether a GPU is available and builds and runs the appropriate image and container.
