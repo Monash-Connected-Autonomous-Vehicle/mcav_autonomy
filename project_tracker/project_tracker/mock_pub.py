@@ -22,8 +22,10 @@ class PointCloudToPCL2(Node):
 
         # timer_period = 0.5
         # self.timer = self.create_timer(timer_period, self.publish_pcl2)
-
-        self.velodyne_glob_path = '/home/home/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/*.bin'
+        
+        self.declare_parameter('velodyne_data_dir', "/home/home/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/")
+        velodyne_data_dir = self.get_parameter('velodyne_data_dir').get_parameter_value().string_value
+        self.velodyne_glob_path = os.path.join(velodyne_data_dir, '*.bin')
         self.velodyne_file_paths = glob.glob(self.velodyne_glob_path)
 
         while True:
