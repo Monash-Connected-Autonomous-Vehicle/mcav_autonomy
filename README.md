@@ -12,22 +12,24 @@ The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles t
 
 # Setup
 - Create a workspace: `mkdir -p ~/mcav_ws/src && cd ~/mcav_ws/src`
-- Clone this package: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git`
-- Clone other mcav packages: `vcs import < mcav_autonomy/autonomy.rosinstall`
+- Clone this package: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git --recurse-submodules` (if you forget to `--recurse-submodules`, you can later run `git submodule update --init --recursive` instead)
 - Install ROS dependencies: `cd .. && rosdep install --from-paths src --ignore-src -r -y`
 - Build the packages: `colcon build --symlink-install`
 
 This should result in a directory structure similar to the following:
 ```
-mcav_ws
+mcav_ws/                                                     
+├──build                                                                                                               
 └── src
-    ├── mcav_autonomy           # Launch files for entire stack and simulation setup
-    ├── mcav_interfaces         # Shared ROS Message and Service definitions
-    ├── project_tracker         # Object detection and tracking
-    ├── pure_pursuit            # Control system
-    └── velocity_planner        # Local planner
+    └── mcav_autonomy
+        ├── autonomy_launch         # Launch files for entire stack
+        ├── mcav_interfaces         # Shared ROS Message and Service definitions
+        ├── project_tracker         # Object detection and tracking
+        ├── pure_pursuit            # Control system
+        ├── simulation              # CARLA simulation setup
+        └── velocity_planner        # Local planner
 ```
-To update the dependency list when adding or updating packages in the future, use `cd ~/mcav_ws/src/ && vcs export > mcav_autonomy/autonomy.rosinstall --exact`.
+See [Git Tools - Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) for information on working with submodules.
 
 # How to run
 Terminal 1 (Launch CARLA server):
