@@ -51,13 +51,13 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
     ```
 8.  In a new terminal, call the mock image publisher node to publish images to the /camera topic. this node takes two arguments from the command line. `Image_path` and `Frame_Id`
     ```sh
-    . install/setub.bash
+    . install/setup.bash
     ros2 run project_tracker mock_image_pub.py <Image_Path> <Frame_Id>
     eg. ros2 run project_tracker mock_image_pub.py /home/mcav/DATASETS/streetViewImages/ velodyne 
     ```
 9. In a new terminal, call the object detection node to detect objects from the images published to the /camera topic.
     ```sh
-    . install/setub.bash
+    . install/setup.bash
     ros2 run project_tracker object_detection.py
     ```
 
