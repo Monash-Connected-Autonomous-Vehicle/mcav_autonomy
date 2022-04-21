@@ -18,7 +18,7 @@ run_with_gpu()
     docker run -e DISPLAY -e TERM \
         --privileged \
         -v "/dev:/dev:rw" \
-        -v "$(pwd):/catkin_ws/src/mcav_autonomy:rw" \
+        -v "$(pwd):/home/mcav/mcav_ws/src/mcav_autonomy:rw" \
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
         --runtime=nvidia \
         --net=host \
@@ -32,7 +32,7 @@ run_without_gpu()
     docker run -e DISPLAY -e TERM \
         --privileged \
         -v "/dev:/dev:rw" \
-        -v "$(pwd):/catkin_ws/src/mcav_autonomy:rw" \
+        -v "$(pwd):/home/mcav/mcav_ws/src/mcav_autonomy:rw" \
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
         --net=host \
         --name $CONTAINER_NAME \
