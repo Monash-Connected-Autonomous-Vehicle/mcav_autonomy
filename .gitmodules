@@ -1,0 +1,3 @@
+[submodule "mcav_interfaces"]
+	path = mcav_interfaces
+	url = git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_interfaces.git
