@@ -60,7 +60,7 @@
                     "lower_fov": -15.0,
                     "rotation_frequency": 20,
                     "noise_stddev": 0.0,
-                    "dropoff_general_rate": 0.1
+                    "dropoff_general_rate": 0.05
                 },
                 {
                     "type": "sensor.pseudo.tf",

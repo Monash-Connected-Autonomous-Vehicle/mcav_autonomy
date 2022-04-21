@@ -20,6 +20,7 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
     ```sh
     sudo apt install python3-pcl
     sudo apt-get install ros-galactic-sensor-msgs-py
+    sudo apt-get install ros-galactic-tf-transformations
     sudo pip3 install transforms3d
     ```
 3. Navigate to the root folder of your workspace

@@ -5,7 +5,7 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='project_tracker',
-            executable='mock_pub',
+            executable='mock_pub.py',
             name='mock_pub',
         ),
         Node(
@@ -15,7 +15,7 @@ def generate_launch_description():
         ),
         Node(
             package='project_tracker',
-            executable='cluster',
+            executable='cluster.py',
             name='cluster',
         ),
     ])

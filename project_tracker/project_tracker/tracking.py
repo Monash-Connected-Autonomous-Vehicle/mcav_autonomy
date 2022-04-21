@@ -1,7 +1,4 @@
-from rclpy.node import Node
-
 import logging
-
 from collections import deque
 import copy
 import numpy as np
@@ -29,7 +26,7 @@ class TrackedObject():
         self.skipped_frames = 0 # number of frames it has been skipped because undetected
 
 
-class Tracker(Node):
+class Tracker():
 
     def __init__(self, max_frames_before_forget, max_frames_length, tracking_method="centre_distance", 
                  dist_threshold=5, iou_threshold=0.8
@@ -53,7 +50,6 @@ class Tracker(Node):
                 between the two rectangles. Note, it moves the bounding boxes to axis-
                 aligned by taking the top left point and the width and height of the rectangle
         """
-        super(Tracker, self).__init__('tracker_dummy_node')
         
         self.tracking_method = tracking_method
         if tracking_method == "centre_distance":
@@ -74,7 +70,7 @@ class Tracker(Node):
 
         self.updated_centres = []
 
-        self.get_logger().set_level(logging.INFO)
+        logging.basicConfig(level=logging.INFO)
 
     def update(self, new_detects):
         """
@@ -102,7 +98,7 @@ class Tracker(Node):
         try:
             prev_detects = [obj.detected_object for obj in self.frames[-1]]
         except IndexError: # if only frames empty
-            self.get_logger().debug("Frame empty, creating initial frame")
+            logging.debug("Frame empty, creating initial frame")
             for i, detected_object in enumerate(new_detects.detected_objects):
                 detected_object.object_id = self.tracked_id_count
                 new_track = TrackedObject(detected_object, self.tracked_id_count)
@@ -146,8 +142,8 @@ class Tracker(Node):
         for row, col in zip(row_ind, col_ind):
             col_assignment[row] = col
 
-        self.get_logger().debug(f"Row inds and col inds: {row_ind, col_ind}")
-        self.get_logger().debug(f"Column assignment: {col_assignment} with length {len(col_assignment)}")
+        logging.debug(f"Row inds and col inds: {row_ind, col_ind}")
+        logging.debug(f"Column assignment: {col_assignment} with length {len(col_assignment)}")
         # see if any tracks are missing from the assignment
         for i in range(len(col_assignment)):
             if col_assignment[i] != -1: # if assigned
@@ -180,7 +176,7 @@ class Tracker(Node):
                 new_track = TrackedObject(detected_object, self.tracked_id_count)
                 self.tracked_id_count += 1
                 self.tracked_objects.append(new_track)
-        self.get_logger().debug(f"Added {self.tracked_id_count - old_tracked_id_count} objects to tracking.")
+        logging.debug(f"Added {self.tracked_id_count - old_tracked_id_count} objects to tracking.")
 
         # store previous frames for use in comparison
         tracked_copy = copy.deepcopy(self.tracked_objects)
