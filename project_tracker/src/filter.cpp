@@ -17,7 +17,7 @@ public:
   Pcl2Filter() : Node("pcl2_filter")
   {
     subscription_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
-        "/carla/ego_vehicle/lidar", 10, std::bind(&Pcl2Filter::filter_callback, this, std::placeholders::_1));
+        "/velodyne_points", 10, std::bind(&Pcl2Filter::filter_callback, this, std::placeholders::_1));
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/velodyne_filtered", 10);
     groundPublisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("pcl2Ground", 10);
   }

@@ -7,15 +7,11 @@ def generate_launch_description():
             package='project_tracker',
             executable='filter',
             name='filter',
+            remappings=[('/velodyne', '/carla/ego_vehicle/lidar'),]
         ),
         Node(
             package='project_tracker',
             executable='cluster.py',
             name='cluster',
-        ),
-        Node(
-            package='project_tracker',
-            executable='carla_rviz_transforms.py',
-            name='carla_rviz_transforms',
         ),
     ])

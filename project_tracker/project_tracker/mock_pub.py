@@ -3,6 +3,7 @@
 import rclpy
 from rclpy.node import Node
 
+import os
 import numpy as np
 import glob 
 import time
@@ -41,7 +42,7 @@ class PointCloudToPCL2(Node):
             self._publisher.publish(msg)
         else: # restart
             self.velodyne_file_paths = glob.glob(self.velodyne_glob_path)
-            self.get_logger().info("Restarting from beginning")
+            self.get_logger().info("Restarting from beginning!")
 
     def convert_bin_to_PCL2(self, velodyne_file_path):
         """Method to convert Lidar data in binary format to PCL2 message"""
