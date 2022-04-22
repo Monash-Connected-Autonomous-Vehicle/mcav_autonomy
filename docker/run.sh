@@ -10,7 +10,7 @@ attach_to_container()
     docker start $CONTAINER_NAME
 
     # Attach a terminal into the container
-    exec docker exec -it $CONTAINER_NAME bash
+    exec docker exec -it $CONTAINER_NAME bash -c /home/mcav/mcav_ws/src/mcav_autonomy/docker/tmux-start.sh
 }
 
 run_with_gpu()
@@ -74,6 +74,7 @@ case "$1" in
     ;;
 "rm")
     docker rm -f $CONTAINER_NAME
+    echo "Removed container"
     ;;
 "--help")
     echo "Usage: docker/run.sh [command]
