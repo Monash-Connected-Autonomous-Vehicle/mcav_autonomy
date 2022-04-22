@@ -61,13 +61,13 @@ class PCL2Subscriber(Node):
     def _callback(self, msg):
         """Subscriber callback. Receives PCL2 message and converts it to points"""
         start = time.time()
-
+        self.original_frame_id = msg.header.frame_id
         self.full_cloud = PCL2_2_numpy(msg, reflectance=False)
         self.cloud = self.full_cloud[:, :3] # ignore reflectance for clustering
         
         self.no_samples, self.no_axes = self.cloud.shape
         cloud_time = time.time() - start
-        self.get_logger().info(f"Took {cloud_time:.5f}s to receive pcl2 message: {self.no_samples, self.no_axes}\n{self.cloud[0]}\n")
+        self.get_logger().info(f"Took {cloud_time:.5f}s to receive pcl2 message: {self.no_samples, self.no_axes}")
 
         ## python3-pcl binding euclidean clustering
         ec_cloud = pcl.PointCloud() # create empty pcl.PointCloud to use C++ bindings to PCL 
@@ -95,7 +95,7 @@ class PCL2Subscriber(Node):
         cluster_colour_cloud = pcl.PointCloud_PointXYZRGB()
         cluster_colour_cloud.from_list(self.colour_cluster_point_list)
         timestamp = self.get_clock().now().to_msg()
-        pcl2_msg = pcl_to_ros(cluster_colour_cloud, timestamp) # convert the pcl to a ROS PCL2 message
+        pcl2_msg = pcl_to_ros(cluster_colour_cloud, timestamp, self.original_frame_id) # convert the pcl to a ROS PCL2 message
         self._cloud_cluster_publisher.publish(pcl2_msg)
 
         # fit bounding boxes to the clustered pointclouds
@@ -166,7 +166,7 @@ class PCL2Subscriber(Node):
             # create detected object
             detected_object = DetectedObject()
             detected_object.object_id = cluster_idx # dummy value until we track the objects
-            detected_object.frame_id = 'velodyne'
+            detected_object.frame_id = self.original_frame_id
 
             # convert rotational matrix to quaternion for use in pose
             roll, pitch, yaw = mat2euler(rotational_matrix_OBB)
@@ -211,7 +211,7 @@ class PCL2Subscriber(Node):
             id_marker = Marker()
             id_marker.ns = 'object_id'
             id_marker.id = d_o.object_id
-            id_marker.header.frame_id = 'velodyne'
+            id_marker.header.frame_id = self.original_frame_id
             id_marker.type = Marker.TEXT_VIEW_FACING
             id_marker.action = id_marker.ADD
             id_marker.pose.position.x = d_o.pose.position.x
@@ -231,7 +231,7 @@ class PCL2Subscriber(Node):
             bounding_box_marker = Marker()
             bounding_box_marker.ns = 'bounding_boxes'
             bounding_box_marker.id = d_o.object_id
-            bounding_box_marker.header.frame_id = 'velodyne'
+            bounding_box_marker.header.frame_id = self.original_frame_id
             bounding_box_marker.type = Marker.CUBE
             bounding_box_marker.action = Marker.ADD
             bounding_box_marker.color.a = 0.5
@@ -250,13 +250,13 @@ class PCL2Subscriber(Node):
             for delete_id in self.tracker.deleted_ids:
                 del_id_marker = Marker()
                 del_id_marker.ns = 'object_id'
-                del_id_marker.header.frame_id = 'velodyne'
+                del_id_marker.header.frame_id = self.original_frame_id
                 del_id_marker.id = delete_id
                 del_id_marker.action = Marker.DELETE
                 self.markers.markers.append(del_id_marker)
                 del_bb_marker = Marker()
                 del_bb_marker.ns = 'bounding_boxes'
-                del_bb_marker.header.frame_id = 'velodyne'
+                del_bb_marker.header.frame_id = self.original_frame_id
                 del_bb_marker.id = delete_id
                 del_bb_marker.action = Marker.DELETE
                 self.markers.markers.append(del_bb_marker)

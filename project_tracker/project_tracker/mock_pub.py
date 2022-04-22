@@ -3,6 +3,7 @@
 import rclpy
 from rclpy.node import Node
 
+import os
 import numpy as np
 import glob 
 import time
@@ -22,8 +23,11 @@ class PointCloudToPCL2(Node):
 
         # timer_period = 0.5
         # self.timer = self.create_timer(timer_period, self.publish_pcl2)
-
-        self.velodyne_file_paths = glob.glob('/home/home/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/*.bin')
+        
+        self.declare_parameter('velodyne_data_dir', "/home/home/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/")
+        velodyne_data_dir = self.get_parameter('velodyne_data_dir').get_parameter_value().string_value
+        self.velodyne_glob_path = os.path.join(velodyne_data_dir, '*.bin')
+        self.velodyne_file_paths = glob.glob(self.velodyne_glob_path)
 
         while True:
             self.publish_pcl2()
@@ -37,8 +41,8 @@ class PointCloudToPCL2(Node):
 
             self._publisher.publish(msg)
         else: # restart
-            self.velodyne_file_paths = glob.glob('/home/home/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/*.bin')
-            self.get_logger().info("Restarting from beginning")
+            self.velodyne_file_paths = glob.glob(self.velodyne_glob_path)
+            self.get_logger().info("Restarting from beginning!")
 
     def convert_bin_to_PCL2(self, velodyne_file_path):
         """Method to convert Lidar data in binary format to PCL2 message"""

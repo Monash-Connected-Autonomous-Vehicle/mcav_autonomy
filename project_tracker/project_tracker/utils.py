@@ -114,7 +114,7 @@ def rgb_to_float(color):
     return float_rgb
 
 
-def pcl_to_ros(pcl_array, timestamp):
+def pcl_to_ros(pcl_array, timestamp, frame_id='velodyne'):
     """ 
     Converts a pcl PointXYZRGB to a ROS PointCloud2 message
 
@@ -129,7 +129,7 @@ def pcl_to_ros(pcl_array, timestamp):
     ros_msg = PCL2()
 
     ros_msg.header.stamp = timestamp
-    ros_msg.header.frame_id = "velodyne"
+    ros_msg.header.frame_id = frame_id
 
     ros_msg.height = 1
     ros_msg.width = pcl_array.size
