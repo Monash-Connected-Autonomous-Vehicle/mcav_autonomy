@@ -4,7 +4,6 @@ The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles t
 # Requirements
 - [Ubuntu 20.04](https://ubuntu.com/download/desktop)
 - [ROS2 Foxy Fitzroy](https://docs.ros.org/en/foxy/Installation.html)
-- [vcstool](https://github.com/dirk-thomas/vcstool): `sudo apt install python3-vcstool`
 
 ## Simulation Requirements
 
@@ -19,7 +18,7 @@ The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles t
 This should result in a directory structure similar to the following:
 ```
 mcav_ws/                                                     
-├──build                                                                                                               
+├── build                                                                                                               
 └── src
     └── mcav_autonomy
         ├── autonomy_launch         # Launch files for entire stack
