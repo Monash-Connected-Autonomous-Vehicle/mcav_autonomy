@@ -1,4 +1,4 @@
-FROM dustynv/ros:foxy-ros-base-l4t-r32.4.4
+FROM dustynv/ros:galactic-pytorch-l4t-r34.1.0
 
 # Dev tools
 # Try to keep ROS-related dependencies out of here and inside package.xml to be installed with rosdep instead
