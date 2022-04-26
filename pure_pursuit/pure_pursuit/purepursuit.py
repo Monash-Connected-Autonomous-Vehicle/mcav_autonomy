@@ -25,11 +25,14 @@ class PurePursuitNode(Node):
         
         self.waypoints = []
         self.Lfc = None  # [m] default look-ahead distance
+        self.stop = False
+        self.failsafe_thresh = 2.8
     
     
     def wp_subscriber_callback(self, wp_msg):
         self.waypoints = wp_msg.waypoints
-        v = self.waypoints[0].velocity.linear.x
+        v = self.waypoints[1].velocity.linear.x
+        self.failsafe(self.waypoints[0].velocity.linear.x, self.waypoints[1].velocity.linear.x)
         # Lookahead distance dependent on velocity
         self.Lfc = 4*v-8 if v > 2.75 else 3  # Tesla model3
         # self.Lfc = 11.028*v - 63.5  # Nissan Micra
@@ -38,9 +41,16 @@ class PurePursuitNode(Node):
     def publisher_callback(self):   
         if self.waypoints: 
             twist_msg = Twist()
-            v_linear, v_angular = self.purepursuit()
-            twist_msg.linear.x = v_linear
-            twist_msg.angular.z = v_angular
+
+            if self.stop:
+                print("Stopping vehicle...")
+                twist_msg.linear.x = 0.0
+                twist_msg.angular.z = 0.0               
+            else:
+                v_linear, v_angular = self.purepursuit()
+                twist_msg.linear.x = v_linear
+                twist_msg.angular.z = v_angular
+                
             self.pp_publisher.publish(twist_msg)
             print("Linear vel: ", twist_msg.linear.x ,", Angular vel: ", twist_msg.angular.z)
 #            print("published twist message")
@@ -51,7 +61,7 @@ class PurePursuitNode(Node):
         tx, ty = self.target_searcher(self.Lfc) # finds local coordinate of target point
         gamma = self.steer_control(tx, ty, self.Lfc) # finds curvature of lookahead arc
         
-        v_linear = self.waypoints[0].velocity.linear.x
+        v_linear = self.waypoints[1].velocity.linear.x
         v_angular = v_linear*gamma
         return v_linear, v_angular
 
@@ -94,9 +104,10 @@ class PurePursuitNode(Node):
                 tx = tx_2
             ty = gradient*tx + y_inter
         elif (wp_d <  L).any(): 
-            # target final point if there are no points beyond lookahead distance
-            tx = wp_x[-1]
-            ty = wp_y[-1]
+            # target lookahead point in the trajectory of last waypoint if there are no points beyond lookahead distance
+            bearing = math.atan(wp_x[-1],wp_y[-1])
+            tx = L*math.sin(bearing)
+            ty = L*math.cos(bearing)
         elif (wp_d >  L).any():
             # target first point if there are no points before lookahead distance
             tx = wp_x[0]
@@ -113,13 +124,30 @@ class PurePursuitNode(Node):
         return gamma
 
 
+    def failsafe(self, v_prev, v_current):
+        if (v_current - v_prev) >= self.failsafe_thresh:
+            print("Increase in velocity above maximum allowable threshold!")
+            self.stop = True
+
+
 # Main function
 def main(args = None):
     rclpy.init(args=args)
     ppnode = PurePursuitNode()
-    rclpy.spin(ppnode)
+
+    try:
+        rclpy.spin(ppnode)
+    except Exception as e:
+        print(e)
+    finally:
+        pass
+
+    ppnode.stop = True
+    ppnode.publisher_callback()
+    print("shutting down node")
     ppnode.destroy_node()
     rclpy.shutdown()
+    print("done.")
 
 
 if __name__ == '__main__':
