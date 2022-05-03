@@ -37,8 +37,8 @@ def get_actor_blueprints(world, filter, generation):
 def main():
     args_host = '127.0.0.1'
     args_port=2000
-    args_number_of_vehicles=50
-    args_number_of_walkers=10
+    args_number_of_vehicles=100
+    args_number_of_walkers=0
     args_safe = True
     args_filterv='vehicle.*'
     args_generationv='All'

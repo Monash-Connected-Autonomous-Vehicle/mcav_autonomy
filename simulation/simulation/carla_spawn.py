@@ -21,6 +21,7 @@ def attach_lidar(actor, world):
     lidar_bp.set_attribute("range", "100")
     lidar_bp.set_attribute("points_per_second", "300000")
     lidar_bp.set_attribute("dropoff_general_rate", "0.10")
+    lidar_bp.set_attribute("rotation_frequency", "50")
     lidar_transform = carla.Transform(lidar_location, lidar_rotation)
     lidar = world.spawn_actor(lidar_bp, lidar_transform, attach_to=actor, attachment_type=carla.AttachmentType.Rigid)
 
@@ -59,7 +60,7 @@ def main():
             # spectator_transform.rotation  = carla.Rotation(pitch = -30)
             # world.get_spectator().set_transform(spectator_transform)
             spectator_transform = sdrone.get_transform()
-            spectator_transform.location += carla.Location(x=0.0, y=0.0, z =100.0)
+            spectator_transform.location += carla.Location(x=0.0, y=0.0, z =50.0)
             spectator_transform.rotation = carla.Rotation(pitch=-90, yaw=180)
             world.get_spectator().set_transform(spectator_transform)
     except KeyboardInterrupt:

@@ -25,6 +25,7 @@ def generate_launch_description():
             package='project_tracker',
             executable='filter',
             name='filter',
+            remappings=[('/velodyne_points', '/carla/ego_vehicle/front/lidar'),]
         ),
         Node(
             package='project_tracker',
