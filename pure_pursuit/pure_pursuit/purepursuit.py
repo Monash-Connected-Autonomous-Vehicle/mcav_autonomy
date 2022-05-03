@@ -37,7 +37,7 @@ class PurePursuitNode(Node):
     
     def waypoints_callback(self, wp_msg):
         self.waypoints = wp_msg.waypoints
-        self.v = self.waypoints[1].velocity.linear.x
+        self.v = self.waypoints[0].velocity.linear.x
         self.failsafe(self.waypoints[0].velocity.linear.x, self.waypoints[1].velocity.linear.x)
         
         # Lookahead distance dependent on velocity
@@ -86,7 +86,7 @@ class PurePursuitNode(Node):
         self.target_publisher.publish(target_msg)
 
         gamma = self.steer_control(tx, ty) # finds curvature of lookahead arc
-        v_linear = self.waypoints[1].velocity.linear.x
+        v_linear = self.waypoints[0].velocity.linear.x
         v_angular = v_linear*gamma
         
         return v_linear, v_angular
