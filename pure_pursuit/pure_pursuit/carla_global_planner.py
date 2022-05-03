@@ -50,9 +50,9 @@ class WaypointPublisher(Node):
         (self.pose_pub).publish(pose_msg)
         
         # TODO: comment this section out if using other means of publishing global waypoints
-        wp_list_msg = WaypointArray()
-        wp_list_msg.waypoints = self.waypoints2msg(self.path) # converts to WaypointArray message
-        (self.waypoints_pub).publish(wp_list_msg)
+        # wp_list_msg = WaypointArray()
+        # wp_list_msg.waypoints = self.waypoints2msg(self.path) # converts to WaypointArray message
+        # (self.waypoints_pub).publish(wp_list_msg)
 
 
     # Generates waypoint path in CARLA
@@ -157,9 +157,7 @@ class WaypointPublisher(Node):
                             z=result[2,0])
 
             (self.debug).draw_line(begin, end, 0.1, carla.Color(0,255,0), 0.08)
-            print("tx: ", tx, "ty: ", ty)
-            print("fx: ", fx, "fy: ", fy, "fa: ", fa)
-            print(end)
+            print("Lookahead point: ", end)
 
 
     # Visualise local waypoints in CARLA    

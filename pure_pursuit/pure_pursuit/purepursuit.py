@@ -43,8 +43,6 @@ class PurePursuitNode(Node):
         # Lookahead distance dependent on velocity
         self.Lfc = 4*self.v-8 if self.v > 4.0 else 8.0  # Tesla model3
         # self.Lfc = 11.028*v - 63.5  # Nissan Micra
-        # self.Lfc = 12.0
-        # self.lookahead_regulator()
  
     
     def twist_callback(self):   
@@ -65,6 +63,7 @@ class PurePursuitNode(Node):
 #            print("published twist message")
 
 
+    #TODO: make sure car slows at curves before implementing
     def lookahead_regulator(self):
         wp_x = np.array([wp.pose.position.x for wp in self.waypoints])
         wp_y = np.array([wp.pose.position.y for wp in self.waypoints])
