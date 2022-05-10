@@ -21,11 +21,13 @@ class WaypointPublisher(Node):
         super().__init__('carla_global_planner')
         # subscribers
         self.local_wp_sub = self.create_subscription(
-                             WaypointArray, 'local_map_waypoints', self.show_local_wp, 10)
+                            WaypointArray, 'local_map_waypoints', self.show_local_wp, 10)
         self.local_wp_sub  # prevent 'unused variable' warning
         self.global_wp_sub = self.create_subscription(
-                             WaypointArray, 'global_waypoints', self.show_global_wp, 10)
+                            WaypointArray, 'global_waypoints', self.show_global_wp, 10)
         self.global_wp_sub  # prevent 'unused variable' warning
+        self.target_sub = self.create_subscription(
+                            PoseWithCovarianceStamped, 'target_pose', self.show_target, 10)
         
         # publishers
         self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, 'current_pose', 1)
@@ -114,6 +116,50 @@ class WaypointPublisher(Node):
         return wp_msg_list
 
 
+    def euler_z(self, px, py, pz, fx, fy, fz, fa): 
+        rot_z = np.matrix([[math.cos(fa), -math.sin(fa), 0, 0],
+                            [math.sin(fa), math.cos(fa), 0, 0],
+                            [0, 0, 1, 0],
+                            [0, 0, 0, 1]])
+        translation = np.matrix([[1, 0, 0, fx], 
+                            [0, 1, 0, fy], 
+                            [0, 0, 1, fz],
+                            [0, 0, 0, 1]])
+        point =  np.matrix([[px], 
+                            [py], 
+                            [pz],
+                            [1]])
+        result = np.matmul(rot_z, point)
+        result = np.matmul(translation, result)
+
+        return result
+
+
+    # Visualise lookahead target in CARLA
+    def show_target(self, target_msg):
+        if self.vehicle_pos:
+            rad_factor = math.pi/180.0
+            tx = target_msg.pose.pose.position.x
+            ty = -target_msg.pose.pose.position.y
+            tz = self.vehicle_pos.location.z
+            fx = self.vehicle_pos.location.x
+            fy = self.vehicle_pos.location.y
+            fz = self.vehicle_pos.location.z
+            fa = self.vehicle_pos.rotation.yaw
+
+            result = self.euler_z(tx, ty, tz, fx, fy, fz, fa*rad_factor)
+
+            begin = carla.Location(x=self.vehicle_pos.location.x,        
+                            y=self.vehicle_pos.location.y, 
+                            z=self.vehicle_pos.location.z)
+            end =   carla.Location(x=result[0,0],        
+                            y=result[1,0], 
+                            z=result[2,0])
+
+            (self.debug).draw_line(begin, end, 0.1, carla.Color(0,255,0), 0.08)
+            print("Lookahead point: ", end)
+
+
     # Visualise local waypoints in CARLA    
     def show_local_wp(self, wp_msg_list):
         self.draw_waypoints(wp_msg_list, carla.Color(255, 0, 0)) 
@@ -128,9 +174,9 @@ class WaypointPublisher(Node):
     def draw_waypoints(self, wp_msg_list, color):
         wp_list = []
         for wp_msg in wp_msg_list.waypoints:
-            wp_location = Location(x=wp_msg.pose.position.x,        
-                                   y=-wp_msg.pose.position.y, 
-                                   z=wp_msg.pose.position.z)
+            wp_location = carla.Location(x=wp_msg.pose.position.x,        
+                                         y=-wp_msg.pose.position.y, 
+                                         z=wp_msg.pose.position.z)
             wp_list.append(wp_location)
     
         for i in wp_list:
