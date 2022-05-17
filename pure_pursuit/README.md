@@ -79,9 +79,9 @@ Terminal 3 (Launch twist to control package)
 - `ros2 launch carla_twist_to_control carla_twist_to_control.launch.py`
 
 ### Launch simulation
-> pure_pursuit.launch: just has nodes required to run pure pursuit and velocity planner, nothing carla specific
-purepursuit_simulation.launch: pure_pursuit.launch plus carla_global_planner
-purepursuit_simulation_standalone.launch: purepursuit_simulation.launch plus carla_spawner
+- pure_pursuit.launch: just has nodes required to run pure pursuit and velocity planner, nothing carla specific
+- purepursuit_simulation.launch: pure_pursuit.launch plus carla_global_planner
+- purepursuit_simulation_standalone.launch: purepursuit_simulation.launch plus carla_spawner
 
 Terminal 4 (Launch simulation)
 - `cd ~/colcon_ws && source install/setup.bash`
