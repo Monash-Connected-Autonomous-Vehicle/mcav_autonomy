@@ -59,11 +59,11 @@ class WaypointPublisher(Node):
         # (self.waypoints_pub).publish(wp_list_msg)
 
 
-    def gen_waypoints(self) -> List[carla.waypoint]:    
+    def gen_waypoints(self) -> List[carla.Waypoint]:    
         """Generates waypoint path in CARLA.
 
         Returns:
-            List[carla.waypoint]: list of carla waypoints
+            List[carla.Waypoint]: list of carla waypoints
         """
 
         wp_start = (self.map).get_waypoint(self.vehicle.get_transform().location) # generates a waypoint at vehicle start location
@@ -97,11 +97,11 @@ class WaypointPublisher(Node):
         return pose_msg
     
     
-    def waypoints2msg(self, waypoints: List[carla.waypoint]) -> List[Waypoint]:
+    def waypoints2msg(self, waypoints: List[carla.Waypoint]) -> List[Waypoint]:
         """Converts waypoint to Waypoint message.
 
         Args:
-            waypoints (List[carla.waypoint]): list of CARLA waypoints
+            waypoints (List[carla.Waypoint]): list of CARLA waypoints
 
         Returns:
             List[Waypoint]: list of Waypoint messages
@@ -247,11 +247,11 @@ class WaypointPublisher(Node):
             (self.debug).draw_point(i + carla.Location(z=0.25), 0.05, color, False)
             
            
-    def save_path(self, waypoints: List[carla.waypoint]):
+    def save_path(self, waypoints: List[carla.Waypoint]):
         """Save path as .csv.
 
         Args:
-            waypoints (List[carla.waypoint]): list of CARLA waypoints
+            waypoints (List[carla.Waypoint]): list of CARLA waypoints
         """
 
         with open('town01_path.csv', 'w', encoding='UTF8', newline='') as f:
