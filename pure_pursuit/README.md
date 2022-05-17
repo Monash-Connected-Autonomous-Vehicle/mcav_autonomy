@@ -22,7 +22,7 @@ Pure Pursuit is a tracking algorithm which works by calculating the amount of cu
 - [CARLA 0.9.13](https://carla.readthedocs.io/en/latest/start_quickstart/#carla-installation) 
 - [CARLA ROS Bridge](https://carla.readthedocs.io/projects/ros-bridge/en/latest/ros_installation_ros2/)
 - [MCAV interfaces](https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces) should be in the same workspace
-- (Optional) [Velocity planner](https://github.com/Monash-Connected-Autonomous-Vehicle/velocity_planner) should be in the same workspace
+- [Velocity planner](https://github.com/Monash-Connected-Autonomous-Vehicle/velocity_planner) should be in the same workspace
 
 ### Other Requirements
 ...
@@ -38,11 +38,11 @@ able to do so -->
 
 #### Note
 Add to .bashrc
-'export CARLA_ROOT=<path-to-carla>'
-'export PYTHONPATH=$PYTHONPATH:$CARLA_ROOT/PythonAPI/carla/dist/carla-<carla_version_and_arch>.egg:$CARLA_ROOT/PythonAPI/carla'
+- `export CARLA_ROOT=<path-to-carla>`
+- `export PYTHONPATH=$PYTHONPATH:$CARLA_ROOT/PythonAPI/carla/dist/carla-<carla_version_and_arch>.egg:$CARLA_ROOT/PythonAPI/carla`
 
 <!-- Directory structure gives a brief on what folders contain what. -->
-This should result in a directory structure similar to the following:
+#### Directory structure
 ```
 ws/                                                     
 ├── 
@@ -79,9 +79,13 @@ Terminal 3 (Launch twist to control package)
 - `ros2 launch carla_twist_to_control carla_twist_to_control.launch.py`
 
 ### Launch simulation
+> pure_pursuit.launch: just has nodes required to run pure pursuit and velocity planner, nothing carla specific
+purepursuit_simulation.launch: pure_pursuit.launch plus carla_global_planner
+purepursuit_simulation_standalone.launch: purepursuit_simulation.launch plus carla_spawner
+
 Terminal 4 (Launch simulation)
 - `cd ~/colcon_ws && source install/setup.bash`
-- 'ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py'
+- `ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py`
     
 Existing waypoints in a csv file can be specified as follows:
     ```ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py waypoint_filename:=/home/mcav/Sheng/control_ws/town01_path1.csv```
@@ -95,11 +99,7 @@ Dummies ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 <table>
   <tr>
     <td align="center"><a href="https://github.com/sqiu0004"><img src="https://avatars.githubusercontent.com/u/49756390?s=400&v=4" width="100px;" alt="Sheng Qiu"/><br /><sub><b>Sheng Qiu</b></sub></a><br /><a href="https://github.com/Monash-Connected-Autonomous-Vehicle/pure_pursuit/commits?author=sqiu0004" title="Code">💻</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/lakshjaisinghani"><img src="https://avatars3.githubusercontent.com/u/45281017?v=4" width="100px;" alt="Laksh Jaisinghani"/><br /><sub><b>Laksh Jaisinghani</b></sub></a><br /><a href="https://github.com/Monash-Connected-Autonomous-Vehicle/pure_pursuit/commits?author=lakshjaisinghani" title="Code">💻</a></td>
-  </tr>
-  <tr>
     <td align="center"><a href="https://github.com/owenbrooks"><img src="https://avatars.githubusercontent.com/u/7232997?v=4" width="100px;" alt="Owen Brooks"/><br /><sub><b>Owen Brooks</b></sub></a><br /><a href="https://github.com/Monash-Connected-Autonomous-Vehicle/pure_pursuit/commits?author=owenbrooks" title="Code">💻</a></td>
   </tr>
 </table>
