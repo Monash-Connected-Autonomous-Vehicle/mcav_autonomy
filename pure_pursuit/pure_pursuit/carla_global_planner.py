@@ -9,25 +9,27 @@ from rclpy.node import Node
 from carla import Transform, Location, Rotation, World
 from mcav_interfaces.msg import WaypointArray, Waypoint
 from geometry_msgs.msg import PoseWithCovarianceStamped, Pose
+from typing import Tuple, List
 
-total_waypoints = 210 # variable
+
+total_waypoints = 210
 waypoint_distance = 2 # distance between waypoints (m)
-target_vel = 4.3 # target velocity (m/s) TODO: are these units correct?
+target_vel = 4.3 # target velocity (m/s)
+
 
 class WaypointPublisher(Node):
-
+    """
+    Node Class - generates and visalises waypoints and lookahead distance in carla; publishes pose and global waypoint (optional) information.
+    """
 
     def __init__(self):
         super().__init__('carla_global_planner')
         # subscribers
-        self.local_wp_sub = self.create_subscription(
-                            WaypointArray, 'local_map_waypoints', self.show_local_wp, 10)
+        self.local_wp_sub = self.create_subscription(WaypointArray, 'local_map_waypoints', self.show_local_wp, 10)
         self.local_wp_sub  # prevent 'unused variable' warning
-        self.global_wp_sub = self.create_subscription(
-                            WaypointArray, 'global_waypoints', self.show_global_wp, 10)
+        self.global_wp_sub = self.create_subscription(WaypointArray, 'global_waypoints', self.show_global_wp, 10)
         self.global_wp_sub  # prevent 'unused variable' warning
-        self.target_sub = self.create_subscription(
-                            PoseWithCovarianceStamped, 'target_pose', self.show_target, 10)
+        self.target_sub = self.create_subscription(PoseWithCovarianceStamped, 'target_pose', self.show_target, 10)
         
         # publishers
         self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, 'current_pose', 1)
@@ -43,8 +45,10 @@ class WaypointPublisher(Node):
         self.path = None
 
 
-    # Main callback function for publishing waypoints
     def waypoints_callback(self):
+        """
+        Main callback function for publishing waypoints.
+        """
         self.vehicle_pos = self.vehicle.get_transform() # record vehicle pose on each loop 
         pose_msg = self.pose2msg()
         (self.pose_pub).publish(pose_msg)
@@ -55,8 +59,13 @@ class WaypointPublisher(Node):
         # (self.waypoints_pub).publish(wp_list_msg)
 
 
-    # Generates waypoint path in CARLA
-    def gen_waypoints(self):      
+    def gen_waypoints(self) -> List[carla.Waypoint]:    
+        """Generates waypoint path in CARLA.
+
+        Returns:
+            List[carla.Waypoint]: list of carla waypoints
+        """
+
         wp_start = (self.map).get_waypoint(self.vehicle.get_transform().location) # generates a waypoint at vehicle start location
         wp_next = wp_start
         wp_list = [None]*(total_waypoints)
@@ -70,8 +79,13 @@ class WaypointPublisher(Node):
         return wp_list
     
     
-    # Converts waypoint to Waypoint message
-    def pose2msg(self):
+    def pose2msg(self) -> PoseWithCovarianceStamped:
+        """Converts CARLA pose to PoseWithCovarianceStamped message.
+
+        Returns:
+            PoseWithCovarianceStamped: pose message
+        """        
+
         rad_factor = math.pi/180
         pose_msg = PoseWithCovarianceStamped()
         pose_msg.header.frame_id = "map"
@@ -83,8 +97,16 @@ class WaypointPublisher(Node):
         return pose_msg
     
     
-    # Converts waypoint to Waypoint message
-    def waypoints2msg(self, waypoints):
+    def waypoints2msg(self, waypoints: List[carla.Waypoint]) -> List[Waypoint]:
+        """Converts waypoint to Waypoint message.
+
+        Args:
+            waypoints (List[carla.Waypoint]): list of CARLA waypoints
+
+        Returns:
+            List[Waypoint]: list of Waypoint messages
+        """        
+
         rad_factor = math.pi/180
         wp_msg_list = [None]*len(waypoints)
 
@@ -116,27 +138,53 @@ class WaypointPublisher(Node):
         return wp_msg_list
 
 
-    def euler_z(self, px, py, pz, fx, fy, fz, fa): 
-        rot_z = np.matrix([[math.cos(fa), -math.sin(fa), 0, 0],
-                            [math.sin(fa), math.cos(fa), 0, 0],
-                            [0, 0, 1, 0],
-                            [0, 0, 0, 1]])
-        translation = np.matrix([[1, 0, 0, fx], 
-                            [0, 1, 0, fy], 
-                            [0, 0, 1, fz],
-                            [0, 0, 0, 1]])
-        point =  np.matrix([[px], 
-                            [py], 
-                            [pz],
-                            [1]])
+    def euler_z(self, px: float, py: float, pz: float, fx: float, fy: float, fz: float, fa: float) -> np.array: 
+        """Transforms coordinate of point from start frame to target frame, rotating about the z-axis.
+
+        Args:
+            px (float): point x from start frame
+            py (float): point y from start frame
+            pz (float): point z from start frame
+            fx (float): point x from target frame
+            fy (float): point y from target frame
+            fz (float): point z from target frame
+            fa (float): point yaw bearing from target frame in radians
+
+        Returns:
+            np.array: coordinate of point from target frame
+        """
+
+        C = math.cos(fa)
+        S = math.sin(fa)
+
+        rot_z       =    np.matrix([[C, -S, 0, 0],
+                                    [S, C, 0, 0],
+                                    [0, 0, 1, 0],
+                                    [0, 0, 0, 1]])
+
+        translation =    np.matrix([[1, 0, 0, fx], 
+                                    [0, 1, 0, fy], 
+                                    [0, 0, 1, fz],
+                                    [0, 0, 0, 1]])
+
+        point       =    np.matrix([[px], 
+                                    [py], 
+                                    [pz],
+                                    [1]])
+
         result = np.matmul(rot_z, point)
         result = np.matmul(translation, result)
 
         return result
 
 
-    # Visualise lookahead target in CARLA
-    def show_target(self, target_msg):
+    def show_target(self, target_msg: PoseWithCovarianceStamped):
+        """Visualise lookahead target in CARLA.
+
+        Args:
+            target_msg (PoseWithCovarianceStamped): target pose from vehicle frame
+        """        
+
         if self.vehicle_pos:
             rad_factor = math.pi/180.0
             tx = target_msg.pose.pose.position.x
@@ -159,19 +207,35 @@ class WaypointPublisher(Node):
             (self.debug).draw_line(begin, end, 0.1, carla.Color(0,255,0), 0.08)
             print("Lookahead point: ", end)
 
+   
+    def show_local_wp(self, wp_msg_list: WaypointArray):
+        """Visualise local waypoints in CARLA. 
 
-    # Visualise local waypoints in CARLA    
-    def show_local_wp(self, wp_msg_list):
+        Args:
+            wp_msg_list (WaypointArray): array of waypoints of type Waypoint
+        """        
+
         self.draw_waypoints(wp_msg_list, carla.Color(255, 0, 0)) 
 
 
-    # Visualise global waypoints in CARLA
-    def show_global_wp(self, wp_msg_list):
+    def show_global_wp(self, wp_msg_list: WaypointArray):
+        """Visualise global waypoints in CARLA.
+
+        Args:
+            wp_msg_list (WaypointArray): array of waypoints of type Waypoint
+        """
+
         self.draw_waypoints(wp_msg_list, carla.Color(0, 0, 255)) 
         
-        
-    # Visualises waypoint paths    
-    def draw_waypoints(self, wp_msg_list, color):
+           
+    def draw_waypoints(self, wp_msg_list: WaypointArray, color: int):
+        """Visualises waypoint paths.
+
+        Args:
+            wp_msg_list (WaypointArray): array of waypoints of type Waypoint
+            color (int): carla.Color(R,G,B)
+        """
+
         wp_list = []
         for wp_msg in wp_msg_list.waypoints:
             wp_location = carla.Location(x=wp_msg.pose.position.x,        
@@ -182,9 +246,14 @@ class WaypointPublisher(Node):
         for i in wp_list:
             (self.debug).draw_point(i + carla.Location(z=0.25), 0.05, color, False)
             
-          
-    # Save path as .csv  
-    def save_path(self, waypoints):
+           
+    def save_path(self, waypoints: List[carla.Waypoint]):
+        """Save path as .csv.
+
+        Args:
+            waypoints (List[carla.Waypoint]): list of CARLA waypoints
+        """
+
         with open('town01_path.csv', 'w', encoding='UTF8', newline='') as f:
             fieldnames = ['x', 'y', 'z', 'yaw', 'velocity', 'change_flag']
             writer = csv.DictWriter(f, fieldnames=fieldnames)
