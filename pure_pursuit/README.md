@@ -24,9 +24,6 @@ Pure Pursuit is a tracking algorithm which works by calculating the amount of cu
 - [MCAV interfaces](https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces) should be in the same workspace
 - [Velocity planner](https://github.com/Monash-Connected-Autonomous-Vehicle/velocity_planner) should be in the same workspace
 
-### Other Requirements
-...
-
 <!-- Very simple installation procedure. If you can't install within 5 single line bullet points, you need to refactor your code to be  \
 able to do so -->
 ## Installation
@@ -92,15 +89,15 @@ Existing waypoints in a csv file can be specified as follows:
     
 ## Contributors ✨
 
-Dummies ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks go to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
 <table>
   <tr>
     <td align="center"><a href="https://github.com/sqiu0004"><img src="https://avatars.githubusercontent.com/u/49756390?s=400&v=4" width="100px;" alt="Sheng Qiu"/><br /><sub><b>Sheng Qiu</b></sub></a><br /><a href="https://github.com/Monash-Connected-Autonomous-Vehicle/pure_pursuit/commits?author=sqiu0004" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/lakshjaisinghani"><img src="https://avatars3.githubusercontent.com/u/45281017?v=4" width="100px;" alt="Laksh Jaisinghani"/><br /><sub><b>Laksh Jaisinghani</b></sub></a><br /><a href="https://github.com/Monash-Connected-Autonomous-Vehicle/pure_pursuit/commits?author=lakshjaisinghani" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/owenbrooks"><img src="https://avatars.githubusercontent.com/u/7232997?v=4" width="100px;" alt="Owen Brooks"/><br /><sub><b>Owen Brooks</b></sub></a><br /><a href="https://github.com/Monash-Connected-Autonomous-Vehicle/pure_pursuit/commits?author=owenbrooks" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/lakshjaisinghani"><img src="https://avatars3.githubusercontent.com/u/45281017?v=4" width="100px;" alt="Laksh Jaisinghani"/><br /><sub><b>Laksh Jaisinghani</b></sub></a><br /><a href="https://github.com/Monash-Connected-Autonomous-Vehicle/pure_pursuit/commits?author=lakshjaisinghani" title="Code">🐛️</a></td>
+    <td align="center"><a href="https://github.com/owenbrooks"><img src="https://avatars.githubusercontent.com/u/7232997?v=4" width="100px;" alt="Owen Brooks"/><br /><sub><b>Owen Brooks</b></sub></a><br /><a href="https://github.com/Monash-Connected-Autonomous-Vehicle/pure_pursuit/commits?author=owenbrooks" title="Code">🐛️</a></td>
   </tr>
 </table>
 
