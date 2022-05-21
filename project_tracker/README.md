@@ -22,9 +22,9 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 - [CARLA](https://carla.readthedocs.io/en/latest/start_quickstart/)
 - [CARLA ROS2 Bridge](https://carla.readthedocs.io/projects/ros-bridge/en/latest/ros_installation_ros2/)
 
-### Installation
+## Installation
 
-#### Moving KITTI data to correct directory
+### Moving KITTI data to correct directory
 
 * Move download of KITTI dataset to ```/home/mcav/DATASETS/KITTI/```, unzip the downloaded zip and copy the folder named `2011_09_26` into the `KITTI` directory.  
 
@@ -52,7 +52,7 @@ Alternatively move your KITTI folder into another folder and specify this when c
 ros2 run project_tracker mock_pub.py --ros-args -p kitti_data_dir:="PATH_TO_YOUR_KITTI/2011_09_26/2011_09_25_drive_0048_sync_DIRECTORY"
 ```
 
-#### Creating workspace and package
+### Creating workspace and package
 
 * Create a ROS2 workspace by following [these instructions](https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html) 
 * Go to the source directory: `cd ~/mcav_ws/src`
@@ -61,11 +61,11 @@ ros2 run project_tracker mock_pub.py --ros-args -p kitti_data_dir:="PATH_TO_YOUR
 * Install ROS dependencies: `rosdep install --from-paths src --ignore-src -r -y`
 * Build the package: `colcon build`
 
-### Usage
+## Usage
 
 Note, for every terminal opened you should navigate to the root folder of your workspace (`cd ~/mcav_ws`) and source the setup file (`. install/setup.bash`).
 
-#### KITTI Example
+### KITTI Example
 
 Terminal 1 (Mock KITTI Publisher):
 ```sh
@@ -93,7 +93,7 @@ Terminal 5 (Object Detection Node to detect objects from images):
 ros2 run project_tracker object_detection.py
 ```
 
-#### CARLA Example
+### CARLA Example
 
 #### Recording ROS bags in Carla
 
@@ -129,7 +129,7 @@ python3 ./carla_integration/generate_traffic.py -n 150 -w 100 --no-rendering
 * Drive the car using the manual control window
 * Open rviz2 in a new terminal and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
 
-##### Optional: record and play back ROS Bags from CARLA
+#### Optional: record and play back ROS Bags from CARLA
 **While driving with manual control:**
 * New terminal: record ROS bags for later use
 ```bash
@@ -158,7 +158,6 @@ Please see the [`ROSINFO.md`](https://github.com/Monash-Connected-Autonomous-Veh
 
 ## Contributors ✨
 
-
 Thanks goes to these people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
@@ -166,14 +165,8 @@ Thanks goes to these people ([emoji key](https://allcontributors.org/docs/en/emo
 <table>
     <tr>
         <td align="center"><a href="https://github.com/bened-wards"><img src="https://avatars.githubusercontent.com/u/69286161?v=4" width="100px;" alt="Ben Edwards"/><br /><sub><b>Ben Edwards</b></sub></a><br /><a title="Code">💻</a></td>
-    </tr>
-    <tr>
         <td align="center"><a href="https://github.com/amir-kt"><img src="https://avatars.githubusercontent.com/u/54131619?v=4" width="100px;" alt="Amir Toosi"/><br /><sub><b>Amir Toosi</b></sub></a><br /><a title="Code">💻</a></td>
-    </tr>
-    <tr>
         <td align="center"><a href="https://github.com/lakshjaisinghani"><img src="https://avatars3.githubusercontent.com/u/45281017?v=4" width="100px;" alt="Laksh Jaisinghani"/><br /><sub><b>Laksh Jaisinghani</b></sub></a><br /><a title="Mentoring">🧑‍🏫 </a></td>
-    </tr>
-    <tr>
         <td align="center"><a href="https://github.com/owenbrooks"><img src="https://avatars.githubusercontent.com/u/7232997?v=4" width="100px;" alt="Owen Brooks"/><br /><sub><b>Owen Brooks</b></sub></a><br /><a title="Review">👀 </a></td>
     </tr>
 </table>
