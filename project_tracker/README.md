@@ -61,6 +61,20 @@ ros2 run project_tracker mock_pub.py --ros-args -p kitti_data_dir:="PATH_TO_YOUR
 * Install ROS dependencies: `rosdep install --from-paths src --ignore-src -r -y`
 * Build the package: `colcon build`
 
+This should result in a directory structre similar to the following:
+```
+mcav_ws/                                                     
+├── build   
+├── install
+├── log                                                                                                              
+└── src
+    └── project_tracker
+        ├── carla_integration       # files relevant to running CARLA example
+        ├── launch                  # launch files for different examples
+        ├── project_tracker         # python scripts used in the package
+        └── src                     # C++ nodes used in the package
+```
+
 ## Usage
 
 Note, for every terminal opened you should navigate to the root folder of your workspace (`cd ~/mcav_ws`) and source the setup file (`. install/setup.bash`).
