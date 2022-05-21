@@ -166,14 +166,8 @@ Thanks goes to these people ([emoji key](https://allcontributors.org/docs/en/emo
 <table>
     <tr>
         <td align="center"><a href="https://github.com/bened-wards"><img src="https://avatars.githubusercontent.com/u/69286161?v=4" width="100px;" alt="Ben Edwards"/><br /><sub><b>Ben Edwards</b></sub></a><br /><a title="Code">💻</a></td>
-    </tr>
-    <tr>
         <td align="center"><a href="https://github.com/amir-kt"><img src="https://avatars.githubusercontent.com/u/54131619?v=4" width="100px;" alt="Amir Toosi"/><br /><sub><b>Amir Toosi</b></sub></a><br /><a title="Code">💻</a></td>
-    </tr>
-    <tr>
         <td align="center"><a href="https://github.com/lakshjaisinghani"><img src="https://avatars3.githubusercontent.com/u/45281017?v=4" width="100px;" alt="Laksh Jaisinghani"/><br /><sub><b>Laksh Jaisinghani</b></sub></a><br /><a title="Mentoring">🧑‍🏫 </a></td>
-    </tr>
-    <tr>
         <td align="center"><a href="https://github.com/owenbrooks"><img src="https://avatars.githubusercontent.com/u/7232997?v=4" width="100px;" alt="Owen Brooks"/><br /><sub><b>Owen Brooks</b></sub></a><br /><a title="Review">👀 </a></td>
     </tr>
 </table>
