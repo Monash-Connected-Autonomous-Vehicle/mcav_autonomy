@@ -1,120 +1,186 @@
-# Project Tracker
+# :cloud: Project Tracker
 
 Project tracker takes inputs from the @Multi-Task Panoptic Perception model and LiDAR sensor and fuses them together to create accurate pose and velocity estimates of the object over time in 3D space.
 
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
+
 ![tracker](https://user-images.githubusercontent.com/69286161/151936865-c160a7b6-f4cc-4b03-b0d2-b586d1aff493.gif)
 
-
-
-## Getting Started
-
-### prerequisites
-* create a ros2 workspace by following [these](https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html) instructions
-* clone this repository into the src directory in your ros2 workspace
-
-### Installation
-
-1. Download synced+rectified data from [here](http://www.cvlibs.net/datasets/kitti/raw_data.php) or to download the data directly, press [this](https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data/2011_09_26_drive_0048/2011_09_26_drive_0048_sync.zip) download button
-2. After the download is complete, navigate to ```/home/mcav/DATASETS/KITTI/```, unzip the downloaded zip and copy the folder named `2011_09_26` into the `KITTI` directory. Your tree for the binary files should then look like: `/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/`
-3. Install dependencies
+## Requirements
+- [Ubuntu 20.04](https://ubuntu.com/download/desktop) or [WSL on Windows 10/11](https://docs.microsoft.com/en-us/windows/wsl/install)
+- [ROS2 Foxy Fitzroy](https://docs.ros.org/en/foxy/Installation.html)
+- Download synced and rectified KITTI data [here](http://www.cvlibs.net/datasets/kitti/raw_data.php) or to download the data directly, press [here](https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data/2011_09_26_drive_0048/2011_09_26_drive_0048_sync.zip)
+- Install dependencies
     ```sh
     sudo apt install python3-pcl
     sudo apt-get install ros-galactic-sensor-msgs-py
     sudo apt-get install ros-galactic-tf-transformations
     sudo pip3 install transforms3d
     ```
-3. Navigate to the root folder of your workspace
-    ```sh
-    cd YOUR_WORKSPACE_ROOT
-    ```
-4. Build the package
-	```sh
-    colcon build
-    . install/setup.bash
-    ```
-5. In a new terminal, navigate to the root of your workspace and call the publisher to publish mock data.
-	```sh
-    cd YOUR_WORKSPACE_ROOT
-    . install/setup.bash
-    ros2 run project_tracker mock_pub velodyne_file_path:=/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data
-    ```
-6.  In a new terminal, navigate to the root of your workspace and call the `filter` node to reduce the number of LiDAR points.
-	```sh
-    cd YOUR_WORKSPACE_ROOT
-    . install/setup.bash
-    ros2 run project_tracker filter
-    ```
-7.  In a new terminal, call the clustering node to produce clusters, bounding boxes and `DetectedObjectArray`
-    ```sh
-    . install/setup.bash
-    ros2 run project_tracker cluster
-    ```
-8.  In a new terminal, call the mock image publisher node to publish images to the /camera topic. this node takes two arguments from the command line. `Image_path` and `Frame_Id`
-    ```sh
-    . install/setup.bash
-    ros2 run project_tracker mock_image_pub.py <Image_Path> <Frame_Id>
-    eg. ros2 run project_tracker mock_image_pub.py /home/mcav/DATASETS/streetViewImages/ velodyne 
-    ```
-9. In a new terminal, call the object detection node to detect objects from the images published to the /camera topic.
-    ```sh
-    . install/setup.bash
-    ros2 run project_tracker object_detection.py
-    ```
 
-#### Parameters and ROS Info
+### Requirements for CARLA Example
+- [CARLA](https://carla.readthedocs.io/en/latest/start_quickstart/)
+- [CARLA ROS2 Bridge](https://carla.readthedocs.io/projects/ros-bridge/en/latest/ros_installation_ros2/)
 
-##### Parameters to modify for clustering: 
-* `self.min_cluster_size`: minimum number of LiDAR points to be considered a cluster
-* `self.max_cluster_size`: maximum number of LiDAR points to be considered a cluster
-* `self.cluster_tolerance`: unsure exactly what the interpretation of this parameter is. I originally thought it was the maximum search radius from any point to another but think it is more nuanced than that after playing with it.
+### Installation
 
-##### Topics
-|Topic|Type|Objective|Nodes interacting|
-------|----|---------|-----------------|
-|`/velodyne_points`|`sensor_msgs.msg PCL2`|Publish mock LiDAR data|`project_tracker::mock_pub` publishes, `project_tracker::filter` subscribes|
-|`clustered_pointclouds`|`sensor_msgs.msg PCL2`|View clustered pointclouds in PCL2 format for visualisation|`project_tracker::cluster` publishes|
-|`bounding_boxes`|`visualization_msgs.msg MarkerArray`|View bounding boxes over identified clusters for visualisation|`project_tracker::cluster` publishes|
-|`detected_objects`|`mcav_interfaces::DetectedObjectArray`|Emit detected objects for use in other MCAV nodes e.g. path planning|`project_tracker::cluster` publishes|
-|`/camera`|`sensor_msgs.msg Image`|publish mock Images|`project_tracker::mock_image_pub` publishes, `project_tracker::object_detection` subscribes|
+#### Moving KITTI data to correct directory
 
-## Carla Integration
+* Move download of KITTI dataset to ```/home/mcav/DATASETS/KITTI/```, unzip the downloaded zip and copy the folder named `2011_09_26` into the `KITTI` directory.  
+
+```
+home/mcav/DATASETS/                                                     
+├── KITTI                                                                                                               
+    └── 2011_09_26
+        └── 2011_09_25_drive_0048_sync
+            ├── image_00                  # image data and timestamps
+                ├── data
+            ├── image_01                  # image data and timestamps
+                ├── data
+            ├── image_02                  # image data and timestamps
+                ├── data
+            ├── image_03                  # image data and timestamps
+                ├── data
+            ├── oxts                      # IMU data and timestamps
+                ├── data
+            └── velodyne_points           # LiDAR pointcloud data and timestamps
+                ├── data
+```
+
+Alternatively move your KITTI folder into another folder and specify this when calling `mock_pub.py` with ROS arguments:
+```sh
+ros2 run project_tracker mock_pub.py --ros-args -p kitti_data_dir:="PATH_TO_YOUR_KITTI/2011_09_26/2011_09_25_drive_0048_sync_DIRECTORY"
+```
+
+#### Creating workspace and package
+
+* Create a ROS2 workspace by following [these instructions](https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html) 
+* Go to the source directory: `cd ~/mcav_ws/src`
+* Clone this repository: `git clone`
+* Go to the root of the workspace: `cd ~/mcav_ws`
+* Install ROS dependencies: `rosdep install --from-paths src --ignore-src -r -y`
+* Build the package: `colcon build`
+
+### Usage
+
+Note, for every terminal opened you should navigate to the root folder of your workspace (`cd ~/mcav_ws`) and source the setup file (`. install/setup.bash`).
+
+#### KITTI Example
+
+Terminal 1 (Mock KITTI Publisher):
+```sh
+ros2 run project_tracker mock_pub.py --ros-args -p kitti_data_dir:="PATH_TO_YOUR_KITTI/2011_09_26/2011_09_25_drive_0048_sync_DIRECTORY"
+```
+
+Terminal 2 (Filter Node to reduce number of LiDAR points):
+```sh
+ros2 run project_tracker filter
+```
+
+Terminal 3 (Cluster Node to produce clusters, bounding boxes and `DetectedObjectArray`):
+```sh
+ros2 run project_tracker cluster.py
+```
+
+Terminal 4 (Mock Image Publisher to publish images):
+```sh
+ros2 run project_tracker mock_image_pub.py <Image_Path> <Frame_Id>
+eg. ros2 run project_tracker mock_image_pub.py /home/mcav/DATASETS/streetViewImages/ velodyne 
+```
+
+Terminal 5 (Object Detection Node to detect objects from images):
+```sh
+ros2 run project_tracker object_detection.py
+```
+
+#### CARLA Example
 
 #### Recording ROS bags in Carla
 
-Manual Control Workaround to Autopilot issue
+Terminal 1 (Launch CARLA Server):
+```sh
+/opt/carla-simulator/CarlaUE4.sh -quality-level=Low
+```
 
-1. Start Carla Agent `/opt/carla-simulator/CarlaUE4.sh -quality-level=Low`
-2. Open a new terminal, source carla_ros_bridge
-```bash
-cd <PATH-TO-carla_ros_bridge> (on the beauty this is ~/Sheng/carla_ros_bridge, the beast it is ~/liam_ws/carla_ros_bridge, I think)
+Terminal 2 (Source and launch CARLA ROS Bridge):
+```sh
+cd <PATH-TO-carla_ros_bridge> 
 source  ./install/setup.bash
-```
-3. Launch carla_ros_bridge `ros2 launch carla_ros_bridge carla_ros_bridge.launch.py -timeout:=10`
-4. Open a new terminal, launch carla_spawn_npc `ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='./tracking.json'`
-    Must make sure to modify the `'objects_definition_file'` in carla_ros_bridge.launch.py to reflect where .json objects file is stored
-5. Open a new terminal, launch carla_manual_control `ros2 launch carla_manual_control carla_manual_control.launch.py`
-6. Open a new terminal, spawn vehicles and walkers `python3 ./carla_integration/generate_traffic.py -n 150 -w 100 --no-rendering`
-7. Drive the car using this manual control window
-8. Open rviz2 in a new terminal and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
-9. Optionally record ROS bags for later use in a new terminal
-```bash
-ros2 bag record -o <TOPIC-NAME> `ros2 topic list | grep --regexp="/carla/*"` /tf
+ros2 launch carla_ros_bridge carla_ros_bridge.launch.py -timeout:=10
 ```
 
-#### Playing back ROS bags with tracking
+Terminal 3 (Spawn Ego Vehicle):
+Must make sure to modify the `'objects_definition_file'` in carla_ros_bridge.launch.py to reflect where .json objects file is stored
+```sh
+ros2 launch carla_spawn_objects carla_example_ego_vehicle.launch.py objects_definition_file:='./carla_integration/tracking.json'
+```
 
-1. Play ROS bags back (at faster rate as recording lags a lot)
+Terminal 4 (Take manual control of Ego Vehicle):
+```sh
+ros2 launch carla_manual_control carla_manual_control.launch.py
+```
+
+Terminal 5 (Spawn Non-Player Characters: vehicles and pedestrians):
+Set to no rendering mode to reduce computational load in non-manual control window.
+```sh
+python3 ./carla_integration/generate_traffic.py -n 150 -w 100 --no-rendering
+```
+
+* Drive the car using the manual control window
+* Open rviz2 in a new terminal and set frame_id to `ego_vehicle`, add pointcloud from `/carla/ego_vehicle/lidar` and camera from `/carla/ego_vehicle/rgb_front`
+
+##### Optional: record and play back ROS Bags from CARLA
+**While driving with manual control:**
+* New terminal: record ROS bags for later use
 ```bash
-cd <PROJECT_TRACKER-PACKAGE>/bag_files
+cd ~/mcav_ws/src/project_tracker/bag_files
+ros2 bag record -o <RECORD-DIR> `ros2 topic list | grep --regexp="/carla/*"` /tf
+e.g. ros2 bag record -o manual_150 `ros2 topic list | grep --regexp="/carla/*"` /tf
+```
+**Playing back ROS bags later**:
+* Terminal 1: play ROS bags back (at faster rate as recording lags a lot)
+```bash
+cd ~/mcav_ws/src/project_tracker/bag_files
 ros2 bag play <BAG-NAME> -r 2.0
+e.g. ros2 bag play manual_150 -r 2.0
 ```
-2. Open a new terminal, source workspace setup file and run tracking_carla launch file
+* Terminal 2: source workspace setup file and run tracking_carla launch file
 ```bash
-cd <WORKSPACE> 
+cd ~/mcav_ws
 . install/setup.bash
 ros2 launch project_tracker tracking_carla.launch.py
 ```
-3. Open a new terminal, launch rviz2 and set frame_id to 'velodyne'. Add relevant pointcloud/image topics
+* Terminal 3: launch rviz2 and set frame_id to 'velodyne'. Add relevant pointcloud/image topics
+
+
+## ROS Parameters and Topics
+Please see the [`ROSINFO.md`](https://github.com/Monash-Connected-Autonomous-Vehicle/mcav-GitHub-documentation-standard/blob/main/ROSINFO.md) file for more info.
+
+## Contributors ✨
+
+
+Thanks goes to these people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<table>
+    <tr>
+        <td align="center"><a href="https://github.com/bened-wards"><img src="https://avatars.githubusercontent.com/u/69286161?v=4" width="100px;" alt="Ben Edwards"/><br /><sub><b>Ben Edwards</b></sub></a><br /><a title="Code">💻</a></td>
+    </tr>
+    <tr>
+        <td align="center"><a href="https://github.com/amir-kt"><img src="https://avatars.githubusercontent.com/u/54131619?v=4" width="100px;" alt="Amir Toosi"/><br /><sub><b>Amir Toosi</b></sub></a><br /><a title="Code">💻</a></td>
+    </tr>
+    <tr>
+        <td align="center"><a href="https://github.com/lakshjaisinghani"><img src="https://avatars3.githubusercontent.com/u/45281017?v=4" width="100px;" alt="Laksh Jaisinghani"/><br /><sub><b>Laksh Jaisinghani</b></sub></a><br /><a title="Mentoring">🧑‍🏫 </a></td>
+    </tr>
+    <tr>
+        <td align="center"><a href="https://github.com/owenbrooks"><img src="https://avatars.githubusercontent.com/u/7232997?v=4" width="100px;" alt="Owen Brooks"/><br /><sub><b>Owen Brooks</b></sub></a><br /><a title="Review">👀 </a></td>
+    </tr>
+</table>
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
 
 ## TODO
@@ -142,10 +208,3 @@ source  ./install/setup.bash
 ```bash
 ros2 bag record -o <TOPIC-NAME> `ros2 topic list | grep --regexp="/carla/*"` /tf
 ```
-
-
-
-## Contact
-Amir Toosi - amir.ghalb@gmail.com
-
-Ben Edwards - bedw0004@student.monash.edu
