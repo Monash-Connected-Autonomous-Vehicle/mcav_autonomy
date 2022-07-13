@@ -14,3 +14,6 @@
 	submodulesummary = 1
 [diff]
 	submodule = log
+[submodule "SD-VehicleInterface"]
+	path = SD-VehicleInterface
+	url = git@github.com:Monash-Connected-Autonomous-Vehicle/SD-VehicleInterface.git
