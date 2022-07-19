@@ -1,4 +1,4 @@
-FROM osrf/ros:foxy-desktop
+FROM osrf/ros:galactic-desktop
 
 # Dev tools
 # Try to keep ROS-related dependencies out of here and inside package.xml to be installed with rosdep instead
@@ -13,8 +13,11 @@ RUN apt-get -y update && apt-get install -y \
     wget \
     tmux \
     sudo \
+    apt-transport-https \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
+
+RUN sh -c 'echo "deb [trusted=yes] https://s3.amazonaws.com/autonomoustuff-repo/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/autonomoustuff-public.list'
 
 # Create a non-root user with sudo privileges
 ARG USERNAME=mcav
@@ -30,6 +33,14 @@ ENV HOMEDIR=/home/${USERNAME}
 ENV COLCON_WS=${HOMEDIR}/mcav_ws
 ENV SOURCE_DIR=${COLCON_WS}/src/mcav_autonomy
 WORKDIR ${COLCON_WS}
+
+# Download autoware and deps
+RUN git clone https://github.com/autowarefoundation/autoware.git ${COLCON_WS}/src/autoware
+# RUN pip3 install gdown && apt update && apt install geographiclib-tools && \
+#  geographiclib-get-geoids egm2008-1
+# WORKDIR ${COLCON_WS}/src/autoware
+RUN mkdir src && vcs import src < autoware.repos
+
 # Download and build carla ros bridge
 # RUN git clone https://github.com/Monash-Connected-Autonomous-Vehicle/ros-bridge.git src/ros-bridge --recurse-submodules
 # RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
@@ -44,6 +55,7 @@ COPY SD-VehicleInterface/sd_msgs/package.xml ${SOURCE_DIR}/SD-VehicleInterface/s
 COPY SD-VehicleInterface/vehicle_interface/package.xml ${SOURCE_DIR}/SD-VehicleInterface/vehicle_interface/package.xml
 # Project-specific dependency install
 RUN apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -r -y \
+    && ros-${ROS_DISTRO}-tf2-geometry-msgs \
     && apt-get install -y python3-pcl \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
