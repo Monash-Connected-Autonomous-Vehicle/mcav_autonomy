@@ -29,6 +29,9 @@ def generate_launch_description():
             package='pure_pursuit',
             executable='carla_global_planner',
             name='carla_global_planner',
+            remappings=[
+                ('/twist_cmd', '/carla/ego_vehicle/twist'),
+            ]
         ),
         Node(
             package='carla_twist_to_control',
