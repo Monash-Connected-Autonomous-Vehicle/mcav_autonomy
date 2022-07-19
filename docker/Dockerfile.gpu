@@ -55,9 +55,9 @@ COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
 COPY SD-VehicleInterface/sd_msgs/package.xml ${SOURCE_DIR}/SD-VehicleInterface/sd_msgs/package.xml
 COPY SD-VehicleInterface/vehicle_interface/package.xml ${SOURCE_DIR}/SD-VehicleInterface/vehicle_interface/package.xml
 # Project-specific dependency install
-RUN apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -r -y \
+RUN apt-get update && DEBIAN_FRONTED=noninteractive rosdep update && rosdep install --from-paths src --ignore-src -r -y \
     && apt-get install -y python3-pcl \
-    ros-${ROS_DISTRO}-tf2-geometry-msgs  \
+    ros-${ROS_DISTRO}-tf2-geometry-msgs \
     ros-${ROS_DISTRO}-pacmod3 \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
