@@ -43,8 +43,10 @@ Terminal 3 (Launch autonomy stack):
 - `ros2 launch autonomy_launch carla.launch.py waypoint_filename:=/home/mcav/Sheng/control_ws/town01_path1.csv`
 
 # How to run on PX2
-Terminal 1 outside the container (Launch camera drivers):
-- `autonomy_launch/camera_drivers_px2.sh`
+Check out the tutorial [here](https://www.notion.so/monashcav/ROS-ROS2-Bridge-Docker-on-the-PX2-b467b22b85444f27a47ded13b8968370). 
+
+Terminal 1 outside the container (Launch camera and lidar drivers):
+- `autonomy_launch/start_cam_lidar.sh`
 
 Terminal 2 (Enter the container): 
 - `docker/px2_run.sh`
