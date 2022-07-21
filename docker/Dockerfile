@@ -32,7 +32,7 @@ ENV SOURCE_DIR=${COLCON_WS}/src/mcav_autonomy
 WORKDIR ${COLCON_WS}
 # Download and build carla ros bridge
 RUN git clone https://github.com/Monash-Connected-Autonomous-Vehicle/ros-bridge.git src/ros-bridge --recurse-submodules
-RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
+# RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
 # Copy package xml files to decide dependencies
 COPY autonomy_launch/package.xml ${SOURCE_DIR}/autonomy_launch/package.xml
 COPY velocity_planner/package.xml ${SOURCE_DIR}/velocity_planner/package.xml
@@ -41,14 +41,13 @@ COPY project_tracker/package.xml ${SOURCE_DIR}/project_tracker/package.xml
 COPY pure_pursuit/package.xml ${SOURCE_DIR}/pure_pursuit/package.xml
 COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
 # Project-specific dependency install
-RUN apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -r -y \
-    && apt-get install -y python3-pcl \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+# RUN apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -r -y \
+#     && apt-get install -y python3-pcl \
+#     && rm -rf /var/lib/apt/lists/* \
+#     && apt-get clean
 # Build project
 COPY . ${SOURCE_DIR}
-RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
-
+# RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
 
 # Change owner of the files to non-root user
 RUN chown -R ${USERNAME} /home/${USERNAME}
