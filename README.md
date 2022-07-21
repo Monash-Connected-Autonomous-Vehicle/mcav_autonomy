@@ -31,7 +31,7 @@ mcav_ws/
 ```
 See [Git Tools - Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) for information on working with submodules.
 
-# How to run
+# How to run in CARLA
 Terminal 1 (Launch CARLA server):
 - `/opt/carla-simulator/CarlaUE4.sh`
 
@@ -42,3 +42,16 @@ Terminal 2 (Launch CARLA ros-bridge):
 Terminal 3 (Launch autonomy stack):
 - `cd ~/mcav_ws && source install/setup.bash`
 - `ros2 launch autonomy_launch carla.launch.py waypoint_filename:=/home/mcav/Sheng/control_ws/town01_path1.csv`
+
+# How to run on PX2
+Terminal 1 outside the container (Launch camera drivers):
+- `autonomy_launch/camera_drivers_px2.sh`
+
+Terminal 2 (Enter the container): 
+- `docker/px2_run.sh`
+
+Terminal 2a (Start the ros1 bridge):
+- `autonomy_launch/ros1bridge.sh`
+
+Terminal 2b (Launch the mcav_autonomy software):
+- `ros2 launch autonomy_launch autonomy.launch`

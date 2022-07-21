@@ -49,6 +49,7 @@ RUN apt-get update && rosdep update && rosdep install --from-paths src --ignore-
 COPY . ${SOURCE_DIR}
 RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
 
+
 # Change owner of the files to non-root user
 RUN chown -R ${USERNAME} /home/${USERNAME}
 # Add source commands to bashrc
