@@ -62,19 +62,24 @@ class PCL2Subscriber(Node):
     def _callback(self, msg):
         """Subscriber callback. Receives PCL2 message and converts it to points"""
 
+        # create and save a pythonpcl pointcloud and its numpy representation from the ros message
         self.np_pointcloud, self.pointcloud = self.load_pointcloud_from_ros_msg(msg)
-        kd_tree = self.pointcloud.make_kdtree() # make kdtree from our tree
-        
+
+        # make kdtree from the pointcloud
+        kd_tree = self.pointcloud.make_kdtree()
+
+        # a list of indices representing each set of points in np_pointcloud that are in the same cluster
         np_pointcloud_cluster_indices = self.create_euclidean_cluster(
             self.pointcloud, kd_tree, config.cluster_tolerance, config.min_cluster_size, config.max_cluster_size)
 
+        # a list representing a coloured version of the clusters in the pointcloud for visualisation
         coloured_clustered_points = self.create_coloured_pointcloud_clusters(np_pointcloud_cluster_indices)
 
         # convert to pcl.PointCloud_PointXYZRGB for visualisation in RViz
         coloured_clustered_pointcloud = pcl.PointCloud_PointXYZRGB()
         coloured_clustered_pointcloud.from_list(coloured_clustered_points)
         timestamp = self.get_clock().now().to_msg()
-        
+
         # convert the pcl to a ROS PCL2 message
         pcl2_msg = pcl_to_ros(coloured_clustered_pointcloud,
                               timestamp, self.original_frame_id)
