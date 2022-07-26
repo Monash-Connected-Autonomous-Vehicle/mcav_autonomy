@@ -81,6 +81,9 @@ install(PROGRAMS
   ${PROJECT_NAME}/cluster.py
   ${PROJECT_NAME}/mock_image_pub.py
   ${PROJECT_NAME}/object_detection.py
+  ${PROJECT_NAME}/utils.py
+  ${PROJECT_NAME}/config.py
+  ${PROJECT_NAME}/tracking.py
   DESTINATION lib/${PROJECT_NAME})
 
 #if(BUILD_TESTING)
