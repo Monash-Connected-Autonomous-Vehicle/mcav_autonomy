@@ -14,16 +14,16 @@ from visualization_msgs.msg import MarkerArray, Marker
 from transforms3d.quaternions import mat2quat
 from transforms3d.euler import mat2euler, euler2quat
 
-from project_tracker.utils import numpy_2_PCL2, PCL2_2_numpy, create_colour_list, pcl_to_ros
-from project_tracker.tracking import Tracker
+from utils import numpy_2_PCL2, PCL2_2_numpy, create_colour_list, pcl_to_ros
+from tracking import Tracker
 
 from mcav_interfaces.msg import DetectedObject, DetectedObjectArray
 
 import pcl
 
+import config
 
 class PCL2Subscriber(Node):
-
     def __init__(self):
         super(PCL2Subscriber, self).__init__('pcl2_subscriber')
         self.subscription = self.create_subscription(
@@ -33,23 +33,24 @@ class PCL2Subscriber(Node):
             10
         )
 
+        self.pointcloud: pcl.PointCloud
+        self.np_pointcloud: np.ndarray
+        self.original_frame_id: str
+
         # TODO create cloud cluster publisher via creating a custom msg
         self._cloud_cluster_publisher = self.create_publisher(PCL2, 'clustered_pointclouds', 10)
         self._bounding_boxes_publisher = self.create_publisher(MarkerArray, 'bounding_boxes', 10)
         self._detected_objects_publisher = self.create_publisher(DetectedObjectArray, 'detected_objects', 10)
         
-
-        # parameters for Euclidean Clustering
-        self.min_cluster_size = 10
-        self.max_cluster_size = 600
-        self.cluster_tolerance = 0.4 # range from 0.5 -> 0.7 seems suitable. Test more when have more data
-
         # create tracker for identifying and following objects over time
         # self.tracker = Tracker(max_frames_before_forget=2, max_frames_length=30, tracking_method="centre_distance", dist_threshold=5)
         # self.tracker = Tracker(max_frames_before_forget=2, max_frames_length=30, tracking_method="iou", iou_threshold=0.85)
         self.tracker = Tracker(
-            max_frames_before_forget=2, max_frames_length=30, tracking_method="both", 
-            iou_threshold=0.85, dist_threshold = 5
+            max_frames_before_forget=2, 
+            max_frames_length=30, 
+            tracking_method="both", 
+            iou_threshold=0.85,
+            dist_threshold = 5
         )
 
         # colour list for publishing different clusters
@@ -60,47 +61,33 @@ class PCL2Subscriber(Node):
 
     def _callback(self, msg):
         """Subscriber callback. Receives PCL2 message and converts it to points"""
-        start = time.time()
-        self.original_frame_id = msg.header.frame_id
-        self.full_cloud = PCL2_2_numpy(msg, reflectance=False)
-        self.cloud = self.full_cloud[:, :3] # ignore reflectance for clustering
-        
-        self.no_samples, self.no_axes = self.cloud.shape
-        cloud_time = time.time() - start
-        self.get_logger().info(f"Took {cloud_time:.5f}s to receive pcl2 message: {self.no_samples, self.no_axes}")
 
-        ## python3-pcl binding euclidean clustering
-        ec_cloud = pcl.PointCloud() # create empty pcl.PointCloud to use C++ bindings to PCL 
-        ec_cloud.from_array(self.cloud)
-        ec_tree = ec_cloud.make_kdtree() # make kdtree from our tree
-        start = time.time()
-        self.euclidean_clustering_ec(ec_cloud, ec_tree)
-        clustering_ec_time = time.time() - start
-        self.get_logger().info(f"PCL binding ec took {clustering_ec_time:.5f}s to find {len(self.clusters_ec)} clusters.")
+        # create and save a pythonpcl pointcloud and its numpy representation from the ros message
+        self.np_pointcloud, self.pointcloud = self.load_pointcloud_from_ros_msg(msg)
 
-        ## PUBLISHING
-        # COLOURED VERSION
-        # colouring the clouds
-        self.colour_cluster_point_list = []
-        for j, indices in enumerate(self.clusters_ec):
-            for indice in indices:
-                self.colour_cluster_point_list.append([
-                    self.cloud[indice][0],
-                    self.cloud[indice][1],
-                    self.cloud[indice][2],
-                    self.colour_list[j]
-                ])
-                
+        # make kdtree from the pointcloud
+        kd_tree = self.pointcloud.make_kdtree()
+
+        # a list of indices representing each set of points in np_pointcloud that are in the same cluster
+        np_pointcloud_cluster_indices = self.create_euclidean_cluster(
+            self.pointcloud, kd_tree, config.cluster_tolerance, config.min_cluster_size, config.max_cluster_size)
+
+        # a list representing a coloured version of the clusters in the pointcloud for visualisation
+        coloured_clustered_points = self.create_coloured_pointcloud_clusters(np_pointcloud_cluster_indices)
+
         # convert to pcl.PointCloud_PointXYZRGB for visualisation in RViz
-        cluster_colour_cloud = pcl.PointCloud_PointXYZRGB()
-        cluster_colour_cloud.from_list(self.colour_cluster_point_list)
+        coloured_clustered_pointcloud = pcl.PointCloud_PointXYZRGB()
+        coloured_clustered_pointcloud.from_list(coloured_clustered_points)
         timestamp = self.get_clock().now().to_msg()
-        pcl2_msg = pcl_to_ros(cluster_colour_cloud, timestamp, self.original_frame_id) # convert the pcl to a ROS PCL2 message
+
+        # convert the pcl to a ROS PCL2 message
+        pcl2_msg = pcl_to_ros(coloured_clustered_pointcloud,
+                              timestamp, self.original_frame_id)
+
         self._cloud_cluster_publisher.publish(pcl2_msg)
 
         # fit bounding boxes to the clustered pointclouds
-        start = time.time()
-        detected_objects = self.create_detected_objects() 
+        detected_objects = self.create_detected_objects(np_pointcloud_cluster_indices) 
 
         # track objects over time
         tracked_detected_objects = self.tracker.update(detected_objects)
@@ -109,36 +96,66 @@ class PCL2Subscriber(Node):
         # fit bounding boxes and ID labels
         self.fit_bounding_boxes(tracked_detected_objects)
 
-        tracking_time = time.time() - start
-        self.get_logger().info(f"Tracking took {tracking_time:.5f}s")
-
         # publish bounding boxes and detected objects
         self._bounding_boxes_publisher.publish(self.markers)
         self._detected_objects_publisher.publish(tracked_detected_objects)
 
-    def euclidean_clustering_ec(self, ec_cloud, ec_tree):
+
+    def create_coloured_pointcloud_clusters(self, np_pointcloud_cluster_indices):
+        # colouring the clouds
+        coloured_clustered_points = []
+        for j, indices in enumerate(np_pointcloud_cluster_indices):
+            for idx in indices:
+                coloured_clustered_points.append([
+                    self.np_pointcloud[idx][0],
+                    self.np_pointcloud[idx][1],
+                    self.np_pointcloud[idx][2],
+                    self.colour_list[j]
+                ])
+        return coloured_clustered_points
+
+
+    def load_pointcloud_from_ros_msg(self, msg):
+        self.original_frame_id = msg.header.frame_id
+        np_full_pointcloud = PCL2_2_numpy(msg, reflectance=False)
+        np_pointcloud = np_full_pointcloud[:, :3] # ignore reflectance for clustering
+
+        ## python3-pcl binding euclidean clustering
+        pointcloud = pcl.PointCloud() # create empty pcl.PointCloud to use C++ bindings to PCL 
+        pointcloud.from_array(np_pointcloud)
+        
+        return np_pointcloud, pointcloud
+
+
+    def create_euclidean_cluster(self, pointcloud, kd_tree, cluster_tolerance, min_cluster_size, max_cluster_size):
         """
         Perform euclidean clustering with a given pcl.PointCloud() and kdtree
 
         Parameters
         ----------
-        ec_cloud : pcl.PointCloud()
+        pointcloud : pcl.PointCloud()
             pcl version of pointcloud message received
-        ec_tree : kdtree
+        kd_tree : kdtree
             kdtree from pcl-python binding
+        cluster_tolerance: float 
+        min_cluster_size: int
+            minimum size of a cluster
+        max_cluster_size: int
+            maximum size of a cluster
         """
         # make euclidean cluster extraction method
-        ec = ec_cloud.make_EuclideanClusterExtraction()
+        ec = pointcloud.make_EuclideanClusterExtraction()
         # set parameters
-        ec.set_ClusterTolerance(self.cluster_tolerance)
-        ec.set_MinClusterSize(self.min_cluster_size + 1)
-        ec.set_MaxClusterSize(self.max_cluster_size)
-        ec.set_SearchMethod(ec_tree)
-        # perform euclidean clustering and return indices
-        self.clusters_ec = ec.Extract()
-        return
+        ec.set_ClusterTolerance(cluster_tolerance)
+        ec.set_MinClusterSize(min_cluster_size + 1)
+        ec.set_MaxClusterSize(max_cluster_size)
+        ec.set_SearchMethod(kd_tree)
 
-    def create_detected_objects(self):
+        # perform euclidean clustering and return indices
+        return ec.Extract()
+
+
+    def create_detected_objects(self, np_pointcloud_cluster_indices):
         """
         Create detected objects from the clusters by finding their centre points and dimensions. This 
         creates the constraints necessary to fit a bounding box later.
@@ -148,8 +165,8 @@ class PCL2Subscriber(Node):
         """
         objects = DetectedObjectArray()
 
-        for cluster_idx, indices in enumerate(self.clusters_ec):
-            cloud = self.cloud[list(indices)] # numpy array cloud
+        for cluster_idx, indices in enumerate(np_pointcloud_cluster_indices):
+            cloud = self.np_pointcloud[list(indices)] # numpy array cloud
             # convert to pcl object
             bb_cloud = pcl.PointCloud()
             bb_cloud.from_array(cloud) 
@@ -200,6 +217,7 @@ class PCL2Subscriber(Node):
             objects.detected_objects.append(detected_object)
 
         return objects
+
 
     def fit_bounding_boxes(self, tracked_detected_objects):
         """
@@ -278,6 +296,7 @@ def main(args=None):
     # destroy node explicity
     pcl2_subscriber.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

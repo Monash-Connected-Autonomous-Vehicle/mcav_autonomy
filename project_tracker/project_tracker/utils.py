@@ -9,6 +9,7 @@ import struct
 from random import randint
 import ctypes
 
+
 def numpy_2_PCL2(cloud, timestamp, frame_id='velodyne', reflectance=True):
     """
     Utility function to take in a numpy pointcloud array and return a PCL2 message for publishing in ROS2.
@@ -66,15 +67,17 @@ def PCL2_2_numpy(pcl2_msg, reflectance=True):
     else:
         return cloud_np.reshape((-1, 3))
 
+
 def create_colour_list():
     """Create list of colours in ROS float format for use in ROS PCL2 messages"""
     colour_list = []
     rgb_list = []
-    for i in range(300):
+    for _ in range(300):
         rgb = random_color_gen()
         rgb_list.append(rgb)
         colour_list.append(rgb_to_float(rgb))
     return rgb_list, colour_list
+
 
 def random_color_gen():
     """ Generates a random color
@@ -88,6 +91,7 @@ def random_color_gen():
     g = randint(0, 255)
     b = randint(0, 255)
     return [r, g, b]
+
 
 def rgb_to_float(color):
     """ 
@@ -115,7 +119,7 @@ def rgb_to_float(color):
 
 
 def pcl_to_ros(pcl_array, timestamp, frame_id='velodyne'):
-    """ 
+    """
     Converts a pcl PointXYZRGB to a ROS PointCloud2 message
 
     Args:

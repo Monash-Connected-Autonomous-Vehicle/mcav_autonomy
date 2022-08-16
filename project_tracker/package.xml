@@ -4,7 +4,7 @@
   <name>project_tracker</name>
   <version>0.0.0</version>
   <description>Package to take LiDAR sensor data and inputs from Multi-Task Panoptic Perception model to create accurate pose and velocity estimates of an object over time in 3D space.</description>
-  <maintainer email="amir@gmail.come">amir</maintainer>
+  <maintainer email="amir@gmail.com">amir</maintainer>
   <maintainer email="bedw0004@student.monash.edu">bened-wards</maintainer>
   <license>The MIT License</license>
 
@@ -33,13 +33,13 @@
   <exec_depend>sensor_msgs_py</exec_depend>
   <exec_depend>tf_transformations</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
-  <exec_depend>transforms3d</exec_depend>
   <exec_depend>mcav_interfaces</exec_depend>
-  <exec_depend>torch</exec_depend>
+  <exec_depend>python-pytorch-pip</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
-  <exec_depend>cv2</exec_depend> 
+  <exec_depend>python3-opencv</exec_depend> 
   <exec_depend>python3-scipy</exec_depend>
   <exec_depend>ros2launch</exec_depend>
+  <exec_depend>python3-transforms3d</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
