@@ -13,9 +13,6 @@ Project tracker takes inputs from the @Multi-Task Panoptic Perception model and 
 - Install dependencies
     ```sh
     sudo apt install python3-pcl
-    sudo apt-get install ros-galactic-sensor-msgs-py
-    sudo apt-get install ros-galactic-tf-transformations
-    sudo pip3 install transforms3d
     ```
 
 ### Requirements for CARLA Example
@@ -79,7 +76,18 @@ mcav_ws/
 
 Note, for every terminal opened you should navigate to the root folder of your workspace (`cd ~/mcav_ws`) and source the setup file (`. install/setup.bash`).
 
-### KITTI Example
+### Option 1: Running on live sensor data with velodyne VLP16 lidar
+Terminal 1 (Filter and cluster lidar points):
+```
+ros2 launch project_tracker tracking.launch.xml launch_velodyne:=true
+```
+
+Terminal 2 (Visualise result in rviz):
+```
+rviz2 -d config/tracker.rviz
+```
+
+### Option 2: Run on data from the KITTI dataset
 
 Terminal 1 (Mock KITTI Publisher):
 ```sh
@@ -107,7 +115,7 @@ Terminal 5 (Object Detection Node to detect objects from images):
 ros2 run project_tracker object_detection.py
 ```
 
-### CARLA Example
+### Option 3: Run with CARLA simulator
 
 #### Recording ROS bags in Carla
 
@@ -158,11 +166,11 @@ cd ~/mcav_ws/src/project_tracker/bag_files
 ros2 bag play <BAG-NAME> -r 2.0
 e.g. ros2 bag play manual_150 -r 2.0
 ```
-* Terminal 2: source workspace setup file and run tracking_carla launch file
+* Terminal 2: source workspace setup file and run carla_tracking launch file
 ```bash
 cd ~/mcav_ws
 . install/setup.bash
-ros2 launch project_tracker tracking_carla.launch.py
+ros2 launch project_tracker carla_tracking.launch.py
 ```
 * Terminal 3: launch rviz2 and set frame_id to 'velodyne'. Add relevant pointcloud/image topics
 
