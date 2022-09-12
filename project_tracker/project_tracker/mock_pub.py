@@ -27,7 +27,7 @@ class PointCloudToPCL2(Node):
         self.declare_parameter('velodyne_data_dir', "/home/mcav/DATASETS/KITTI/2011_09_26/2011_09_26_drive_0048_sync/velodyne_points/data/")
         velodyne_data_dir = self.get_parameter('velodyne_data_dir').get_parameter_value().string_value
         self.velodyne_glob_path = os.path.join(velodyne_data_dir, '*.bin')
-        self.velodyne_file_paths = glob.glob(self.velodyne_glob_path)
+        self.velodyne_file_paths = None
 
         while True:
             self.publish_pcl2()
@@ -41,7 +41,7 @@ class PointCloudToPCL2(Node):
 
             self._publisher.publish(msg)
         else: # restart
-            self.velodyne_file_paths = glob.glob(self.velodyne_glob_path)
+            self.velodyne_file_paths = sorted(glob.glob(self.velodyne_glob_path))
             self.get_logger().info("Restarting from beginning!")
 
     def convert_bin_to_PCL2(self, velodyne_file_path):
