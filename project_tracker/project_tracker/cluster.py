@@ -174,8 +174,9 @@ class PCL2Subscriber(Node):
             # create feature extractor for bounding box
             feature_extractor = bb_cloud.make_MomentOfInertiaEstimation()
             feature_extractor.compute()
+
             # axis-aligned bounding box
-            [min_point_AABB, max_point_AABB] = feature_extractor.get_AABB()
+            # [min_point_AABB, max_point_AABB] = feature_extractor.get_AABB()
             # oriented bounding box
             [min_point_OBB, max_point_OBB, position_OBB,
                 rotational_matrix_OBB] = feature_extractor.get_OBB()
@@ -187,14 +188,17 @@ class PCL2Subscriber(Node):
 
             # convert rotational matrix to quaternion for use in pose
             roll, pitch, yaw = mat2euler(rotational_matrix_OBB)
+            
             while not(-10. < yaw*180/np.pi < 10.):
                 yaw -= np.sign(yaw) * 0.15
+            
             quat = euler2quat(0., 0., yaw)
             # pose -> assume of center point
             detected_object.pose.orientation.w = quat[0]
             detected_object.pose.orientation.x = quat[1]
             detected_object.pose.orientation.y = quat[2]
             detected_object.pose.orientation.z = quat[3]
+
             # # orientation -> restricted to rotate only around the z axis i.e. flat to ground plane
             # mag = sqrt(quat[0]**2 + quat[3]**2)
             # detected_object.pose.orientation.w = float(quat[0]/mag)
@@ -206,10 +210,12 @@ class PCL2Subscriber(Node):
             detected_object.pose.position.x = float(position_OBB[0,0])
             detected_object.pose.position.y = float(position_OBB[0,1])
             detected_object.pose.position.z = float(position_OBB[0,2])
+
             # dimensions -> assuming want distance from face to face
             detected_object.dimensions.x = 2 * float(max_point_OBB[0,0])
             detected_object.dimensions.y = 2 * float(max_point_OBB[0,1])
             detected_object.dimensions.z = 2 * float(max_point_OBB[0,2])
+            
             # object and signal class -> unknown for now
             detected_object.object_class = detected_object.CLASS_UNKNOWN
             detected_object.signal_state = detected_object.SIGNAL_UNKNOWN
