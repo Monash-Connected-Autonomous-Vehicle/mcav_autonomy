@@ -41,10 +41,10 @@ COPY project_tracker/package.xml ${SOURCE_DIR}/project_tracker/package.xml
 COPY pure_pursuit/package.xml ${SOURCE_DIR}/pure_pursuit/package.xml
 COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
 # Project-specific dependency install
-# RUN apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -r -y \
-#     && apt-get install -y python3-pcl \
-#     && rm -rf /var/lib/apt/lists/* \
-#     && apt-get clean
+RUN apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -r -y \
+    && apt-get install -y python3-pcl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 # Build project
 COPY . ${SOURCE_DIR}
 # RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
@@ -56,7 +56,7 @@ RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/${USERNAME}/.bashrc
 # Change prompt to show we are in a docker container
 RUN echo "export PS1='\[\e]0;\u@docker: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@docker\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> /home/${USERNAME}/.bashrc
 # Add workspace sourcing alias (means you can type 'src' to source the workspace)
-RUN echo "alias src='source ~/mcav_ws/install/setup.bash"
+RUN echo "alias src='source ~/mcav_ws/install/setup.bash'" >> /home/${USERNAME}/.bashrc
 # Add tmux configuration file
 COPY docker/.tmux.conf /home/${USERNAME}/.tmux.conf
 
