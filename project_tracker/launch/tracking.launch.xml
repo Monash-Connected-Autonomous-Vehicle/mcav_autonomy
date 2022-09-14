@@ -1,0 +1,15 @@
+<launch>
+    <arg name="launch_velodyne" default="false" description="launch velodyne lidar driver"/>
+
+    <group if="$(var launch_velodyne)" >
+        <include file="$(find-pkg-share velodyne_driver)/launch/velodyne_driver_node-VLP16-launch.py">
+        </include>
+        <include file="$(find-pkg-share velodyne_pointcloud)/launch/velodyne_convert_node-VLP16-launch.py">
+        </include>
+    </group>
+
+    <node pkg="project_tracker" exec="filter" name="lidar_filter">
+    </node>
+    <node pkg="project_tracker" exec="cluster.py" name="lidar_cluster">
+    </node>
+</launch>
