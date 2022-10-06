@@ -17,3 +17,6 @@
 [submodule "SD-VehicleInterface"]
 	path = SD-VehicleInterface
 	url = git@github.com:Monash-Connected-Autonomous-Vehicle/SD-VehicleInterface.git
+[submodule "project_map"]
+	path = project_map
+	url = git@github.com:Monash-Connected-Autonomous-Vehicle/project_map.git
