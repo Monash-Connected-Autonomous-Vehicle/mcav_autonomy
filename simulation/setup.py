@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'carla_spawn = simulation.carla_spawn:main',
             'generate_traffic = simulation.generate_traffic:main',
+            'simple_sim = simulation.simple_sim:main',
         ],
     },
 )
