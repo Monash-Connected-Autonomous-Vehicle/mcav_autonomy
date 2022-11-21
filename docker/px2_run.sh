@@ -11,9 +11,9 @@ run_without_gpu()
         --net=host \
         --name $CONTAINER_NAME \
         --rm \
-        -it $IMAGE_NAME bash
-        # --entrypoint /ros_entrypoint.sh \
-        # -d $IMAGE_NAME /usr/bin/tail -f /dev/null
+        -it $IMAGE_NAME bash -c /home/mcav/mcav_ws/src/mcav_autonomy/docker/tmux-start.sh
+        #-d $IMAGE_NAME /usr/bin/tail -f /dev/null # was testing this to see if we can keep container running in background
+	# --entrypoint /ros_entrypoint.sh \
 }
 
 build_image() 
