@@ -7,3 +7,4 @@ docker/Dockerfile.px2
 .git
 .dockerignore
 autoware
+rosbags
