@@ -1,4 +1,4 @@
-FROM ros:galactic
+FROM ros:foxy
 
 # Dev tools
 # Try to keep ROS-related dependencies out of here and inside package.xml to be installed with rosdep instead
@@ -31,19 +31,12 @@ ENV COLCON_WS=${HOMEDIR}/mcav_ws
 ENV SOURCE_DIR=${COLCON_WS}/src/mcav_autonomy
 WORKDIR ${COLCON_WS}
 
-# Download autoware and deps
-RUN git clone https://github.com/autowarefoundation/autoware.git ${COLCON_WS}/src/autoware
-RUN sh -c 'echo "deb [trusted=yes] https://s3.amazonaws.com/autonomoustuff-repo/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/autonomoustuff-public.list'
-# RUN pip3 install gdown && apt update && apt install geographiclib-tools && \
-#  geographiclib-get-geoids egm2008-1
-WORKDIR ${COLCON_WS}/src/autoware
-RUN mkdir src && vcs import src < autoware.repos
-
 # Copy package xml files to decide dependencies
 COPY autonomy_launch/package.xml ${SOURCE_DIR}/autonomy_launch/package.xml
 COPY velocity_planner/package.xml ${SOURCE_DIR}/velocity_planner/package.xml
 COPY mcav_interfaces/package.xml ${SOURCE_DIR}/mcav_interfaces/package.xml
 COPY project_tracker/package.xml ${SOURCE_DIR}/project_tracker/package.xml
+COPY project_map/icp_cpp_localiser/package.xml ${SOURCE_DIR}/project_map/icp_cpp_localiser/package.xml
 COPY pure_pursuit/package.xml ${SOURCE_DIR}/pure_pursuit/package.xml
 COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
 COPY SD-VehicleInterface/sd_msgs/package.xml ${SOURCE_DIR}/SD-VehicleInterface/sd_msgs/package.xml
@@ -69,24 +62,17 @@ COPY docker/.tmux.conf /home/${USERNAME}/.tmux.conf
 # Change owner of the files to non-root user
 RUN chown -R ${USERNAME} /home/${USERNAME}
 
-# Install ROS 1 bridge
-RUN echo "deb http://packages.ros.org/ros/ubuntu/ focal main" > /etc/apt/sources.list.d/ros1-latest.list
-# setup keys
-ENV ROS1_DISTRO noetic
-ENV ROS2_DISTRO foxy
-# install ros 1 packages
-RUN apt-get update && apt-get install -y \
-	ros-noetic-ros-comm=1.15.14-1* \
-        ros-foxy-ros1-bridge=0.9.6-1* \
-	ros-${ROS2_DISTRO}-velodyne-pointcloud \
-	&& rm -rf /var/lib/apt/lists/*
-
-# Nvidia GPU Support (if run with nvidia-container-runtime)
-ENV NVIDIA_VISIBLE_DEVICES \
-    ${NVIDIA_VISIBLE_DEVICES:-all}
-ENV NVIDIA_DRIVER_CAPABILITIES \
-    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
-ENV ROS_DISTRO foxy
+# # Install ROS 1 bridge
+# RUN echo "deb http://packages.ros.org/ros/ubuntu/ focal main" > /etc/apt/sources.list.d/ros1-latest.list
+# # setup keys
+# ENV ROS1_DISTRO noetic
+# ENV ROS2_DISTRO foxy
+# # install ros 1 packages
+# RUN apt-get update && apt-get install -y \
+# 	ros-noetic-ros-comm=1.15.14-1* \
+#         ros-foxy-ros1-bridge=0.9.6-1* \
+# 	ros-${ROS2_DISTRO}-velodyne-pointcloud \
+# 	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR ${SOURCE_DIR}
 CMD /bin/bash
