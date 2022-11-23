@@ -91,7 +91,8 @@ class PCL2Subscriber(Node):
 
         # track objects over time
         tracked_detected_objects = self.tracker.update(detected_objects)
-        print(f"Number of tracked objects: {len(tracked_detected_objects.detected_objects)}")
+        # self.get_logger().info(f'Number of tracked objects: {len(tracked_detected_objects.detected_objects)}')
+        # print(f"Number of tracked objects: {len(tracked_detected_objects.detected_objects)}")
 
         # fit bounding boxes and ID labels
         self.fit_bounding_boxes(tracked_detected_objects)
@@ -163,6 +164,7 @@ class PCL2Subscriber(Node):
         Tutorial at PCL docs helps with make_MomentOfInertiaEstimation aspect
         https://pcl.readthedocs.io/projects/tutorials/en/master/moment_of_inertia.html#moment-of-inertia
         """
+        self.get_logger().info(f'number of clusters: {len(np_pointcloud_cluster_indices)}')
         objects = DetectedObjectArray()
 
         for cluster_idx, indices in enumerate(np_pointcloud_cluster_indices):
@@ -222,6 +224,7 @@ class PCL2Subscriber(Node):
 
             objects.detected_objects.append(detected_object)
 
+        self.get_logger().info(f'number of objects: {len(objects.detected_objects)}')
         return objects
 
 
