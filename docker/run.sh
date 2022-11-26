@@ -44,6 +44,7 @@ build_image()
 {
     echo "Building docker image $IMAGE_NAME from $DOCKER_FILE"
     docker build . -t $IMAGE_NAME -f $DOCKER_FILE
+    docker build . --platform $PLATFORM -t $IMAGE_NAME -f $DOCKER_FILE
 }
 
 # Check for nvidia-container-runtime and set variables for GPU/no GPU accordingly
@@ -53,13 +54,24 @@ if [[ $(docker info | grep Runtimes) =~ nvidia ]] ; then # computer has nvidia-c
     IMAGE_NAME=ghcr.io/mcav/mcav_autonomy:main
     DOCKER_FILE=docker/Dockerfile.gpu
     GPU_ON=true
+    PLATFORM=linux/amd64
 else # no nvidia-container-runtime
     echo "GPU not available. Install nvidia container runtime to enable support."
-    CONTAINER_NAME=mcav_autonomy_cpu
-    IMAGE_NAME=mcav_autonomy_cpu
-    DOCKER_FILE=docker/Dockerfile.cpu
     GPU_ON=false
-fi  
+    # Determine if running on ARM (jetson/M1) device or x86 (regular Intel computer)
+    if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then # arm
+        CONTAINER_NAME=mcav_autonomy_arm
+        IMAGE_NAME=mcav_autonomy_arm
+        DOCKER_FILE=docker/Dockerfile.px2
+        PLATFORM=linux/arm64
+    else # x86_64
+        echo "not arm"
+        CONTAINER_NAME=mcav_autonomy_cpu
+        IMAGE_NAME=mcav_autonomy_cpu
+        DOCKER_FILE=docker/Dockerfile.cpu
+        PLATFORM=linux/amd64
+    fi
+fi
 
 case "$1" in
 "build")
