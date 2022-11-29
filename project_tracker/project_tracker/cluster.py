@@ -241,8 +241,10 @@ class PCL2Subscriber(Node):
             id_marker.header.frame_id = self.original_frame_id
             id_marker.type = Marker.TEXT_VIEW_FACING
             id_marker.action = id_marker.ADD
-            id_marker.pose.position.x = d_o.pose.position.x
-            id_marker.pose.position.y = d_o.pose.position.y + 0.5
+
+            # Keeping original bounding box labelling
+            id_marker.pose.position.x = d_o.pose.position.x + 0.5
+            id_marker.pose.position.y = d_o.pose.position.y
             id_marker.pose.position.z = d_o.pose.position.z
             id_marker.color.a = 1.
             id_marker.color.r = 1.
@@ -266,9 +268,11 @@ class PCL2Subscriber(Node):
             bounding_box_marker.color.g = 255.#self.rgb_list[cluster_idx][1]/255.
             bounding_box_marker.color.b = 255.#self.rgb_list[cluster_idx][2]/255.
             # size -> 2 times the max_point from centre
-            bounding_box_marker.scale.x = d_o.dimensions.x
-            bounding_box_marker.scale.y = d_o.dimensions.y
-            bounding_box_marker.scale.z = d_o.dimensions.z
+
+            # Flipping bounding box fit
+            bounding_box_marker.scale.x = d_o.dimensions.y
+            bounding_box_marker.scale.y = d_o.dimensions.z
+            bounding_box_marker.scale.z = d_o.dimensions.x
             bounding_box_marker.pose = d_o.pose
             self.markers.markers.append(bounding_box_marker)
 
