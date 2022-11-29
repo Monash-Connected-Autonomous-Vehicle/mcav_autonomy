@@ -1,7 +1,8 @@
 <launch>
   <arg name="bag" default="rosbag2_XXX.db3"/>
+  <arg name="rate" default="1.0" />
 
   <node pkg="data_recording" exec="lidar_stamp_updater" name="lidar_stamp_updater" />
   
-  <executable cmd="ros2 bag play $(var bag) --remap /velodyne_points:=/velodyne_points_outdated" output="screen" />
+  <executable cmd="ros2 bag play $(var bag) --remap /velodyne_points:=/velodyne_points_outdated -r $(var rate)" output="screen" />
 </launch>

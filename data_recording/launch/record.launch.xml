@@ -1,0 +1,16 @@
+<!-- Records imu, GPS, twist, CAN frames (transmitted and received), and lidar points (lidar can be disabled by adding lidar:=false to launch command) -->
+<launch>
+  <arg name="lidar" default="true" description="Boolean that decides whether lidar points are recorded or not." />
+  <arg name="interface" default="false" description="Whether or not to launch the StreetDrone vehicle_interface node that translates CAN messages" />
+
+  <group if="$(var lidar)">
+    <executable cmd="ros2 bag record /sd_imu_raw /sd_current_GPS /sd_current_twist /from_can_bus /to_can_bus /velodyne_points" output="screen" />
+  </group>
+  <group unless="$(var lidar)">
+    <executable cmd="ros2 bag record /sd_imu_raw /sd_current_GPS /sd_current_twist /from_can_bus /to_can_bus" output="screen" />
+  </group>
+
+  <group if="$(var interface)">
+    <include file="$(find-pkg-share sd_vehicle_interface)/launch/sd_vehicle_interface.launch.xml" />
+  </group>
+</launch>
