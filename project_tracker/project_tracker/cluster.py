@@ -39,7 +39,7 @@ class PCL2Subscriber(Node):
 
         # TODO create cloud cluster publisher via creating a custom msg
         self._cloud_cluster_publisher = self.create_publisher(PCL2, 'clustered_pointclouds', 10)
-        self._bounding_boxes_publisher = self.create_publisher(MarkerArray, 'bounding_boxes', 10)
+        self._bounding_boxes_publisher = self.create_publisher(MarkerArray, 'bounding_boxes_array', 10)
         self._detected_objects_publisher = self.create_publisher(DetectedObjectArray, 'detected_objects', 10)
         
         # create tracker for identifying and following objects over time
@@ -85,7 +85,7 @@ class PCL2Subscriber(Node):
                               timestamp, self.original_frame_id)
 
         self._cloud_cluster_publisher.publish(pcl2_msg)
-
+        
         # fit bounding boxes to the clustered pointclouds
         detected_objects = self.create_detected_objects(np_pointcloud_cluster_indices) 
 
@@ -177,9 +177,10 @@ class PCL2Subscriber(Node):
             feature_extractor = bb_cloud.make_MomentOfInertiaEstimation()
             feature_extractor.compute()
 
-            # axis-aligned bounding box
+            # Axis-Aligned Bounding Box (AABB)
             # [min_point_AABB, max_point_AABB] = feature_extractor.get_AABB()
-            # oriented bounding box
+
+            # Oriented Bounding Box (OBB)
             [min_point_OBB, max_point_OBB, position_OBB,
                 rotational_matrix_OBB] = feature_extractor.get_OBB()
 
@@ -194,7 +195,7 @@ class PCL2Subscriber(Node):
             while not(-10. < yaw*180/np.pi < 10.):
                 yaw -= np.sign(yaw) * 0.15
             
-            quat = euler2quat(0., 0., yaw)
+            quat = euler2quat(roll, pitch, yaw)
             # pose -> assume of center point
             detected_object.pose.orientation.w = quat[0]
             detected_object.pose.orientation.x = quat[1]
@@ -204,9 +205,9 @@ class PCL2Subscriber(Node):
             # # orientation -> restricted to rotate only around the z axis i.e. flat to ground plane
             # mag = sqrt(quat[0]**2 + quat[3]**2)
             # detected_object.pose.orientation.w = float(quat[0]/mag)
-            # detected_object.pose.orientation.x = 0. #float(quat[1])
-            # detected_object.pose.orientation.y = 0. #float(quat[2]/mag)
-            # detected_object.pose.orientation.z = float(quat[2]/mag)#float(quat[3])
+            # detected_object.pose.orientation.x = float(quat[1])
+            # detected_object.pose.orientation.y = float(quat[2]/mag)
+            # detected_object.pose.orientation.z = float(quat[3])
 
             ### oriented version
             detected_object.pose.position.x = float(position_OBB[0,0])
@@ -258,7 +259,7 @@ class PCL2Subscriber(Node):
 
             # create bounding boxes for visualisation
             bounding_box_marker = Marker()
-            bounding_box_marker.ns = 'bounding_boxes'
+            bounding_box_marker.ns = 'bounding_boxes_array'
             bounding_box_marker.id = d_o.object_id
             bounding_box_marker.header.frame_id = self.original_frame_id
             bounding_box_marker.type = Marker.CUBE
@@ -270,9 +271,9 @@ class PCL2Subscriber(Node):
             # size -> 2 times the max_point from centre
 
             # Flipping bounding box fit
-            bounding_box_marker.scale.x = d_o.dimensions.y
-            bounding_box_marker.scale.y = d_o.dimensions.z
-            bounding_box_marker.scale.z = d_o.dimensions.x
+            bounding_box_marker.scale.x = d_o.dimensions.x
+            bounding_box_marker.scale.y = d_o.dimensions.y
+            bounding_box_marker.scale.z = d_o.dimensions.z
             bounding_box_marker.pose = d_o.pose
             self.markers.markers.append(bounding_box_marker)
 
@@ -286,7 +287,7 @@ class PCL2Subscriber(Node):
                 del_id_marker.action = Marker.DELETE
                 self.markers.markers.append(del_id_marker)
                 del_bb_marker = Marker()
-                del_bb_marker.ns = 'bounding_boxes'
+                del_bb_marker.ns = 'bounding_boxes_array'
                 del_bb_marker.header.frame_id = self.original_frame_id
                 del_bb_marker.id = delete_id
                 del_bb_marker.action = Marker.DELETE
