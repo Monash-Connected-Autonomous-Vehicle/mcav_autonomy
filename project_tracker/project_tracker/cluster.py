@@ -178,46 +178,26 @@ class PCL2Subscriber(Node):
             feature_extractor.compute()
 
             # Axis-Aligned Bounding Box (AABB)
-            # [min_point_AABB, max_point_AABB] = feature_extractor.get_AABB()
+            [min_point_AABB, max_point_AABB] = feature_extractor.get_AABB()
 
             # Oriented Bounding Box (OBB)
-            [min_point_OBB, max_point_OBB, position_OBB,
-                rotational_matrix_OBB] = feature_extractor.get_OBB()
+            # [min_point_OBB, max_point_OBB, position_OBB,
+            #     rotational_matrix_OBB] = feature_extractor.get_OBB()
 
             # create detected object
             detected_object = DetectedObject()
             detected_object.object_id = cluster_idx # dummy value until we track the objects
             detected_object.frame_id = self.original_frame_id
 
-            # convert rotational matrix to quaternion for use in pose
-            roll, pitch, yaw = mat2euler(rotational_matrix_OBB)
-            
-            while not(-10. < yaw*180/np.pi < 10.):
-                yaw -= np.sign(yaw) * 0.15
-            
-            quat = euler2quat(roll, pitch, yaw)
-            # pose -> assume of center point
-            detected_object.pose.orientation.w = quat[0]
-            detected_object.pose.orientation.x = quat[1]
-            detected_object.pose.orientation.y = quat[2]
-            detected_object.pose.orientation.z = quat[3]
-
-            # # orientation -> restricted to rotate only around the z axis i.e. flat to ground plane
-            # mag = sqrt(quat[0]**2 + quat[3]**2)
-            # detected_object.pose.orientation.w = float(quat[0]/mag)
-            # detected_object.pose.orientation.x = float(quat[1])
-            # detected_object.pose.orientation.y = float(quat[2]/mag)
-            # detected_object.pose.orientation.z = float(quat[3])
-
-            ### oriented version
-            detected_object.pose.position.x = float(position_OBB[0,0])
-            detected_object.pose.position.y = float(position_OBB[0,1])
-            detected_object.pose.position.z = float(position_OBB[0,2])
+            # set the position of the detected object
+            detected_object.pose.position.x = (max_point_AABB[0,0]+min_point_AABB[0,0])/2
+            detected_object.pose.position.y = (max_point_AABB[0,1]+min_point_AABB[0,1])/2
+            detected_object.pose.position.z = (max_point_AABB[0,2]+min_point_AABB[0,2])/2
 
             # dimensions -> assuming want distance from face to face
-            detected_object.dimensions.x = 2 * float(max_point_OBB[0,0])
-            detected_object.dimensions.y = 2 * float(max_point_OBB[0,1])
-            detected_object.dimensions.z = 2 * float(max_point_OBB[0,2])
+            detected_object.dimensions.x = float(max_point_AABB[0,0]-min_point_AABB[0,0])
+            detected_object.dimensions.y = float(max_point_AABB[0,1]-min_point_AABB[0,1])
+            detected_object.dimensions.z = float(max_point_AABB[0,2]-min_point_AABB[0,2])
             
             # object and signal class -> unknown for now
             detected_object.object_class = detected_object.CLASS_UNKNOWN
