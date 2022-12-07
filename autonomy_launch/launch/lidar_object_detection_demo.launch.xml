@@ -1,0 +1,6 @@
+<launch>
+	<include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml">
+		<arg name="launch_velodyne" value="true" />
+	</include>
+	<node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share project_tracker)/rviz/tracker.rviz'/>
+</launch>
