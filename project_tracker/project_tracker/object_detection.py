@@ -20,7 +20,8 @@ class ObjectDetection(Node):
         self.get_logger().set_level(logging.DEBUG)
 
         # Model
-        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x, custom
+        #self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x, custom
+        self.model = torch.hub.load('yolov5', 'custom', path='/home/mcav/mcav_ws/src/mcav_autonomy/yolov5s.pt', source='local')
 
     def _callback(self, msg: Image):
         # convert ros2 image to cv_image to allow for processing through yolo

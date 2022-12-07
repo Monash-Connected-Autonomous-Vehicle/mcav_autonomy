@@ -41,6 +41,7 @@
   <exec_depend>python3-scipy</exec_depend>
   <exec_depend>ros2launch</exec_depend>
   <exec_depend>python3-transforms3d</exec_depend>
+  <exec_depend>ipython</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
