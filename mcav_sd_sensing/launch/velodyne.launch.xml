@@ -1,7 +1,12 @@
 <launch>
-    <include file="$(find-pkg-share velodyne_driver)/launch/velodyne_driver_node-VLP16-launch.py">
-    </include>
+    <arg name="launch_velodyne_driver" default="false" description="launch velodyne lidar driver"/>
 
-    <include file="$(find-pkg-share velodyne_pointcloud)/launch/velodyne_convert_node-VLP16-launch.py">
-    </include>
+    <group if="$(var launch_velodyne_driver)">
+        <include file="$(find-pkg-share velodyne_driver)/launch/velodyne_driver_node-VLP16-launch.py">
+        </include>
+        <include file="$(find-pkg-share velodyne_pointcloud)/launch/velodyne_convert_node-VLP16-launch.py">
+        </include>
+    </group>
+
+    <node pkg="tf2_ros" exec="static_transform_publisher" args="0.2 0.0 1.5 0 0 0 1 base_link velodyne" />
 </launch>
