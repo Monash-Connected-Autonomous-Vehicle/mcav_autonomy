@@ -31,12 +31,13 @@ class ObjectDetection(Node):
         results = self.model(cv_image)
         
         # print objects found in the console
-        results.print()  # or .show(), .save(), .crop(), .pandas(), etc.
+        # results.print()  # or .show(), .save(), .crop(), .pandas(), etc.
         
         # numpy array representing the classified image
-        image_array = np.array(results.render())[:,:,::-1]
+        image_array = np.array(results.render()[0])[:,:,::-1] # reverse bgr to rgb
 
         image_message = bridge.cv2_to_imgmsg(image_array, encoding="passthrough")
+        image_message.header.frame_id = msg.header.frame_id
 
         self._publisher.publish(image_message)
 
