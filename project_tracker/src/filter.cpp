@@ -66,13 +66,13 @@ private:
     pcl::fromPCLPointCloud2(*pclPc2_t, *pcxyz);
 
     // x and y-coordinate passthrough filter
-    passThroughFilter(pcxyz, pcxyz, "x", -7.0, 7.0, false);
-    passThroughFilter(pcxyz, pcxyz, "y", -10.0, 10.0, false);
+    passThroughFilter(pcxyz, pcxyz, "x", -15.0, 15.0, false);
+    passThroughFilter(pcxyz, pcxyz, "y", -15.0, 15.0, false);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr pcxyz_ground(new pcl::PointCloud<pcl::PointXYZ>);
 
     // z-coordinate passthrough filter, extracting the points on the ground
-    passThroughFilter(pcxyz, pcxyz_ground, "z", -1.55, 1, true);
+    passThroughFilter(pcxyz, pcxyz_ground, "z", -10.55, 1, true);
 
     auto pointCloud2Ground = pxyzPclToPointCloud2(pcxyz_ground);
     pointCloud2Ground.header.frame_id = "velodyne";
