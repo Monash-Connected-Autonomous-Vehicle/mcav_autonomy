@@ -39,7 +39,7 @@ class PCL2Subscriber(Node):
 
         # TODO create cloud cluster publisher via creating a custom msg
         self._cloud_cluster_publisher = self.create_publisher(PCL2, 'clustered_pointclouds', 10)
-        self._bounding_boxes_publisher = self.create_publisher(MarkerArray, 'bounding_boxes', 10)
+        self._bounding_boxes_publisher = self.create_publisher(MarkerArray, 'bounding_boxes_array', 10)
         self._detected_objects_publisher = self.create_publisher(DetectedObjectArray, 'detected_objects', 10)
         
         # create tracker for identifying and following objects over time
@@ -85,7 +85,7 @@ class PCL2Subscriber(Node):
                               timestamp, self.original_frame_id)
 
         self._cloud_cluster_publisher.publish(pcl2_msg)
-
+        
         # fit bounding boxes to the clustered pointclouds
         detected_objects = self.create_detected_objects(np_pointcloud_cluster_indices) 
 
@@ -177,46 +177,27 @@ class PCL2Subscriber(Node):
             feature_extractor = bb_cloud.make_MomentOfInertiaEstimation()
             feature_extractor.compute()
 
-            # axis-aligned bounding box
-            # [min_point_AABB, max_point_AABB] = feature_extractor.get_AABB()
-            # oriented bounding box
-            [min_point_OBB, max_point_OBB, position_OBB,
-                rotational_matrix_OBB] = feature_extractor.get_OBB()
+            # Axis-Aligned Bounding Box (AABB)
+            [min_point_AABB, max_point_AABB] = feature_extractor.get_AABB()
+
+            # Oriented Bounding Box (OBB)
+            # [min_point_OBB, max_point_OBB, position_OBB,
+            #     rotational_matrix_OBB] = feature_extractor.get_OBB()
 
             # create detected object
             detected_object = DetectedObject()
             detected_object.object_id = cluster_idx # dummy value until we track the objects
             detected_object.frame_id = self.original_frame_id
 
-            # convert rotational matrix to quaternion for use in pose
-            roll, pitch, yaw = mat2euler(rotational_matrix_OBB)
-            
-            while not(-10. < yaw*180/np.pi < 10.):
-                yaw -= np.sign(yaw) * 0.15
-            
-            quat = euler2quat(0., 0., yaw)
-            # pose -> assume of center point
-            detected_object.pose.orientation.w = quat[0]
-            detected_object.pose.orientation.x = quat[1]
-            detected_object.pose.orientation.y = quat[2]
-            detected_object.pose.orientation.z = quat[3]
-
-            # # orientation -> restricted to rotate only around the z axis i.e. flat to ground plane
-            # mag = sqrt(quat[0]**2 + quat[3]**2)
-            # detected_object.pose.orientation.w = float(quat[0]/mag)
-            # detected_object.pose.orientation.x = 0. #float(quat[1])
-            # detected_object.pose.orientation.y = 0. #float(quat[2]/mag)
-            # detected_object.pose.orientation.z = float(quat[2]/mag)#float(quat[3])
-
-            ### oriented version
-            detected_object.pose.position.x = float(position_OBB[0,0])
-            detected_object.pose.position.y = float(position_OBB[0,1])
-            detected_object.pose.position.z = float(position_OBB[0,2])
+            # set the position of the detected object
+            detected_object.pose.position.x = (max_point_AABB[0,0]+min_point_AABB[0,0])/2
+            detected_object.pose.position.y = (max_point_AABB[0,1]+min_point_AABB[0,1])/2
+            detected_object.pose.position.z = (max_point_AABB[0,2]+min_point_AABB[0,2])/2
 
             # dimensions -> assuming want distance from face to face
-            detected_object.dimensions.x = 2 * float(max_point_OBB[0,0])
-            detected_object.dimensions.y = 2 * float(max_point_OBB[0,1])
-            detected_object.dimensions.z = 2 * float(max_point_OBB[0,2])
+            detected_object.dimensions.x = float(max_point_AABB[0,0]-min_point_AABB[0,0])
+            detected_object.dimensions.y = float(max_point_AABB[0,1]-min_point_AABB[0,1])
+            detected_object.dimensions.z = float(max_point_AABB[0,2]-min_point_AABB[0,2])
             
             # object and signal class -> unknown for now
             detected_object.object_class = detected_object.CLASS_UNKNOWN
@@ -241,8 +222,10 @@ class PCL2Subscriber(Node):
             id_marker.header.frame_id = self.original_frame_id
             id_marker.type = Marker.TEXT_VIEW_FACING
             id_marker.action = id_marker.ADD
-            id_marker.pose.position.x = d_o.pose.position.x
-            id_marker.pose.position.y = d_o.pose.position.y + 0.5
+
+            # Keeping original bounding box labelling
+            id_marker.pose.position.x = d_o.pose.position.x + 0.5
+            id_marker.pose.position.y = d_o.pose.position.y
             id_marker.pose.position.z = d_o.pose.position.z
             id_marker.color.a = 1.
             id_marker.color.r = 1.
@@ -256,7 +239,7 @@ class PCL2Subscriber(Node):
 
             # create bounding boxes for visualisation
             bounding_box_marker = Marker()
-            bounding_box_marker.ns = 'bounding_boxes'
+            bounding_box_marker.ns = 'bounding_boxes_array'
             bounding_box_marker.id = d_o.object_id
             bounding_box_marker.header.frame_id = self.original_frame_id
             bounding_box_marker.type = Marker.CUBE
@@ -266,6 +249,8 @@ class PCL2Subscriber(Node):
             bounding_box_marker.color.g = 255.#self.rgb_list[cluster_idx][1]/255.
             bounding_box_marker.color.b = 255.#self.rgb_list[cluster_idx][2]/255.
             # size -> 2 times the max_point from centre
+
+            # Flipping bounding box fit
             bounding_box_marker.scale.x = d_o.dimensions.x
             bounding_box_marker.scale.y = d_o.dimensions.y
             bounding_box_marker.scale.z = d_o.dimensions.z
@@ -282,7 +267,7 @@ class PCL2Subscriber(Node):
                 del_id_marker.action = Marker.DELETE
                 self.markers.markers.append(del_id_marker)
                 del_bb_marker = Marker()
-                del_bb_marker.ns = 'bounding_boxes'
+                del_bb_marker.ns = 'bounding_boxes_array'
                 del_bb_marker.header.frame_id = self.original_frame_id
                 del_bb_marker.id = delete_id
                 del_bb_marker.action = Marker.DELETE
