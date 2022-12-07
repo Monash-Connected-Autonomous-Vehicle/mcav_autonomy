@@ -15,28 +15,26 @@ import torch
 class ObjectDetection(Node):
     def __init__(self):
         super(ObjectDetection, self).__init__('object_detection')
-        
-        self.subscription = self.create_subscription(Image, '/camera', self._callback, 10)
+        self.subscription = self.create_subscription(Image, '/image_raw', self._callback, 10)
         self._publisher = self.create_publisher(Image, '/object_detected_image', 10)
-
         self.get_logger().set_level(logging.DEBUG)
 
-    def _callback(self, msg: Image):
         # Model
-        model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x, custom
+        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x, custom
 
+    def _callback(self, msg: Image):
         # convert ros2 image to cv_image to allow for processing through yolo
         bridge = CvBridge()
         cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
 
         # Inference
-        results = model(cv_image)
+        results = self.model(cv_image)
         
         # print objects found in the console
         results.print()  # or .show(), .save(), .crop(), .pandas(), etc.
         
         # numpy array representing the classified image
-        image_array = np.array(results.render())[0]
+        image_array = np.array(results.render())[:,:,::-1]
 
         image_message = bridge.cv2_to_imgmsg(image_array, encoding="passthrough")
 
