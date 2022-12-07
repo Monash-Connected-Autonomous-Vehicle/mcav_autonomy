@@ -34,16 +34,16 @@ run_without_gpu()
         -v "/dev:/dev:rw" \
         -v "$(pwd):/home/mcav/mcav_ws/src/mcav_autonomy:rw" \
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-        --net=host \
+        -p 7400-8000:7400-8000/udp \
         --name $CONTAINER_NAME \
         --entrypoint /ros_entrypoint.sh \
         -d $IMAGE_NAME /usr/bin/tail -f /dev/null
+        #--net=host \
 }
 
 build_image() 
 {
     echo "Building docker image $IMAGE_NAME from $DOCKER_FILE"
-    docker build . -t $IMAGE_NAME -f $DOCKER_FILE
     docker build . --platform $PLATFORM -t $IMAGE_NAME -f $DOCKER_FILE
 }
 
@@ -73,6 +73,7 @@ else # no nvidia-container-runtime
     fi
 fi
 
+
 case "$1" in
 "build")
     build_image
@@ -85,23 +86,32 @@ case "$1" in
     fi
     ;;
 "rm")
+    if [[ $2 ]] ; then
+        NAME_POSTFIX=$2
+        CONTAINER_NAME="${CONTAINER_NAME}_${NAME_POSTFIX}"
+    fi
     docker rm -f $CONTAINER_NAME
     echo "Removed container"
     ;;
 "--help")
-    echo "Usage: docker/run.sh [command]
+    echo "Usage: docker/run.sh [command] [name]
 Available commands:
-    run.sh
-        Attach a new terminal to the container (pulling/building, creating and starting it if necessary)
-    run.sh build
-        Build a new image from the Dockerfile in the current directory
-    run.sh rm
-        Remove the current container
+    run.sh [name]
+        Attach a new terminal to the container (pulling/building, creating and starting it if necessary). name is optional
+    run.sh build [name]
+        Build a new image from the Dockerfile in the current directory. name is optional
+    run.sh rm [name]
+        Remove the container. name is optional
     run.sh --help
         Show this help message    
     "
     ;;
 *) # Attach a new terminal to the container (pulling, creating and starting it if necessary)
+    if [[ $1 ]] ; then
+        NAME_POSTFIX=$1
+        CONTAINER_NAME="${CONTAINER_NAME}_${NAME_POSTFIX}"
+    fi
+
     if [ -z "$(docker images -f reference=$IMAGE_NAME -q)" ]; then # if the image does not yet exist, pull it
         if [ "$GPU_ON" = true ] ; then
             build_image
