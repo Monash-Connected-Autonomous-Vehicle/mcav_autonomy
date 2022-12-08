@@ -65,6 +65,16 @@ RUN apt-get update && DEBIAN_FRONTED=noninteractive rosdep update && rosdep inst
 COPY . ${SOURCE_DIR}
 # RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
 
+# Install ROS 1 bridge (needed for autoware.ai)
+RUN echo "deb http://packages.ros.org/ros/ubuntu/ focal main" > /etc/apt/sources.list.d/ros1-latest.list
+ENV ROS1_DISTRO noetic
+ENV ROS2_DISTRO galactic
+# install ros 1 packages
+RUN apt-get update && apt-get install -y \
+	ros-${ROS1_DISTRO}-ros-comm \
+        ros-${ROS2_DISTRO}-ros1-bridge \
+	&& rm -rf /var/lib/apt/lists/*
+
 # Change owner of the files to non-root user
 RUN chown -R ${USERNAME} /home/${USERNAME}
 # Add source commands to bashrc
