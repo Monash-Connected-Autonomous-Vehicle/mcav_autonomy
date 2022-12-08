@@ -8,4 +8,15 @@ sudo sh -c "echo \"127.0.0.1	`hostname`.localdomain	`hostname`\" >> /etc/hosts" 
 
 # Start tmux session
 session="mcav"
-tmux new-session -A -s $session
+tmux new-session -d -s $session
+
+tmux split-window -h
+tmux send-keys './autonomy_launch/scripts/2.sh'
+tmux split-window -v
+tmux send-keys './autonomy_launch/scripts/3.sh'
+tmux split-window -v -t 1
+tmux send-keys './autonomy_launch/scripts/4.sh'
+tmux select-pane -t 1
+tmux send-keys './autonomy_launch/scripts/1.sh'
+
+tmux attach-session -d -t $session
