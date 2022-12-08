@@ -2,10 +2,7 @@
 
 import numpy as np
 import math
-import matplotlib.pyplot as plt
 import rclpy
-import time as tim
-from geometry_msgs.msg import Twist, PoseWithCovarianceStamped, Pose
 from rclpy.node import Node
 from mcav_interfaces.msg import WaypointArray, Waypoint
 
