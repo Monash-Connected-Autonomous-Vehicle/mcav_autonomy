@@ -192,12 +192,12 @@ class PCL2Subscriber(Node):
             # set the position of the detected object
             detected_object.pose.position.x = (max_point_AABB[0,0]+min_point_AABB[0,0])/2
             detected_object.pose.position.y = (max_point_AABB[0,1]+min_point_AABB[0,1])/2
-            detected_object.pose.position.z = (max_point_AABB[0,2]+min_point_AABB[0,2])/2
+            detected_object.pose.position.z = float(min_point_AABB[0,2]) # todo: check why z is special case
 
             # dimensions -> assuming want distance from face to face
-            detected_object.dimensions.x = float(max_point_AABB[0,0]-min_point_AABB[0,0])
-            detected_object.dimensions.y = float(max_point_AABB[0,1]-min_point_AABB[0,1])
-            detected_object.dimensions.z = float(max_point_AABB[0,2]-min_point_AABB[0,2])
+            detected_object.dimensions.x = float(max_point_AABB[0,0]-min_point_AABB[0,0])*2.0
+            detected_object.dimensions.y = float(max_point_AABB[0,1]-min_point_AABB[0,1])*2.0
+            detected_object.dimensions.z = float(max_point_AABB[0,2]-min_point_AABB[0,2])*2.0
             
             # object and signal class -> unknown for now
             detected_object.object_class = detected_object.CLASS_UNKNOWN

@@ -1,10 +1,16 @@
 <launch>
     <arg name="launch_velodyne" default="false" description="launch velodyne lidar driver"/>
+    <arg name="lidar_topic" default="velodyne_points" description="lidar points topic" />
 
     <include file="$(find-pkg-share mcav_sd_sensing)/launch/velodyne.launch.xml">
-        <arg name="launch_velodyne_driver" value="$(var launch_velodyne)" />
+	<arg name="launch_velodyne_driver" value="$(var launch_velodyne)" />
     </include>
 
-    <node pkg="project_tracker" exec="filter" name="lidar_filter" />
+
+    <node pkg="project_tracker" exec="filter" name="lidar_filter" >
+      <remap from="velodyne_points" to="$(var lidar_topic)" />
+    </node>
+
     <node pkg="project_tracker" exec="cluster.py" name="lidar_cluster" />
+
 </launch>
