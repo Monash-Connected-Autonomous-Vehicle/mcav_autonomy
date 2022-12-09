@@ -49,11 +49,11 @@ def generate_launch_description():
 
     args, unknown = parser.parse_known_args(sys.argv[4:])
 
-    usb_cam_dir = get_package_share_directory('usb_cam')
+    mcav_sd_sensing_dir = get_package_share_directory('mcav_sd_sensing')
 
     # get path to params file
     params_path = os.path.join(
-        usb_cam_dir,
+        mcav_sd_sensing_dir,
         'config',
         'params.yaml'
     )
