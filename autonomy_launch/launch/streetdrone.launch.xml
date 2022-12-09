@@ -4,11 +4,13 @@
     
     <!-- Sensing -->
     <include file="$(find-pkg-share mcav_sd_sensing)/launch/velodyne.launch.xml">
-        <arg name="launch_velodyne" value="true"/>
+        <arg name="launch_velodyne" value="false"/>
     </include>
     
     <!-- Perception -->
-    <include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml" />
+    <include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml" >
+	    <arg name="lidar_topic" value="points_raw" />
+    </include>
     
     <!-- Planning -->
     <include file="$(find-pkg-share velocity_planner)/launch/velocity_planner.launch.py" />

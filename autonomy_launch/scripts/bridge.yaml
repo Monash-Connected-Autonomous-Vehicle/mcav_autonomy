@@ -3,3 +3,7 @@ topics:
     topic: /ndt_pose  # Topic name on both ROS 1 and ROS 2
     type: geometry_msgs/msg/PoseStamped  # Type of topic to bridge
     queue_size: 1  # Queue size
+  -
+    topic: /points_raw
+    type: sensor_msgs/msg/PointCloud2
+    queue_size: 1
