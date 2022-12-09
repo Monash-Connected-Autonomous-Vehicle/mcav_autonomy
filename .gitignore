@@ -3,3 +3,7 @@ __pycache__
 rosbags
 pointclouds
 waypoints
+yolov5/
+yolov5s.pt
+autoware_wd
+pcl_localization_ros2

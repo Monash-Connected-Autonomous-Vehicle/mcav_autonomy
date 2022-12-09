@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cd autoware_wd/docker/generic
-./run.sh
+$HOME/mcav_autonomy/autoware_wd/generic/run.sh
