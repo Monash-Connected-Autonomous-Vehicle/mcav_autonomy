@@ -6,7 +6,7 @@ import rclpy
 from rclpy.node import Node
 import tf2_ros
 from sd_msgs.msg import SDControl
-from geometry_msgs.msg import PoseWithCovarianceStamped, Quaternion
+from geometry_msgs.msg import PoseWithCovarianceStamped, Quaternion, PoseStamped
 from geometry_msgs.msg import TransformStamped
 from tf2_ros import TransformBroadcaster
 
@@ -28,7 +28,7 @@ class SimpleSim(Node):
         self.control_cmd  # prevent unused variable warning
 
         # Publishers
-        self.current_pose_pub = self.create_publisher(PoseWithCovarianceStamped, 'current_pose', 10)
+        self.current_pose_pub = self.create_publisher(PoseStamped, 'current_pose', 10)
         # Transform Broadcaster
         self.tf_broadcaster = TransformBroadcaster(self)
 
@@ -66,6 +66,7 @@ class SimpleSim(Node):
         # From SDControl message definition:
         # msg.torque: Range -100 to 100, -100 is max brake, +100 is max throttle
         # msg.steer: Range -100 to +100, +100 is maximum left turn
+        self.get_logger().info(f"Received command {msg.torque}")
 
         self.current_torque_nm = msg.torque * self.TORQUE_PERCENT_TO_NM
         self.current_steer_angle_rad = msg.steer * self.STEER_PERCENT_TO_RAD
@@ -107,6 +108,13 @@ class SimpleSim(Node):
         # Broadcast tf
         t.header.stamp = self.get_clock().now().to_msg()
         self.tf_broadcaster.sendTransform(t)
+
+        # Publish current pose
+        new_pose_msg = PoseStamped()
+        new_pose_msg.pose.position.x = self.state_x
+        new_pose_msg.pose.position.y = self.state_y
+        new_pose_msg.pose.orientation = z_angle_to_quat(self.state_phi+beta)
+        self.current_pose_pub.publish(new_pose_msg)
 
 
 def z_angle_to_quat(angle):
