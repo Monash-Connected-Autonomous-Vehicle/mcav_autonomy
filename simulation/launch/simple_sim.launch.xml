@@ -13,7 +13,10 @@
     </include> -->
     
     <!-- Planning -->
-    <include file="$(find-pkg-share velocity_planner)/launch/velocity_planner.launch.py" />
+    <include file="$(find-pkg-share velocity_planner)/launch/velocity_planner.launch.xml">
+        <arg name="pose_topic" value="/current_pose" />
+        <arg name="max_velocity" value="0.1" />
+    </include>
     
     <node pkg="velocity_planner" exec="waypoint_reader" name="waypoint_reader" >
         <param name="waypoint_filename" value="$(var waypoint_filename)"/>
@@ -23,6 +26,7 @@
     <node pkg="pure_pursuit" exec="purepursuit" name="purepursuit" />
     <include file="$(find-pkg-share sd_vehicle_interface)/launch/sd_vehicle_interface.launch.xml">
         <arg name="sd_simulation_mode" value="true" />
+        <arg name="sd_speed_source" value="ndt_speed" />
     </include>
     
     <!-- Simulation -->

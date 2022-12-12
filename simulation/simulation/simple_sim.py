@@ -7,7 +7,7 @@ from rclpy.node import Node
 import tf2_ros
 from sd_msgs.msg import SDControl
 from geometry_msgs.msg import PoseWithCovarianceStamped, Quaternion, PoseStamped
-from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import TransformStamped, TwistStamped
 from tf2_ros import TransformBroadcaster
 
 import numpy as np
@@ -26,9 +26,12 @@ class SimpleSim(Node):
         self.control_cmd = self.create_subscription(SDControl,
             'sd_control', self.control_callback, 10)
         self.control_cmd  # prevent unused variable warning
+        self.initialpose_sub = self.create_subscription(PoseWithCovarianceStamped, '/initialpose', self.initialpose_callback, 10)
+        self.initialpose_sub
 
         # Publishers
         self.current_pose_pub = self.create_publisher(PoseStamped, 'current_pose', 10)
+        self.current_vel_pub = self.create_publisher(TwistStamped, 'current_velocity', 10)
         # Transform Broadcaster
         self.tf_broadcaster = TransformBroadcaster(self)
 
@@ -56,7 +59,7 @@ class SimpleSim(Node):
         self.state_phi = 0.0 # radians
         self.state_v = 0.0 # m/s
         # Vehicle parameters
-        self.vehicle_mass_kg = 500 # approximate weight of the Renault Twizy
+        self.vehicle_mass_kg = 0.5 # approximate weight of the Renault Twizy is 500kg
         
         self.get_logger().set_level(logging.DEBUG)
 
@@ -66,10 +69,19 @@ class SimpleSim(Node):
         # From SDControl message definition:
         # msg.torque: Range -100 to 100, -100 is max brake, +100 is max throttle
         # msg.steer: Range -100 to +100, +100 is maximum left turn
-        self.get_logger().info(f"Received command {msg.torque}")
+        # self.get_logger().info(f"Received command {msg.torque}, {msg.steer}")
 
         self.current_torque_nm = msg.torque * self.TORQUE_PERCENT_TO_NM
         self.current_steer_angle_rad = msg.steer * self.STEER_PERCENT_TO_RAD
+
+    def initialpose_callback(self, msg: PoseWithCovarianceStamped):
+        """ Sets current pose to the received pose, resets velocity """
+        self.state_x = msg.pose.pose.position.x
+        self.state_y = msg.pose.pose.position.y
+        self.state_v = 0
+        self.state_phi = 0 # TODO: update this based on received orientation
+
+        self.get_logger().info("Received initialpose")
 
     def spin(self):
         # Update tf based on current commanded torque and steering after one time step
@@ -95,11 +107,14 @@ class SimpleSim(Node):
         self.state_x += x_dot*self.timer_period
         self.state_y += y_dot*self.timer_period
 
+        # Get frame id parameters
+        vehicle_frame = self.get_parameter('vehicle_frame').get_parameter_value().string_value
+        fixed_frame = self.get_parameter('fixed_frame').get_parameter_value().string_value
         # Create this new tf
         t = TransformStamped() # Create an empty message
         # Transform is from fixed frame to vehicle frame (e.g. map to base_link)
-        t.header.frame_id = self.get_parameter('fixed_frame').get_parameter_value().string_value
-        t.child_frame_id = self.get_parameter('vehicle_frame').get_parameter_value().string_value
+        t.header.frame_id = fixed_frame
+        t.child_frame_id = vehicle_frame
         # Set transform translation to msg pose position/rotation
         t.transform.translation.x = self.state_x
         t.transform.translation.y = self.state_y
@@ -111,10 +126,18 @@ class SimpleSim(Node):
 
         # Publish current pose
         new_pose_msg = PoseStamped()
+        new_pose_msg.header.frame_id = fixed_frame
         new_pose_msg.pose.position.x = self.state_x
         new_pose_msg.pose.position.y = self.state_y
         new_pose_msg.pose.orientation = z_angle_to_quat(self.state_phi+beta)
         self.current_pose_pub.publish(new_pose_msg)
+
+        # Publish current velocity
+        vel_msg = TwistStamped()
+        vel_msg.header.frame_id = vehicle_frame
+        vel_msg.twist.linear.x = self.state_v
+        vel_msg.twist.angular.z = phi_dot # TODO: check if this represents angular vel
+        self.current_vel_pub.publish(vel_msg)
 
 
 def z_angle_to_quat(angle):
