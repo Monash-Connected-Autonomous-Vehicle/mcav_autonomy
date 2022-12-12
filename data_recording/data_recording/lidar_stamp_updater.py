@@ -15,7 +15,7 @@ class LidarStampUpdater(Node):
 
         self.lidar_pub = self.create_publisher(PointCloud2, 'velodyne_points', 10)
         self.lidar_sub = self.create_subscription(PointCloud2,
-            'velodyne_points_outdated', self.lidar_callback, 10)
+            'lidar_points_outdated', self.lidar_callback, 10)
         self.lidar_sub  # prevent unused variable warning
 
         self.get_logger().info('StampUpdater initialised.')
