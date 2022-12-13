@@ -37,4 +37,5 @@
 
     <!-- Visualisation -->
     <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
+    <include file="$(find-pkg-share mcav_sd_model)/launch/mcav_sd_model.launch.py" />
 </launch>
