@@ -35,6 +35,8 @@ private:
                          float filterUpperBound,
                          bool setFilterLimitsNegative)
   {
+    // If setFilterLimitsNegative is true, filtered will contain only the points from unfiltered that
+    // are inside the given limits. Otherwise, it will contain the points that are outside the given limits.
     pcl::PassThrough<pcl::PointXYZ> filter;
     filter.setInputCloud(unfiltered);
     filter.setFilterFieldName(dimension);
@@ -56,7 +58,7 @@ private:
 
   void filter_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
   {
-    RCLCPP_INFO(this->get_logger(), "received msg");
+    // RCLCPP_INFO(this->get_logger(), "received msg");
 
     pcl::PCLPointCloud2::Ptr pclPc2_t(new pcl::PCLPointCloud2());
 
@@ -71,15 +73,8 @@ private:
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr pcxyz_ground(new pcl::PointCloud<pcl::PointXYZ>);
 
-    // z-coordinate passthrough filter, extracting the points on the ground
-    passThroughFilter(pcxyz, pcxyz_ground, "z", -10.55, 1, true);
-
-    auto pointCloud2Ground = pxyzPclToPointCloud2(pcxyz_ground);
-    pointCloud2Ground.header.frame_id = "velodyne";
-    groundPublisher_->publish(pointCloud2Ground);
-
-    // z-coordinate passthrough filter
-    passThroughFilter(pcxyz, pcxyz, "z", -1.55, 1, false);
+    // z-coordinate passthrough filter: removes points that are on the ground // TODO: perform more robust ground filtering that survives e.g. titlting
+    passThroughFilter(pcxyz, pcxyz, "z", -1.5, 1, false);
 
     pcl::PCLPointCloud2::Ptr pclPc2(new pcl::PCLPointCloud2());
     pcl::PCLPointCloud2 pclPc2_ds;

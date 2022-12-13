@@ -164,40 +164,60 @@ class PCL2Subscriber(Node):
         Tutorial at PCL docs helps with make_MomentOfInertiaEstimation aspect
         https://pcl.readthedocs.io/projects/tutorials/en/master/moment_of_inertia.html#moment-of-inertia
         """
-        self.get_logger().info(f'number of clusters: {len(np_pointcloud_cluster_indices)}')
+        # self.get_logger().info(f'number of clusters: {len(np_pointcloud_cluster_indices)}')
         objects = DetectedObjectArray()
 
         for cluster_idx, indices in enumerate(np_pointcloud_cluster_indices):
-            cloud = self.np_pointcloud[list(indices)] # numpy array cloud
+            cluster_cloud = self.np_pointcloud[list(indices)] # numpy array cloud
+            # Create flattened point cloud by zeroing z values.
+            # bounding box orientations are found in this 2D representation since it gave nicer results.
+            # The axis-aligned bounding box of the origin 3D cloud is also used, but only for the height and z-axis position.
+            # Would be worth experimenting with pure 3D boxes again in future.
+            flattened_cloud = cluster_cloud.copy()
+            flattened_cloud[:, 2] = 0.0 # set z values to 0 to flatten cloud.
+            
             # convert to pcl object
-            bb_cloud = pcl.PointCloud()
-            bb_cloud.from_array(cloud) 
+            cluster_pcl_cloud = pcl.PointCloud()
+            cluster_pcl_cloud.from_array(cluster_cloud) 
 
-            # create feature extractor for bounding box
-            feature_extractor = bb_cloud.make_MomentOfInertiaEstimation()
-            feature_extractor.compute()
+            flattened_pcl_cloud = pcl.PointCloud()
+            flattened_pcl_cloud.from_array(flattened_cloud) 
 
+            # create feature extractor for axis-aligned bounding box
+            feature_extractor_3d = cluster_pcl_cloud.make_MomentOfInertiaEstimation()
+            feature_extractor_3d.compute()
             # Axis-Aligned Bounding Box (AABB)
-            [min_point_AABB, max_point_AABB] = feature_extractor.get_AABB()
+            [min_point_AABB, max_point_AABB] = feature_extractor_3d.get_AABB()
 
+            # create feature extractor for flattened bounding box
+            feature_extractor_flat = flattened_pcl_cloud.make_MomentOfInertiaEstimation()
+            feature_extractor_flat.compute()
             # Oriented Bounding Box (OBB)
-            # [min_point_OBB, max_point_OBB, position_OBB,
-            #     rotational_matrix_OBB] = feature_extractor.get_OBB()
+            [_, max_point_OBB, position_OBB, rotational_matrix_OBB] = feature_extractor_flat.get_OBB()
 
             # create detected object
             detected_object = DetectedObject()
             detected_object.object_id = cluster_idx # dummy value until we track the objects
             detected_object.frame_id = self.original_frame_id
 
-            # set the position of the detected object
-            detected_object.pose.position.x = (max_point_AABB[0,0]+min_point_AABB[0,0])/2
-            detected_object.pose.position.y = (max_point_AABB[0,1]+min_point_AABB[0,1])/2
-            detected_object.pose.position.z = float(min_point_AABB[0,2]) # todo: check why z is special case
+            # convert rotational matrix to quaternion for use in pose
+            roll, pitch, yaw = mat2euler(rotational_matrix_OBB)
+            quat = euler2quat(roll, pitch, yaw, 'sxyz')
+            detected_object.pose.orientation.w = quat[0]
+            detected_object.pose.orientation.x = quat[1]
+            detected_object.pose.orientation.y = quat[2]
+            detected_object.pose.orientation.z = quat[3]
+
+            # pose -> assume of center point
+            z_pos = (max_point_AABB[0, 2] + min_point_AABB[0, 2])/2
+            detected_object.pose.position.x = float(position_OBB[0,0])
+            detected_object.pose.position.y = float(position_OBB[0,1])
+            detected_object.pose.position.z = float(z_pos)
 
             # dimensions -> assuming want distance from face to face
-            detected_object.dimensions.x = float(max_point_AABB[0,0]-min_point_AABB[0,0])*2.0
-            detected_object.dimensions.y = float(max_point_AABB[0,1]-min_point_AABB[0,1])*2.0
-            detected_object.dimensions.z = float(max_point_AABB[0,2]-min_point_AABB[0,2])*2.0
+            detected_object.dimensions.x = 2 * float(max_point_OBB[0, 0])
+            detected_object.dimensions.y = 2 * float(max_point_OBB[0, 1])
+            detected_object.dimensions.z = float(max_point_AABB[0, 2] - min_point_AABB[0, 2])
             
             # object and signal class -> unknown for now
             detected_object.object_class = detected_object.CLASS_UNKNOWN
@@ -205,7 +225,7 @@ class PCL2Subscriber(Node):
 
             objects.detected_objects.append(detected_object)
 
-        self.get_logger().info(f'number of objects: {len(objects.detected_objects)}')
+        # self.get_logger().info(f'number of objects: {len(objects.detected_objects)}')
         return objects
 
 
@@ -248,9 +268,7 @@ class PCL2Subscriber(Node):
             bounding_box_marker.color.r = 255.#self.rgb_list[cluster_idx][0]/255.
             bounding_box_marker.color.g = 255.#self.rgb_list[cluster_idx][1]/255.
             bounding_box_marker.color.b = 255.#self.rgb_list[cluster_idx][2]/255.
-            # size -> 2 times the max_point from centre
 
-            # Flipping bounding box fit
             bounding_box_marker.scale.x = d_o.dimensions.x
             bounding_box_marker.scale.y = d_o.dimensions.y
             bounding_box_marker.scale.z = d_o.dimensions.z
