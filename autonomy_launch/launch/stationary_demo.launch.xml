@@ -1,0 +1,26 @@
+<launch>
+    <!-- Arguments -->
+
+
+    <!-- Sensing -->
+    <include file="$(find-pkg-share mcav_sd_sensing)/launch/velodyne.launch.xml">
+        <arg name="launch_velodyne" value="true"/>
+    </include>
+    
+    <!-- Perception -->
+    <include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml" >
+	    <arg name="lidar_topic" value="velodyne_points" />
+    </include>
+
+    <!-- Planning -->
+    <include file="$(find-pkg-share velocity_planner)/launch/velocity_planner.launch.xml">
+        <arg name="pose_topic" value="/ndt_pose" />
+        <arg name="max_velocity" value="5.6" />
+    </include>
+    
+    <node pkg="velocity_planner" exec="fake_waypoint_publisher" name="fake_waypoint_publisher" />
+    
+    <!-- Visualisation -->
+    <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
+    <include file="$(find-pkg-share mcav_sd_model)/launch/mcav_sd_model.launch.py" />
+</launch>

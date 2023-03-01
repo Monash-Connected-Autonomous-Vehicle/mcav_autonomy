@@ -2,5 +2,6 @@
 	<include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml">
 		<arg name="launch_velodyne" value="true" />
 	</include>
-	<node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share project_tracker)/rviz/tracker.rviz'/>
+	<node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
+	<include file="$(find-pkg-share mcav_sd_model)/launch/mcav_sd_model.launch.py" />
 </launch>
