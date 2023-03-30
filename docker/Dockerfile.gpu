@@ -1,4 +1,4 @@
-FROM osrf/ros:galactic-desktop
+FROM osrf/ros:humble-desktop
 
 # Dev tools
 # Try to keep ROS-related dependencies out of here and inside package.xml to be installed with rosdep instead
@@ -68,7 +68,7 @@ COPY . ${SOURCE_DIR}
 # Install ROS 1 bridge (needed for autoware.ai)
 RUN echo "deb http://packages.ros.org/ros/ubuntu/ focal main" > /etc/apt/sources.list.d/ros1-latest.list
 ENV ROS1_DISTRO noetic
-ENV ROS2_DISTRO galactic
+ENV ROS2_DISTRO humble
 # install ros 1 packages
 RUN apt-get update && apt-get install -y \
 	ros-${ROS1_DISTRO}-ros-comm \
