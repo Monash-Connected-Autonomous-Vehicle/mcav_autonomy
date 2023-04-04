@@ -2,8 +2,8 @@
 The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles team. Designed to run on a StreetDrone Twizy and in the CARLA simulation environment.
 
 # Requirements
-- [Ubuntu 20.04](https://ubuntu.com/download/desktop)
-- [ROS2 Foxy Fitzroy](https://docs.ros.org/en/foxy/Installation.html)
+- [Ubuntu 22.04](https://ubuntu.com/download/desktop)
+- [ROS2 Humble Hawksbill](https://docs.ros.org/en/humble/Installation.html)
 
 ## Simulation Requirements
 
@@ -22,7 +22,11 @@ mcav_ws/
 └── src
     └── mcav_autonomy
         ├── autonomy_launch         # Launch files for entire stack
+        ├── data_recording          # Launch files for creating rosbags
+        ├── docker                  # Dockerfiles and run scripts
         ├── mcav_interfaces         # Shared ROS Message and Service definitions
+        ├── mcav_sd_model           # 3D vehicle models for visualisation
+        ├── mcav_sd_sensing         # Launch files for the sensors
         ├── project_tracker         # Object detection and tracking
         ├── pure_pursuit            # Control system
         ├── simulation              # CARLA simulation setup
