@@ -49,11 +49,11 @@ def generate_launch_description():
 
     args, unknown = parser.parse_known_args(sys.argv[4:])
 
-    mcav_sd_sensing_dir = get_package_share_directory('mcav_sd_sensing')
+    sensors_launch_dir = get_package_share_directory('sensors_launch')
 
     # get path to params file
     params_path = os.path.join(
-        mcav_sd_sensing_dir,
+        sensors_launch_dir,
         'config',
         'params.yaml'
     )

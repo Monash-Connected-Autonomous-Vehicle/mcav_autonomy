@@ -5,7 +5,7 @@
     <arg name="launch_lidar" default="false" />
 
     <!-- Sensing -->
-    <include file="$(find-pkg-share mcav_sd_sensing)/launch/velodyne.launch.xml">
+    <include file="$(find-pkg-share sensors_launch)/launch/velodyne.launch.xml">
         <arg name="launch_velodyne" value="$(var launch_lidar)"/>
     </include>
     

@@ -26,9 +26,9 @@ mcav_ws/
         ├── docker                  # Dockerfiles and run scripts
         ├── mcav_interfaces         # Shared ROS Message and Service definitions
         ├── mcav_sd_model           # 3D vehicle models for visualisation
-        ├── mcav_sd_sensing         # Launch files for the sensors
         ├── project_tracker         # Object detection and tracking
         ├── pure_pursuit            # Control system
+        ├── sensors_launch          # Launch files for the sensors
         ├── simulation              # CARLA simulation setup
         └── velocity_planner        # Local planner
 ```
