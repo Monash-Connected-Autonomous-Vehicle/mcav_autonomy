@@ -4,9 +4,6 @@
 [submodule "pure_pursuit"]
 	path = pure_pursuit
 	url = git@github.com:Monash-Connected-Autonomous-Vehicle/pure_pursuit.git
-[submodule "velocity_planner"]
-	path = velocity_planner
-	url = git@github.com:Monash-Connected-Autonomous-Vehicle/velocity_planner.git
 [status]
 	submodulesummary = 1
 [diff]
