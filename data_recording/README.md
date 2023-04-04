@@ -1,8 +1,18 @@
-# Data Recording
+# Data Recording and Playback
 
-Launch files and nodes to help with recording data (mainly using the ros2 bag command).
+Launch files and nodes to help with recording and playing back data (mainly using the ros2 bag command).
 
 ## Launch files
+
+### `record.launch.xml`
+
+Runs `ros2 bag record` to record IMU, GPS, current twist, CAN frames (transmitted and received), and lidar points (lidar can be enabled by adding lidar:=true to the launch command)
+
+To record without lidar points: `ros2 launch data_recording record.launch.xml`
+
+To record with lidar points: `ros2 launch data_recording record.launch.xml lidar:=True`
+
+To launch the sd_vehicle_interface, append `launch_vi:=True` to the command.
 
 ### `update_lidar_timestamp.launch.xml`
 
