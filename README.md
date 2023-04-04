@@ -11,7 +11,8 @@ The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles t
 
 # Setup
 - Create a workspace: `mkdir -p ~/mcav_ws/src && cd ~/mcav_ws/src`
-- Clone this package: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git --recurse-submodules` (if you forget to `--recurse-submodules`, you can later run `git submodule update --init --recursive` instead)
+- Clone this package: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git`
+- Clone the vehicle interface: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/SD-VehicleInterface.git mcav_autonomy/SD-VehicleInterface.git`
 - Install ROS dependencies: `cd .. && rosdep install --from-paths src --ignore-src -r -y`
 - Build the packages: `colcon build --symlink-install`
 
@@ -29,10 +30,10 @@ mcav_ws/
         ├── project_tracker         # Object detection and tracking
         ├── pure_pursuit            # Control system
         ├── sensors_launch          # Launch files for the sensors
+        ├── SD-VehicleInterface     # Sends commands to and reads from the car's CAN bus
         ├── simulation              # CARLA simulation setup
         └── velocity_planner        # Local planner
 ```
-See [Git Tools - Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) for information on working with submodules.
 
 # How to run in CARLA
 Terminal 1 (Launch CARLA server):
