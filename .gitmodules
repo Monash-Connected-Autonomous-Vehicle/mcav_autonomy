@@ -1,9 +1,6 @@
 [submodule "project_tracker"]
 	path = project_tracker
 	url = git@github.com:Monash-Connected-Autonomous-Vehicle/project_tracker.git
-[submodule "pure_pursuit"]
-	path = pure_pursuit
-	url = git@github.com:Monash-Connected-Autonomous-Vehicle/pure_pursuit.git
 [status]
 	submodulesummary = 1
 [diff]
