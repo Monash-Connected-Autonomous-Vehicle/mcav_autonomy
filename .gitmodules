@@ -1,6 +1,3 @@
-[submodule "project_tracker"]
-	path = project_tracker
-	url = git@github.com:Monash-Connected-Autonomous-Vehicle/project_tracker.git
 [status]
 	submodulesummary = 1
 [diff]
