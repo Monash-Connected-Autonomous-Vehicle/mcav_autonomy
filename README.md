@@ -35,6 +35,8 @@ mcav_ws/
         └── velocity_planner        # Local planner
 ```
 
+Pointcloud map, rosbags, waypoints and other files that are data, not code, should be stored in `data/pointclouds`, `data/rosbags`, `data/waypoints` etc.
+
 # How to run in CARLA
 Terminal 1 (Launch CARLA server):
 - `/opt/carla-simulator/CarlaUE4.sh`
