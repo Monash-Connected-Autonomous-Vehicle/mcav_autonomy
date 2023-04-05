@@ -9,6 +9,8 @@ The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles t
 
 ## StreetDrone Requirements
 
+- [MCAV's fork of the StreetDrone Vehicle Interface](https://github.com/Monash-Connected-Autonomous-Vehicle/SD-VehicleInterface)
+
 # Setup
 - Create a workspace: `mkdir -p ~/mcav_ws/src && cd ~/mcav_ws/src`
 - Clone this package: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git`
