@@ -6,5 +6,5 @@ docker/Dockerfile.gpu
 docker/Dockerfile.px2
 .git
 .dockerignore
+data/
 autoware
-rosbags
