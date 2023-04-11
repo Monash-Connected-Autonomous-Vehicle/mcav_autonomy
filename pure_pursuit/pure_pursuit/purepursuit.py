@@ -43,7 +43,6 @@ class PurePursuitNode(Node):
 
         self.waypoints = wp_msg.waypoints
         self.v = self.waypoints[0].velocity.linear.x
-        self.failsafe(self.waypoints[0].velocity.linear.x, self.waypoints[1].velocity.linear.x)
         
         # Lookahead distance dependent on velocity
         self.Lfc = 4*self.v-8 if self.v > 4.0 else 8.0  # Tesla model3
@@ -165,39 +164,16 @@ class PurePursuitNode(Node):
         return gamma
 
 
-    def failsafe(self, v_prev: float, v_next: float):
-        """Failsafe function that stops the vehicle when the acceleration between two velicities is above a certain threshold.
-
-        Args:
-            v_prev (float): velocity of current waypoint
-            v_next (float): velocity of next waypoint
-        """
-
-        if (v_next - v_prev) >= self.failsafe_thresh:
-            print("Increase in velocity above maximum allowable threshold!")
-            self.stop = True
-
-
 # Main function
 def main(args = None):
     rclpy.init(args=args)
     ppnode = PurePursuitNode()
-
-    try:
-        rclpy.spin(ppnode)
-    except:
-        print(Exception)
-    finally:
-        pass
-
+    rclpy.spin(ppnode)
     ppnode.stop = True
     ppnode.twist_callback()
-    print("shutting down node")
     ppnode.destroy_node()
     rclpy.shutdown()
-    print("done.")
 
 
 if __name__ == '__main__':
-    print("Pure pursuit path tracking simulation start")
     main()
