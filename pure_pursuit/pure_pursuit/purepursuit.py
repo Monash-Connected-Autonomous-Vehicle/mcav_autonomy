@@ -5,6 +5,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from mcav_interfaces.msg import WaypointArray, Waypoint
+from geometry_msgs.msg import Twist, PoseWithCovarianceStamped
 
 from typing import Tuple
   
