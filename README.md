@@ -21,7 +21,7 @@ The urban-driving autonomous stack of the Monash Connected Autonomous Vehicles t
 This should result in a directory structure similar to the following:
 ```
 mcav_ws/                                                     
-├── build                                                                                                               
+├── build
 └── src
     └── mcav_autonomy
         ├── autonomy_launch         # Launch files for entire stack
@@ -32,7 +32,7 @@ mcav_ws/
         ├── project_tracker         # Object detection and tracking
         ├── pure_pursuit            # Control system
         ├── sensors_launch          # Launch files for the sensors
-        ├── SD-VehicleInterface     # Sends commands to and reads from the car's CAN bus
+        ├── SD-VehicleInterface     # Sends actuation commands, reads GPS/IMU and speedometer
         ├── simulation              # CARLA simulation setup
         └── velocity_planner        # Local planner
 ```

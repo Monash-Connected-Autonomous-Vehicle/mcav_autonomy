@@ -55,8 +55,8 @@ RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon bu
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/${USERNAME}/.bashrc
 # Change prompt to show we are in a docker container
 RUN echo "export PS1='\[\e]0;\u@docker: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@docker\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> /home/${USERNAME}/.bashrc
-# Add workspace sourcing alias (means you can type 'src' to source the workspace)
-RUN echo "alias src='source ~/mcav_ws/install/setup.bash'" >> /home/${USERNAME}/.bashrc
+# Add short aliases for commonly-used commands
+RUN echo "source ~/aliases" >> /home/${USERNAME}/.bashrc
 # Add tmux configuration file
 COPY docker/.tmux.conf /home/${USERNAME}/.tmux.conf
 # Change owner of the files to non-root user

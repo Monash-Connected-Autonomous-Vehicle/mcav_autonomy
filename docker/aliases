@@ -1,0 +1,11 @@
+# These aliases act like shortcuts so we don't need to type long commands
+# to perform common actions
+
+# ROS
+alias cb="colcon build"
+alias cbps="colcon build --packages-select"
+alias cbpu="colcon build --packages-up-to"
+alias cbr="colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release"
+alias cbpsr="colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-select"
+alias cbpur="colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --packages-up-to"
+alias src="source $HOME/mcav_ws/install/setup.bash"
