@@ -40,5 +40,8 @@
 
     <!-- Visualisation -->
     <!-- <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/> -->
+    <include file="$(find-pkg-share foxglove_bridge)/foxglove_bridge_launch.xml">
+        <arg name="port" value="8765" />
+    </include>
 </launch>
 <!-- TODO: replace most of this with an include of streetdrone.launch.xml -->
