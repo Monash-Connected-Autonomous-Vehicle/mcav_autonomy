@@ -25,16 +25,20 @@ class WaypointReader(Node):
         """ Reads in waypoints from the given csv file and stores them """
         paths_csv_directory = os.path.join(get_package_share_directory('velocity_planner'))
 
-        with open(os.path.join(paths_csv_directory, waypoint_filename)) as csvfile:
-            csv_reader = csv.DictReader(csvfile, delimiter=',')
+        try:
+            filename = os.path.join(paths_csv_directory, waypoint_filename)
+            with open(filename) as csvfile:
+                csv_reader = csv.DictReader(csvfile, delimiter=',')
 
-            for row in csv_reader:
-                waypoint = Waypoint()
-                waypoint.frame_id = 'map'
-                waypoint.pose.position.x = float(row['x'])
-                waypoint.pose.position.y = float(row['y'])
-                waypoint.velocity.linear.x = float(row['velocity']) # m/s
-                self.waypoints.append(waypoint)
+                for row in csv_reader:
+                    waypoint = Waypoint()
+                    waypoint.frame_id = 'map'
+                    waypoint.pose.position.x = float(row['x'])
+                    waypoint.pose.position.y = float(row['y'])
+                    waypoint.velocity.linear.x = float(row['velocity']) # m/s
+                    self.waypoints.append(waypoint)
+        except FileNotFoundError:
+            self.get_logger().error(f"Error, waypoint file not found: {filename}")
 
     def timer_callback(self):
         msg = WaypointArray()

@@ -13,7 +13,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
-        (os.path.join('share', package_name), ('example_waypoints/')),
+        (os.path.join('share', package_name, 'example_waypoints'), glob('example_waypoints/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

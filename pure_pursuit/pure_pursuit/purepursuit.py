@@ -5,7 +5,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from mcav_interfaces.msg import WaypointArray, Waypoint
-from geometry_msgs.msg import Twist, PoseWithCovarianceStamped
+from geometry_msgs.msg import TwistStamped, PoseWithCovarianceStamped
 
 from typing import Tuple
   
@@ -29,9 +29,11 @@ class PurePursuitNode(Node):
         
         # Publishers
         self.target_publisher = self.create_publisher(PoseWithCovarianceStamped, 'target_pose', 1)
-        self.pp_publisher = self.create_publisher(Twist, '/carla/ego_vehicle/twist', 1)
+        self.pp_publisher = self.create_publisher(TwistStamped, '/twist_cmd', 1)
         self.timer_period = 0.01
         self.spinner = self.create_timer(self.timer_period, self.twist_callback)
+
+        self.get_logger().info("pure_pursuit node started")
     
     
     def waypoints_callback(self, wp_msg: WaypointArray):
@@ -55,19 +57,19 @@ class PurePursuitNode(Node):
         """
 
         if self.waypoints: 
-            twist_msg = Twist()
+            twist_msg = TwistStamped()
 
             if self.stop:
                 print("Stopping vehicle...")
-                twist_msg.linear.x = 0.0
-                twist_msg.angular.z = 0.0               
+                twist_msg.twist.linear.x = 0.0
+                twist_msg.twist.angular.z = 0.0
             else:
                 v_linear, v_angular = self.purepursuit()
-                twist_msg.linear.x = v_linear
-                twist_msg.angular.z = v_angular
+                twist_msg.twist.linear.x = v_linear
+                twist_msg.twist.angular.z = v_angular
                 
             self.pp_publisher.publish(twist_msg)
-            print("Linear vel: ", twist_msg.linear.x ,", Angular vel: ", twist_msg.angular.z)
+            print("Linear vel: ", twist_msg.twist.linear.x ,", Angular vel: ", twist_msg.twist.angular.z)
 
         
     def purepursuit(self) -> Tuple[float, float]:
@@ -80,6 +82,7 @@ class PurePursuitNode(Node):
         tx, ty = self.target_searcher()
         
         target_msg = PoseWithCovarianceStamped()
+        target_msg.header.frame_id = "base_link" # TODO: extract this constant
         target_msg.pose.pose.position.x = tx
         target_msg.pose.pose.position.y = ty
         self.target_publisher.publish(target_msg)
