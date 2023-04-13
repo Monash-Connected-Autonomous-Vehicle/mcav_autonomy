@@ -32,7 +32,6 @@ class WaypointReader(Node):
 
                 for row in csv_reader:
                     waypoint = Waypoint()
-                    waypoint.frame_id = 'map'
                     waypoint.pose.position.x = float(row['x'])
                     waypoint.pose.position.y = float(row['y'])
                     waypoint.velocity.linear.x = float(row['velocity']) # m/s
@@ -42,6 +41,7 @@ class WaypointReader(Node):
 
     def timer_callback(self):
         msg = WaypointArray()
+        msg.frame_id = "map"
         msg.waypoints = self.waypoints
         self.publisher_.publish(msg)
 

@@ -12,11 +12,11 @@ class WaypointVisualiser(Node):
 
         self.global_sub = self.create_subscription(WaypointArray,
             'global_waypoints', self.global_callback, 10)
-        self.global_sub = self.create_subscription(WaypointArray,
-            'local_map_waypoints', self.local_callback, 10)
+        self.local_sub = self.create_subscription(WaypointArray,
+            'local_waypoints', self.local_callback, 10)
 
-        self.vis_pub_ = self.create_publisher(MarkerArray, 'visualization_marker_array', 0)
-        self.local_vis_pub_ = self.create_publisher(MarkerArray, 'local_visualization_marker_array', 0)
+        self.vis_pub_ = self.create_publisher(MarkerArray, 'global_waypoint_markers', 0)
+        self.local_vis_pub_ = self.create_publisher(MarkerArray, 'local_waypoint_markers', 0)
 
         self.declare_parameter('max_velocity', 5.6) # m/s
 
@@ -28,20 +28,14 @@ class WaypointVisualiser(Node):
         self.text_scale = 0.3
         self.text_offset = self.text_scale * 3 # used to move text so it doesn't overlap waypoints
 
-    def global_callback(self, msg):
-        self.publish_global(msg.waypoints)
-
     def local_callback(self, msg):
-        self.publish_local(msg.waypoints)
-
-    def publish_local(self, waypoints):
         markers = []
 
         top_speed = self.get_parameter('max_velocity').get_parameter_value().double_value
 
-        for index, waypoint in enumerate(waypoints):
+        for index, waypoint in enumerate(msg.waypoints):
             pose_marker = Marker()
-            pose_marker.header.frame_id = waypoints[0].frame_id
+            pose_marker.header.frame_id = msg.frame_id
             pose_marker.ns = 'local_waypoints'
             pose_marker.id = index
             pose_marker.type = Marker.SPHERE
@@ -65,7 +59,7 @@ class WaypointVisualiser(Node):
             markers.append(pose_marker)
 
             velocity_marker = Marker()
-            velocity_marker.header.frame_id = waypoints[0].frame_id
+            velocity_marker.header.frame_id = msg.frame_id
             velocity_marker.ns = 'velocity'
             velocity_marker.id = index
             velocity_marker.type = Marker.TEXT_VIEW_FACING
@@ -85,33 +79,33 @@ class WaypointVisualiser(Node):
             markers.append(velocity_marker)
 
         # Remove extra markers
-        for index in range(len(waypoints), self.local_waypoints_length):
+        for index in range(len(msg.waypoints), self.local_waypoints_length):
             marker = Marker()
-            marker.header.frame_id = waypoints[0].frame_id
+            marker.header.frame_id = msg.frame_id
             marker.ns = 'local_waypoints'
             marker.id = index
             marker.action = Marker.DELETE
             markers.append(marker)
-        for index in range(len(waypoints), self.local_waypoints_length):
+        for index in range(len(msg.waypoints), self.local_waypoints_length):
             marker = Marker()
-            marker.header.frame_id = waypoints[0].frame_id
+            marker.header.frame_id = msg.frame_id
             marker.ns = 'velocity'
             marker.id = index
             marker.action = Marker.DELETE
             markers.append(marker)
 
         # update record of number of markers published so they can be deleted next time
-        self.local_waypoints_length = len(waypoints) 
+        self.local_waypoints_length = len(msg.waypoints) 
         
         marker_array = MarkerArray()
         marker_array.markers = markers
         self.local_vis_pub_.publish(marker_array)
 
-    def publish_global(self, waypoints):
+    def global_callback(self, msg):
         markers = []
-        for index, waypoint in enumerate(waypoints):
+        for index, waypoint in enumerate(msg.waypoints):
             pose_marker = Marker()
-            pose_marker.header.frame_id = waypoints[0].frame_id
+            pose_marker.header.frame_id = msg.frame_id
             pose_marker.ns = 'global_waypoints'
             pose_marker.id = index
             pose_marker.type = Marker.CUBE
@@ -128,7 +122,7 @@ class WaypointVisualiser(Node):
             markers.append(pose_marker)
 
             velocity_marker = Marker()
-            velocity_marker.header.frame_id = waypoints[0].frame_id
+            velocity_marker.header.frame_id = msg.frame_id
             velocity_marker.ns = 'velocity'
             velocity_marker.id = index
             velocity_marker.type = Marker.TEXT_VIEW_FACING
@@ -150,21 +144,21 @@ class WaypointVisualiser(Node):
         # Remove extra markers
         for index in range(self.global_waypoints_length):
             marker = Marker()
-            marker.header.frame_id = waypoints[0].frame_id
+            marker.header.frame_id = msg.frame_id
             marker.ns = 'global_waypoints'
             marker.id = index
             marker.action = Marker.DELETE
             markers.append(marker)
         for index in range(self.global_waypoints_length):
             marker = Marker()
-            marker.header.frame_id = waypoints[0].frame_id
+            marker.header.frame_id = msg.frame_id
             marker.ns = 'velocity'
             marker.id = index
             marker.action = Marker.DELETE
             markers.append(marker)
 
         # update record of number of markers published so they can be deleted next time
-        self.local_waypoints_length = len(waypoints) 
+        self.local_waypoints_length = len(msg.waypoints) 
 
         marker_array = MarkerArray()
         marker_array.markers = markers
