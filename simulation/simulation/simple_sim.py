@@ -19,7 +19,7 @@ class SimpleSim(Node):
         super().__init__('simple_sim')
 
         # Spin the simulation at regular intervals
-        self.timer_period = 0.01  # seconds
+        self.timer_period = 0.1  # seconds
         self.spinner = self.create_timer(self.timer_period, self.spin)
 
         # Subscribers
@@ -50,7 +50,7 @@ class SimpleSim(Node):
         # Constants for converting SDControl message values (percentages) to Nm and radians
         # For now, these were chosen arbitrarily
         # TODO: determine the actual constants that correspond to the real-world vehicle
-        self.TORQUE_PERCENT_TO_NM = 0.05 # Nm / %
+        self.TORQUE_PERCENT_TO_NM = 0.5 # Nm / %
         self.STEER_PERCENT_TO_RAD = 0.03 # Rad / %
 
         # Kinematic bicycle model state
@@ -59,9 +59,11 @@ class SimpleSim(Node):
         self.state_phi = 0.0 # radians
         self.state_v = 0.0 # m/s
         # Vehicle parameters
-        self.vehicle_mass_kg = 0.5 # approximate weight of the Renault Twizy is 500kg
+        self.vehicle_mass_kg = 300.0 # approximate weight of the Renault Twizy is 500kg
         
         self.get_logger().set_level(logging.DEBUG)
+        
+        self.prev_time = self.get_clock().now()
 
     def control_callback(self, msg: SDControl):
         # Update the stored control command values
@@ -85,27 +87,32 @@ class SimpleSim(Node):
 
     def spin(self):
         # Update tf based on current commanded torque and steering after one time step
+        
+        elapsed_time_ns = (self.get_clock().now() - self.prev_time).nanoseconds
+        elapsed_time = elapsed_time_ns / 1e9
+        self.prev_time = self.get_clock().now()
 
         # Bicycle kinematic model as defined e.g. 
         # https://thef1clan.com/2020/09/21/vehicle-dynamics-the-kinematic-bicycle-model/
         # https://thomasfermi.github.io/Algorithms-for-Automated-Driving/Control/BicycleModel.html
         # R. Rajamani, Vehicle Dynamics and Control: https://edisciplinas.usp.br/pluginfile.php/5349444/mod_resource/content/3/Rajesh_Rajamani_Vehicle_Dynamics_and_Con.pdf
-
-        lf = 0.1 # distance from centre of gravity to front axle TODO: find real value
-        lr = 0.1 # distance from centre of gravity to rear axle TODO: find real value
+        # page 27
+        lf = 1.0 # distance from centre of gravity to front axle TODO: find real value
+        lr = 0.5 # distance from centre of gravity to rear axle TODO: find real value
 
         # Calculate values for kinematic model
-        beta = np.arctan((lr/(lf+lr))*np.tan(self.current_steer_angle_rad))
+        # assume delta_r is 0 (front wheel steering) --> self.current_steer_angle_rad = delta_f
+        beta = np.arctan((lr/(lf+lr))*np.tan(self.current_steer_angle_rad)) # "vehicle slip angle"
         x_dot = self.state_v * np.cos(self.state_phi+beta)
         y_dot = self.state_v * np.sin(self.state_phi+beta)
-        phi_dot = self.state_v*np.sin(beta)/lr
+        phi_dot = self.state_v*np.cos(beta)*np.tan(self.current_steer_angle_rad)/(lr+lf) # yaw angle (global)
         v_dot = self.current_torque_nm / self.vehicle_mass_kg
 
         # Integrate over time step
-        self.state_phi += phi_dot*self.timer_period
-        self.state_v += v_dot*self.timer_period
-        self.state_x += x_dot*self.timer_period
-        self.state_y += y_dot*self.timer_period
+        self.state_phi += phi_dot*elapsed_time
+        self.state_v += v_dot*elapsed_time
+        self.state_x += x_dot*elapsed_time
+        self.state_y += y_dot*elapsed_time
 
         # Get frame id parameters
         vehicle_frame = self.get_parameter('vehicle_frame').get_parameter_value().string_value
@@ -136,8 +143,10 @@ class SimpleSim(Node):
         vel_msg = TwistStamped()
         vel_msg.header.frame_id = vehicle_frame
         vel_msg.twist.linear.x = self.state_v
-        vel_msg.twist.angular.z = phi_dot # TODO: check if this represents angular vel
+        vel_msg.twist.angular.z = phi_dot # TODO: check if phi_dot represents angular vel
         self.current_vel_pub.publish(vel_msg)
+
+        # self.get_logger().info(f"v: {self.state_v:.2f}, phi: {self.state_phi:.2f}")
 
 
 def z_angle_to_quat(angle):

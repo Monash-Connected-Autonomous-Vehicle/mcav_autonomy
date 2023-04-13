@@ -26,8 +26,7 @@ class VelocityPlanner(Node):
         self.objects_sub  # prevent unused variable warning
 
         # Publishers
-        self.local_wp_bl_pub = self.create_publisher(WaypointArray, 'local_baselink_waypoints', 10)
-        self.local_wp_map_pub = self.create_publisher(WaypointArray, 'local_map_waypoints', 10)
+        self.local_wp_pub = self.create_publisher(WaypointArray, 'local_waypoints', 10)
         
         # Parameters (can be changed in launch file)
         self.declare_parameter('max_velocity', 0.1) # maximum waypoint velocity used for speed capping
@@ -50,7 +49,6 @@ class VelocityPlanner(Node):
         
         self.get_logger().set_level(logging.DEBUG)
 
-
     def current_pose_callback(self, pose_msg: PoseStamped):
         self.position = np.array([pose_msg.pose.position.x, pose_msg.pose.position.y])
         self.yaw = pose_msg.pose.orientation.z
@@ -64,6 +62,7 @@ class VelocityPlanner(Node):
         if len(self.global_wp_coords) == 0:
             self.get_logger().info("Received global waypoints")
         self.global_waypoints = msg.waypoints
+        self.waypoints_frame = msg.frame_id
         self.global_wp_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in msg.waypoints])
         
 
@@ -128,7 +127,6 @@ class VelocityPlanner(Node):
 
         return stopping_indices
 
-
     def slow_to_stop(self, waypoints, stopping_index):
         main_speed = max(wp.velocity.linear.x for wp in waypoints)
         max_accel = self.get_parameter('max_acceleration').get_parameter_value().double_value
@@ -147,7 +145,6 @@ class VelocityPlanner(Node):
             slowed_waypoints[i].velocity.linear.x = 0.0
 
         return slowed_waypoints
-
 
     def slow_at_curve(self, waypoints):
         """ Regulates velocity of waypoints at curves """
@@ -178,7 +175,6 @@ class VelocityPlanner(Node):
 
         return slowed_waypoints
 
-
     def speed_cap(self, waypoints):
         """ Failsafe to cap the speed of the car """
         capped_waypoints = waypoints.copy()
@@ -188,40 +184,6 @@ class VelocityPlanner(Node):
             wp.velocity.linear.x = min(max_velocity, wp.velocity.linear.x) # Velocity cap for pure pursuit
                          
         return capped_waypoints
-
-
-    def convert2base(self, wp_list): # converts given waypoints to base_link frame
-        """  """
-        vehicle_frame_id = self.get_parameter('vehicle_frame_id').get_parameter_value().string_value
-        # Wait until a transform is available from tf
-        try:
-            to_frame_rel = vehicle_frame_id
-            from_frame_rel = wp_list[0].frame_id
-            t = self.tf_buffer.lookup_transform(
-                to_frame_rel,
-                from_frame_rel,
-                rclpy.time.Time())
-        except tf2_ros.TransformException as ex:
-            self.get_logger().info(
-                f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')
-            return
-
-        local_wp_msg = WaypointArray()
-        
-        for wp in wp_list:
-            # Transform waypoint to vehicle coordinate frame
-            vehicle_matrix = transforms.tf_to_homogenous_mat(t)
-            wp_matrix = transforms.pose_to_homogenous_mat(wp.pose)
-            new_wp_matrix = np.dot(vehicle_matrix, wp_matrix)
-
-            wp_new = Waypoint()
-            wp_new.frame_id = vehicle_frame_id
-            wp_new.velocity.linear.x = wp.velocity.linear.x
-            wp_new.pose = transforms.homogenous_mat_to_pose(new_wp_matrix)
-            local_wp_msg.waypoints.append(wp_new)
-            
-        return local_wp_msg
-
 
     def spin(self):
         if len(self.position) > 0 and len(self.global_wp_coords) > 0:
@@ -247,14 +209,10 @@ class VelocityPlanner(Node):
                 local_waypoints = self.slow_to_stop(local_waypoints, min(stopping_indices))
             
             # Publish local waypoints in the map frame
-            local_map_wp_msg = WaypointArray()
-            local_map_wp_msg.waypoints = local_waypoints
-            self.local_wp_map_pub.publish(local_map_wp_msg)
-
-            # Publish local waypoints in the base_link frame
-            local_wp_msg = self.convert2base(local_waypoints)
-            if local_wp_msg is not None:
-                self.local_wp_bl_pub.publish(local_wp_msg)
+            local_wp_msg = WaypointArray()
+            local_wp_msg.frame_id = self.waypoints_frame
+            local_wp_msg.waypoints = local_waypoints
+            self.local_wp_pub.publish(local_wp_msg)
 
         # Log the reason that we cannot plan yet
         if len(self.position) == 0:

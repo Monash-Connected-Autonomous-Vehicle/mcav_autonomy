@@ -1,6 +1,6 @@
 <launch>
     <!-- Arguments -->
-    <arg name="waypoint_filename" default="/home/mcav/mcav_ws/src/mcav_autonomy/N1Level4_rectangularPath_Waypoints.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
+    <arg name="waypoint_filename" default="/home/mcav/mcav_ws/src/mcav_autonomy/data/waypoints/N1Level4_rectangularPath_Waypoints.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
     <arg name="pcd_path" default="/home/mcav/mcav_ws/src/mcav_autonomy/pointclouds/n1level4-autoware-221006.pcd" description="Absolute path of a .pcd file" />
     
     <!-- Sensing -->
@@ -14,9 +14,9 @@
     </include> -->
 
     <!-- Map -->
-    <node pkg="pcd_map_publisher" exec="pcd_map_publisher" name="pcd_map_publisher" >
-        <param name="pcd_path" value="$(var pcd_path)" />
-    </node>
+    <!-- <node pkg="pcd_map_publisher" exec="pcd_map_publisher" name="pcd_map_publisher" > -->
+        <!-- <param name="pcd_path" value="$(var pcd_path)" /> -->
+    <!-- </node> -->
     
     <!-- Planning -->
     <include file="$(find-pkg-share velocity_planner)/launch/velocity_planner.launch.xml">
@@ -39,6 +39,11 @@
     <node pkg="simulation" exec="simple_sim" name="simple_sim" />
 
     <!-- Visualisation -->
-    <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
+    <include file="$(find-pkg-share mcav_sd_model)/launch/mcav_sd_model.launch.py" />
+
+    <!-- <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/> -->
+    <include file="$(find-pkg-share foxglove_bridge)/foxglove_bridge_launch.xml">
+        <arg name="port" value="8765" />
+    </include>
 </launch>
 <!-- TODO: replace most of this with an include of streetdrone.launch.xml -->

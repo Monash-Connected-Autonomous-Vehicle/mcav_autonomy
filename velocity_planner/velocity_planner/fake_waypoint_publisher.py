@@ -22,7 +22,6 @@ class FakeWaypoints(Node):
 
         for i in range(len(x)):
             waypoint = Waypoint()
-            waypoint.frame_id = 'map'
             waypoint.pose.position.x = x[i]
             waypoint.pose.position.y = y[i]
             waypoint.velocity.linear.x = 5.5 # m/s
@@ -31,6 +30,7 @@ class FakeWaypoints(Node):
     def timer_callback(self):
         msg = WaypointArray()
         msg.waypoints = self.waypoints
+        msg.frame_id = "map"
         self.publisher_.publish(msg)
 
 

@@ -10,4 +10,5 @@ To run:
 ```
 . ~/mcav_ws/install/setup.bash
 ros2 launch simulation simple_sim.launch.xml
+ros2 launch simulation simple_sim.launch.xml waypoint_filename:=/home/mcav/mcav_ws/src/mcav_autonomy/simulation/example_waypoints/straight.csv
 ```

@@ -22,7 +22,7 @@ class ObjectVisualiser(Node):
         markers = []
         for index, object in enumerate(objects):
             obj_marker = Marker()
-            obj_marker.header.frame_id = objects[0].frame_id
+            obj_marker.header.frame_id = object.frame_id
             obj_marker.ns = 'detected_objects'
             obj_marker.id = index
             obj_marker.type = Marker.CUBE
