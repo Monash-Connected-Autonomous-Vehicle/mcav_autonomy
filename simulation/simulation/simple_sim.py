@@ -19,7 +19,7 @@ class SimpleSim(Node):
         super().__init__('simple_sim')
 
         # Spin the simulation at regular intervals
-        self.timer_period = 0.01  # seconds
+        self.timer_period = 0.1  # seconds
         self.spinner = self.create_timer(self.timer_period, self.spin)
 
         # Subscribers
@@ -62,6 +62,8 @@ class SimpleSim(Node):
         self.vehicle_mass_kg = 0.5 # approximate weight of the Renault Twizy is 500kg
         
         self.get_logger().set_level(logging.DEBUG)
+        
+        self.prev_time = self.get_clock().now()
 
     def control_callback(self, msg: SDControl):
         # Update the stored control command values
@@ -85,6 +87,10 @@ class SimpleSim(Node):
 
     def spin(self):
         # Update tf based on current commanded torque and steering after one time step
+        
+        elapsed_time_ns = (self.get_clock().now() - self.prev_time).nanoseconds
+        elapsed_time = elapsed_time_ns / 1e9
+        self.prev_time = self.get_clock().now()
 
         # Bicycle kinematic model as defined e.g. 
         # https://thef1clan.com/2020/09/21/vehicle-dynamics-the-kinematic-bicycle-model/
@@ -102,10 +108,10 @@ class SimpleSim(Node):
         v_dot = self.current_torque_nm / self.vehicle_mass_kg
 
         # Integrate over time step
-        self.state_phi += phi_dot*self.timer_period
-        self.state_v += v_dot*self.timer_period
-        self.state_x += x_dot*self.timer_period
-        self.state_y += y_dot*self.timer_period
+        self.state_phi += phi_dot*elapsed_time
+        self.state_v += v_dot*elapsed_time
+        self.state_x += x_dot*elapsed_time
+        self.state_y += y_dot*elapsed_time
 
         # Get frame id parameters
         vehicle_frame = self.get_parameter('vehicle_frame').get_parameter_value().string_value

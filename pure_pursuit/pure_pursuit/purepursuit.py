@@ -60,7 +60,7 @@ class PurePursuitNode(Node):
             twist_msg = TwistStamped()
 
             if self.stop:
-                print("Stopping vehicle...")
+                self.get_logger().info("Stopping vehicle...")
                 twist_msg.twist.linear.x = 0.0
                 twist_msg.twist.angular.z = 0.0
             else:
@@ -69,7 +69,7 @@ class PurePursuitNode(Node):
                 twist_msg.twist.angular.z = v_angular
                 
             self.pp_publisher.publish(twist_msg)
-            print("Linear vel: ", twist_msg.twist.linear.x ,", Angular vel: ", twist_msg.twist.angular.z)
+            self.get_logger().info(f"Stop: {self.stop}, Linear vel: {twist_msg.twist.linear.x:5.3f}, Angular vel: {twist_msg.twist.angular.z:5.3f}")
 
         
     def purepursuit(self) -> Tuple[float, float]:
@@ -138,7 +138,7 @@ class PurePursuitNode(Node):
             ty = gradient*tx + y_inter
         elif (wp_d <  self.Lfc).any(): 
             # target lookahead point in the trajectory of last waypoint if there are no points beyond lookahead distance
-            bearing = math.atan(wp_x[-1],wp_y[-1])
+            bearing = math.atan2(wp_x[-1],wp_y[-1])
             tx = self.Lfc*math.sin(bearing)
             ty = self.Lfc*math.cos(bearing)
         elif (wp_d >  self.Lfc).any():
@@ -146,7 +146,7 @@ class PurePursuitNode(Node):
             tx = wp_x[0]
             ty = wp_y[0]        
         
-        print("x: ", tx ,", y: ", ty)
+        self.get_logger().info(f"x: {tx:5.3f} , y: {ty:5.3f}")
         
         return tx, ty        
     
