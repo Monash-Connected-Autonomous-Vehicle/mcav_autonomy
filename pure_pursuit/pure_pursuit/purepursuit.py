@@ -4,8 +4,10 @@ import numpy as np
 import math
 import rclpy
 from rclpy.node import Node
-from mcav_interfaces.msg import WaypointArray, Waypoint
+from mcav_interfaces.msg import WaypointArray
 from geometry_msgs.msg import TwistStamped, PoseWithCovarianceStamped
+import tf2_ros
+import velocity_planner.transforms as transforms
 
 from typing import Tuple
   
@@ -19,19 +21,23 @@ class PurePursuitNode(Node):
 
         self.waypoints = []
         self.Lfc = None  # [m] default look-ahead distance
-        self.v = None  # [m/s] linear velocity
         self.stop = False  # stopping flag
         self.failsafe_thresh = 2.8  # positive change in velocity at which the car will stop at
+        self.vehicle_frame_id = "base_link"
 
         # Subscribers
-        self.wp_subscriber = self.create_subscription(WaypointArray, 'local_baselink_waypoints', self.waypoints_callback, 1)
+        self.wp_subscriber = self.create_subscription(WaypointArray, 'local_waypoints', self.waypoints_callback, qos_profile=rclpy.qos.qos_profile_sensor_data)
         self.wp_subscriber  # prevent 'unused variable' warning
+
+        # Initialise tf buffer and listener
+        self.tf_buffer = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.transform_listener.TransformListener(self.tf_buffer, self)
         
         # Publishers
         self.target_publisher = self.create_publisher(PoseWithCovarianceStamped, 'target_pose', 1)
         self.pp_publisher = self.create_publisher(TwistStamped, '/twist_cmd', 1)
         self.timer_period = 0.01
-        self.spinner = self.create_timer(self.timer_period, self.twist_callback)
+        self.spinner = self.create_timer(self.timer_period, self.spin)
 
         self.get_logger().info("pure_pursuit node started")
     
@@ -42,20 +48,27 @@ class PurePursuitNode(Node):
         Args:
             wp_msg (WaypointArray): array of waypoints of type Waypoint
         """
-
+        default_lookahead = 8.0
+        self.waypoint_frame_id = wp_msg.frame_id
         self.waypoints = wp_msg.waypoints
-        self.v = self.waypoints[0].velocity.linear.x
-        
-        # Lookahead distance dependent on velocity
-        self.Lfc = 4*self.v-8 if self.v > 4.0 else 8.0  # Tesla model3
-        # self.Lfc = 11.028*v - 63.5  # Nissan Micra
- 
+        # shorten the lookahead distance when slow (determined experimentally)
+        is_low_velocity = False
+        if len(wp_msg.waypoints) > 0:
+            linear_vel = self.waypoints[0].velocity.linear.x
+            is_low_velocity = linear_vel < 4.0
+            if is_low_velocity:
+                self.Lfc = default_lookahead
+            else:
+                self.Lfc = 4.0 * linear_vel - 8.0 # formula determined experimentally for Tesla Model 3 in CARLA
+                # self.Lfc = 11.028*linear_vel - 63.5  # Nissan Micra
+        else:
+            self.Lfc = default_lookahead
     
-    def twist_callback(self):   
+
+    def spin(self):   
         """
         Twist command publisher callback function.
         """
-
         if self.waypoints: 
             twist_msg = TwistStamped()
 
@@ -70,6 +83,8 @@ class PurePursuitNode(Node):
                 
             self.pp_publisher.publish(twist_msg)
             self.get_logger().info(f"Stop: {self.stop}, Linear vel: {twist_msg.twist.linear.x:5.3f}, Angular vel: {twist_msg.twist.angular.z:5.3f}")
+        else:
+            self.get_logger().warning(f"Waiting for local waypoints")
 
         
     def purepursuit(self) -> Tuple[float, float]:
@@ -94,15 +109,43 @@ class PurePursuitNode(Node):
         return v_linear, v_angular
 
 
+    def convert2base(self, wp_list): # converts given waypoints to base_link frame
+        vehicle_frame_id = "base_link"
+        # Wait until a transform is available from tf
+        try:
+            t = self.tf_buffer.lookup_transform(
+                target_frame=vehicle_frame_id,
+                source_frame=self.waypoint_frame_id,
+                time=rclpy.time.Time()
+            )
+        except tf2_ros.TransformException as ex:
+            self.get_logger().error(
+                f'Could not transform {vehicle_frame_id} to {self.waypoint_frame_id}: {ex}')
+            return
+
+        wp_x = []
+        wp_y = []
+        for wp in wp_list:
+            # Transform waypoint to vehicle coordinate frame
+            vehicle_matrix = transforms.tf_to_homogenous_mat(t)
+            wp_matrix = transforms.pose_to_homogenous_mat(wp.pose)
+            new_wp_matrix = np.dot(vehicle_matrix, wp_matrix)
+
+            pose = transforms.homogenous_mat_to_pose(new_wp_matrix)
+            
+            wp_x.append(pose.position.x)
+            wp_y.append(pose.position.y)
+            
+        return (np.array(wp_x), np.array(wp_y))
+
+            
     def target_searcher(self) -> Tuple[float, float]:
         """Interpolates target point in waypoint path at a lookahead distance away from vehicle.
 
         Returns:
              Tuple[float, float]: x and y coordinates of target
         """
-
-        wp_x = np.array([wp.pose.position.x for wp in self.waypoints])
-        wp_y = np.array([wp.pose.position.y for wp in self.waypoints])
+        (wp_x, wp_y) = self.convert2base(self.waypoints)
         wp_d = np.hypot(wp_x, wp_y)
         
         if (wp_d >  self.Lfc).any() and (wp_d <  self.Lfc).any():
@@ -161,9 +204,7 @@ class PurePursuitNode(Node):
         Returns:
              float: curvature to target
         """
-
         gamma = 2.0*y/(self.Lfc**2)  # gamma = 1/r
-        
         return gamma
 
 

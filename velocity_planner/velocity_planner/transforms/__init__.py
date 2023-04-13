@@ -16,7 +16,7 @@ def tf_to_homogenous_mat(t):
 
     return matrix
 
-def pose_to_homogenous_mat(pose):
+def pose_to_homogenous_mat(pose: Pose):
     translation_xyz = [pose.position.x, pose.position.y, pose.position.z]
     rotation_wxyz = [pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z]
     rotation_mat = tf3d.quaternions.quat2mat(rotation_wxyz)
@@ -27,7 +27,7 @@ def pose_to_homogenous_mat(pose):
 
     return matrix
 
-def homogenous_mat_to_pose(mat):
+def homogenous_mat_to_pose(mat) -> Pose:
     rotation_wxyz = tf3d.quaternions.mat2quat(mat[:3, :3])
     translation_xyz = mat[:3, 3]
 
