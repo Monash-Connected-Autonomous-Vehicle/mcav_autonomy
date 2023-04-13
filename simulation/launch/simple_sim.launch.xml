@@ -39,6 +39,8 @@
     <node pkg="simulation" exec="simple_sim" name="simple_sim" />
 
     <!-- Visualisation -->
+    <include file="$(find-pkg-share mcav_sd_model)/launch/mcav_sd_model.launch.py" />
+
     <!-- <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/> -->
     <include file="$(find-pkg-share foxglove_bridge)/foxglove_bridge_launch.xml">
         <arg name="port" value="8765" />

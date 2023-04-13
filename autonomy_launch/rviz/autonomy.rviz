@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /RobotModel1
       Splitter Ratio: 0.5
     Tree Height: 787
   - Class: rviz_common/Selection
@@ -75,9 +76,57 @@ Visualization Manager:
         All Enabled: true
         base_link:
           Value: true
+        chassis:
+          Value: true
+        front_center_camera_link:
+          Value: true
+        front_center_camera_link_optical:
+          Value: true
+        front_left_axle:
+          Value: true
+        front_left_camera_link:
+          Value: true
+        front_left_camera_link_optical:
+          Value: true
+        front_left_wheel:
+          Value: true
+        front_right_axle:
+          Value: true
+        front_right_camera_link:
+          Value: true
+        front_right_camera_link_optical:
+          Value: true
+        front_right_wheel:
+          Value: true
+        left_forward_camera_link:
+          Value: true
+        left_forward_camera_link_optical:
+          Value: true
+        left_rearward_camera_link:
+          Value: true
+        left_rearward_camera_link_optical:
+          Value: true
         map:
           Value: true
+        rear_center_camera_link:
+          Value: true
+        rear_center_camera_link_optical:
+          Value: true
+        rear_left_wheel:
+          Value: true
+        rear_right_wheel:
+          Value: true
+        right_forward_camera_link:
+          Value: true
+        right_forward_camera_link_optical:
+          Value: true
+        right_rearward_camera_link:
+          Value: true
+        right_rearward_camera_link_optical:
+          Value: true
         velodyne:
+          Value: true
+        velodyne_base_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -87,7 +136,43 @@ Visualization Manager:
       Tree:
         map:
           base_link:
-            velodyne:
+            chassis:
+              front_center_camera_link:
+                front_center_camera_link_optical:
+                  {}
+              front_left_camera_link:
+                front_left_camera_link_optical:
+                  {}
+              front_right_camera_link:
+                front_right_camera_link_optical:
+                  {}
+              left_forward_camera_link:
+                left_forward_camera_link_optical:
+                  {}
+              left_rearward_camera_link:
+                left_rearward_camera_link_optical:
+                  {}
+              rear_center_camera_link:
+                rear_center_camera_link_optical:
+                  {}
+              right_forward_camera_link:
+                right_forward_camera_link_optical:
+                  {}
+              right_rearward_camera_link:
+                right_rearward_camera_link_optical:
+                  {}
+              velodyne_base_link:
+                velodyne:
+                  {}
+            front_left_axle:
+              front_left_wheel:
+                {}
+            front_right_axle:
+              front_right_wheel:
+                {}
+            rear_left_wheel:
+              {}
+            rear_right_wheel:
               {}
       Update Interval: 0
       Value: true
@@ -106,6 +191,152 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /lookahead_point
       Value: true
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        chassis:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_center_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_center_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_left_axle:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_left_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_axle:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_right_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_forward_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_forward_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        left_rearward_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_rearward_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_center_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_center_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_forward_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_forward_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        right_rearward_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_rearward_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        velodyne:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        velodyne_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: RobotModel
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -152,25 +383,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 8.729690551757812
+      Distance: 40.66950988769531
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 14.179922103881836
-        Y: -0.5950894355773926
-        Z: -0.2122354358434677
+        X: 12.370794296264648
+        Y: -1.2974365949630737
+        Z: -2.2748167514801025
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6403988599777222
+      Pitch: 0.6903988122940063
       Target Frame: map
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.0854110717773438
+      Yaw: 2.330406427383423
     Saved: ~
 Window Geometry:
   Displays:

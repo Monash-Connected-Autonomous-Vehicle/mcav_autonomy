@@ -13,7 +13,7 @@ class WaypointReader(Node):
     def __init__(self):
         super().__init__('waypoint_reader')
         self.publisher_ = self.create_publisher(WaypointArray, 'global_waypoints', 10)
-        timer_period = 0.005  # seconds
+        timer_period = 2.0  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.waypoints = []
         self.declare_parameter('waypoint_filename', "town01_path.csv")

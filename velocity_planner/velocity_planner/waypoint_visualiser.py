@@ -166,7 +166,6 @@ class WaypointVisualiser(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-
     waypoint_visusaliser = WaypointVisualiser()
     rclpy.spin(waypoint_visusaliser)
     waypoint_visusaliser.destroy_node()

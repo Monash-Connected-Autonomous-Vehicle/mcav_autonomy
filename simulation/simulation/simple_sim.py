@@ -146,7 +146,7 @@ class SimpleSim(Node):
         vel_msg.twist.angular.z = phi_dot # TODO: check if phi_dot represents angular vel
         self.current_vel_pub.publish(vel_msg)
 
-        self.get_logger().info(f"v: {self.state_v:.2f}, phi: {self.state_phi:.2f}")
+        # self.get_logger().info(f"v: {self.state_v:.2f}, phi: {self.state_phi:.2f}")
 
 
 def z_angle_to_quat(angle):

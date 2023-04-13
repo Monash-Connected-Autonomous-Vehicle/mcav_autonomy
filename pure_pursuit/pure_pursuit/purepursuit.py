@@ -206,7 +206,7 @@ class PurePursuitNode(Node):
             # target first point if there are no points before lookahead distance
             tx = wp_x[0]
             ty = wp_y[0]
-            vlinear = self.waypoints[0].linear.x
+            vlinear = self.waypoints[0].velocity.linear.x
         
         # self.get_logger().info(f"x: {tx:5.3f} , y: {ty:5.3f}")
         
