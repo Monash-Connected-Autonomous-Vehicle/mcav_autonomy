@@ -50,8 +50,8 @@ class SimpleSim(Node):
         # Constants for converting SDControl message values (percentages) to Nm and radians
         # For now, these were chosen arbitrarily
         # TODO: determine the actual constants that correspond to the real-world vehicle
-        self.TORQUE_PERCENT_TO_NM = 0.05 # Nm / %
-        self.STEER_PERCENT_TO_RAD = 0.03 # Rad / %
+        self.TORQUE_PERCENT_TO_NM = 0.5 # Nm / %
+        self.STEER_PERCENT_TO_RAD = 0.3 # Rad / %
 
         # Kinematic bicycle model state
         self.state_x = 0.0 # metres
@@ -59,7 +59,7 @@ class SimpleSim(Node):
         self.state_phi = 0.0 # radians
         self.state_v = 0.0 # m/s
         # Vehicle parameters
-        self.vehicle_mass_kg = 0.5 # approximate weight of the Renault Twizy is 500kg
+        self.vehicle_mass_kg = 100.0 # approximate weight of the Renault Twizy is 500kg
         
         self.get_logger().set_level(logging.DEBUG)
         
@@ -97,8 +97,8 @@ class SimpleSim(Node):
         # https://thomasfermi.github.io/Algorithms-for-Automated-Driving/Control/BicycleModel.html
         # R. Rajamani, Vehicle Dynamics and Control: https://edisciplinas.usp.br/pluginfile.php/5349444/mod_resource/content/3/Rajesh_Rajamani_Vehicle_Dynamics_and_Con.pdf
 
-        lf = 0.1 # distance from centre of gravity to front axle TODO: find real value
-        lr = 0.1 # distance from centre of gravity to rear axle TODO: find real value
+        lf = 1.0 # distance from centre of gravity to front axle TODO: find real value
+        lr = 1.0 # distance from centre of gravity to rear axle TODO: find real value
 
         # Calculate values for kinematic model
         beta = np.arctan((lr/(lf+lr))*np.tan(self.current_steer_angle_rad))
@@ -142,8 +142,10 @@ class SimpleSim(Node):
         vel_msg = TwistStamped()
         vel_msg.header.frame_id = vehicle_frame
         vel_msg.twist.linear.x = self.state_v
-        vel_msg.twist.angular.z = phi_dot # TODO: check if this represents angular vel
+        vel_msg.twist.angular.z = phi_dot # TODO: check if phi_dot represents angular vel
         self.current_vel_pub.publish(vel_msg)
+
+        self.get_logger().info(f"v: {self.state_v:.2f}, phi: {self.state_phi:.2f}")
 
 
 def z_angle_to_quat(angle):
