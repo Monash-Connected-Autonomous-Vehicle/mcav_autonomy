@@ -51,7 +51,7 @@ class SimpleSim(Node):
         # For now, these were chosen arbitrarily
         # TODO: determine the actual constants that correspond to the real-world vehicle
         self.TORQUE_PERCENT_TO_NM = 0.5 # Nm / %
-        self.STEER_PERCENT_TO_RAD = 0.3 # Rad / %
+        self.STEER_PERCENT_TO_RAD = 0.03 # Rad / %
 
         # Kinematic bicycle model state
         self.state_x = 0.0 # metres
@@ -59,7 +59,7 @@ class SimpleSim(Node):
         self.state_phi = 0.0 # radians
         self.state_v = 0.0 # m/s
         # Vehicle parameters
-        self.vehicle_mass_kg = 100.0 # approximate weight of the Renault Twizy is 500kg
+        self.vehicle_mass_kg = 300.0 # approximate weight of the Renault Twizy is 500kg
         
         self.get_logger().set_level(logging.DEBUG)
         
@@ -96,15 +96,16 @@ class SimpleSim(Node):
         # https://thef1clan.com/2020/09/21/vehicle-dynamics-the-kinematic-bicycle-model/
         # https://thomasfermi.github.io/Algorithms-for-Automated-Driving/Control/BicycleModel.html
         # R. Rajamani, Vehicle Dynamics and Control: https://edisciplinas.usp.br/pluginfile.php/5349444/mod_resource/content/3/Rajesh_Rajamani_Vehicle_Dynamics_and_Con.pdf
-
+        # page 27
         lf = 1.0 # distance from centre of gravity to front axle TODO: find real value
-        lr = 1.0 # distance from centre of gravity to rear axle TODO: find real value
+        lr = 0.5 # distance from centre of gravity to rear axle TODO: find real value
 
         # Calculate values for kinematic model
-        beta = np.arctan((lr/(lf+lr))*np.tan(self.current_steer_angle_rad))
+        # assume delta_r is 0 (front wheel steering) --> self.current_steer_angle_rad = delta_f
+        beta = np.arctan((lr/(lf+lr))*np.tan(self.current_steer_angle_rad)) # "vehicle slip angle"
         x_dot = self.state_v * np.cos(self.state_phi+beta)
         y_dot = self.state_v * np.sin(self.state_phi+beta)
-        phi_dot = self.state_v*np.sin(beta)/lr
+        phi_dot = self.state_v*np.cos(beta)*np.tan(self.current_steer_angle_rad)/(lr+lf) # yaw angle (global)
         v_dot = self.current_torque_nm / self.vehicle_mass_kg
 
         # Integrate over time step
