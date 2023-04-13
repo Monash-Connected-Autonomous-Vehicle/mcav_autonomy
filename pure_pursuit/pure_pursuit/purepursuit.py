@@ -78,8 +78,8 @@ class PurePursuitNode(Node):
                 twist_msg.twist.linear.x = 0.0
                 twist_msg.twist.angular.z = 0.0
             else:
-                v_linear, v_angular = self.purepursuit()
-                twist_msg.twist.linear.x = v_linear
+                vlinear, v_angular = self.purepursuit()
+                twist_msg.twist.linear.x = vlinear
                 twist_msg.twist.angular.z = v_angular
                 
             self.pp_publisher.publish(twist_msg)
@@ -114,13 +114,12 @@ class PurePursuitNode(Node):
              Tuple[float, float]: linear and angular velocity
         """
 
-        tx, ty = self.target_searcher()
+        tx, ty, vlinear = self.target_searcher()
         self.publish_lookahead_point(tx, ty)
         gamma = self.steer_control(tx, ty)
-        v_linear = self.waypoints[0].velocity.linear.x
-        v_angular = v_linear*gamma
+        v_angular = vlinear*gamma
         
-        return v_linear, v_angular
+        return vlinear, v_angular
 
 
     def convert2base(self, wp_list): # converts given waypoints to base_link frame
@@ -163,17 +162,21 @@ class PurePursuitNode(Node):
         wp_d = np.hypot(wp_x, wp_y)
         
         if (wp_d >  self.Lfc).any() and (wp_d <  self.Lfc).any():
-            L_less = wp_d[wp_d <= self.Lfc]  # distance of points within lookahead range
-            L_more = wp_d[wp_d >  self.Lfc]  # distance of points beyond lookahead range
-            d_prev_i = np.argmax(L_less)
-            d_next_i = np.argmin(L_more)
+            points_within = wp_d <= self.Lfc
+            points_beyond = wp_d > self.Lfc
             
-            # coordinates of closest point within lookahead range
-            x1 = (wp_x[wp_d <= self.Lfc])[d_prev_i]
-            y1 = (wp_y[wp_d <= self.Lfc])[d_prev_i]
+            # coordinates of furthest point within lookahead range
+            L_less = wp_d[points_within]  # distance of points within lookahead range
+            d_prev_i = np.argmax(L_less)
+            x1 = (wp_x[points_within])[d_prev_i]
+            y1 = (wp_y[points_within])[d_prev_i]
             # coordinates of closest point beyond lookahead range
-            x2 = (wp_x[wp_d >  self.Lfc])[d_next_i]
-            y2 = (wp_y[wp_d >  self.Lfc])[d_next_i]
+            L_more = wp_d[points_beyond]  # distance of points beyond lookahead range
+            d_next_i = np.argmin(L_more)
+            x2 = (wp_x[points_beyond])[d_next_i]
+            y2 = (wp_y[points_beyond])[d_next_i]
+
+            vlinear = self.waypoints[d_next_i].velocity.linear.x
             
             # maths to get coordinates of lookahead point
             ## linear line coeficients
@@ -198,15 +201,16 @@ class PurePursuitNode(Node):
             bearing = math.atan2(wp_x[-1],wp_y[-1])
             tx = self.Lfc*math.sin(bearing)
             ty = self.Lfc*math.cos(bearing)
-            self.get_logger().info("Reached last waypoint")
+            vlinear = 0.0
         elif (wp_d >  self.Lfc).any():
             # target first point if there are no points before lookahead distance
             tx = wp_x[0]
             ty = wp_y[0]
+            vlinear = self.waypoints[0].linear.x
         
         # self.get_logger().info(f"x: {tx:5.3f} , y: {ty:5.3f}")
         
-        return tx, ty        
+        return tx, ty, vlinear  
     
     
     def steer_control(self, x: float, y: float) ->  float:
