@@ -17,8 +17,6 @@ RUN apt-get -y update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
-RUN sh -c 'echo "deb [trusted=yes] https://s3.amazonaws.com/autonomoustuff-repo/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/autonomoustuff-public.list'
-
 # Create a non-root user with sudo privileges
 ARG USERNAME=mcav
 ARG USER_UID=1000
@@ -34,55 +32,45 @@ ENV COLCON_WS=${HOMEDIR}/mcav_ws
 ENV SOURCE_DIR=${COLCON_WS}/src/mcav_autonomy
 WORKDIR ${COLCON_WS}
 
-# Download autoware and deps
-# RUN git clone https://github.com/autowarefoundation/autoware.git ${COLCON_WS}/src/autoware
-# RUN pip3 install gdown && apt update && apt install geographiclib-tools && \
-#  geographiclib-get-geoids egm2008-1
-# WORKDIR ${COLCON_WS}/src/autoware
-# RUN mkdir src && vcs import src < autoware.repos
-
-# Download and build carla ros bridge
-# RUN git clone https://github.com/Monash-Connected-Autonomous-Vehicle/ros-bridge.git src/ros-bridge --recurse-submodules
-# RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
-# Copy package xml files to decide dependencies
+# Copy package xml files to decide dependencies (while avoiding cache invalidation when other files change)
 COPY autonomy_launch/package.xml ${SOURCE_DIR}/autonomy_launch/package.xml
 COPY velocity_planner/package.xml ${SOURCE_DIR}/velocity_planner/package.xml
 COPY mcav_interfaces/package.xml ${SOURCE_DIR}/mcav_interfaces/package.xml
 COPY project_tracker/package.xml ${SOURCE_DIR}/project_tracker/package.xml
-COPY project_map/package.xml ${SOURCE_DIR}/project_map/package.xml
 COPY pure_pursuit/package.xml ${SOURCE_DIR}/pure_pursuit/package.xml
 COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
-COPY SD-VehicleInterface/sd_msgs/package.xml ${SOURCE_DIR}/SD-VehicleInterface/sd_msgs/package.xml
-COPY SD-VehicleInterface/vehicle_interface/package.xml ${SOURCE_DIR}/SD-VehicleInterface/vehicle_interface/package.xml
+
+# Clone external sources
+WORKDIR ${SOURCE_DIR}
+COPY ros.repos ${SOURCE_DIR}
+RUN vcs import . < ros.repos
+
 # Project-specific dependency install
-RUN apt-get update && rosdep update && DEBIAN_FRONTED=noninteractive rosdep install --from-paths src --ignore-src -r -y \
-    && ros-${ROS_DISTRO}-tf2-geometry-msgs \
-    && apt-get install -y python3-pcl \
+RUN apt-get update && rosdep update && DEBIAN_FRONTEND=noninteractive rosdep install --from-paths src --ignore-src -r -y \
+    && apt-get install -y \
+    python3-pcl \
+    ros-${ROS_DISTRO}-tf2-geometry-msgs \
+    ros-${ROS_DISTRO}-foxglove-bridge \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
+
 # Build project
 COPY . ${SOURCE_DIR}
 RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
 
-
-# Change owner of the files to non-root user
-RUN chown -R ${USERNAME} /home/${USERNAME}
 # Add source commands to bashrc
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/${USERNAME}/.bashrc
 # Change prompt to show we are in a docker container
 RUN echo "export PS1='\[\e]0;\u@docker: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@docker\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> /home/${USERNAME}/.bashrc
-# Add workspace sourcing alias (means you can type 'src' to source the workspace)
-RUN echo "alias src='source ~/mcav_ws/install/setup.bash'" >> /home/${USERNAME}/.bashrc
+# Add short aliases for commonly-used commands
+COPY ./docker/aliases /home/${USERNAME}
+RUN echo "source ~/aliases" >> /home/${USERNAME}/.bashrc
 # Suppress warning about setup.py being deprecated (https://github.com/colcon/colcon-core/issues/454)
 echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> /home/${USERNAME}/.bashrc
 # Add tmux configuration file
 COPY docker/.tmux.conf /home/${USERNAME}/.tmux.conf
-
-# Nvidia GPU Support (if run with nvidia-container-runtime)
-ENV NVIDIA_VISIBLE_DEVICES \
-    ${NVIDIA_VISIBLE_DEVICES:-all}
-ENV NVIDIA_DRIVER_CAPABILITIES \
-    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
+# Change owner of the files to non-root user
+RUN chown -R ${USERNAME} /home/${USERNAME}
 
 WORKDIR ${SOURCE_DIR}
 CMD /bin/bash

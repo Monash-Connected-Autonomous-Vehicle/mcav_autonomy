@@ -3,10 +3,8 @@ FROM ros:humble
 # Dev tools
 # Try to keep ROS-related dependencies out of here and inside package.xml to be installed with rosdep instead
 RUN apt-get -y update && apt-get install -y \
-    x11-apps \
     python3-pip \
     build-essential \
-    libcanberra-gtk3-module \
     vim \
     nano \
     git \
@@ -31,23 +29,28 @@ ENV COLCON_WS=${HOMEDIR}/mcav_ws
 ENV SOURCE_DIR=${COLCON_WS}/src/mcav_autonomy
 WORKDIR ${COLCON_WS}
 
-# Copy package xml files to decide dependencies
+# Copy package xml files to decide dependencies (while avoiding cache invalidation when other files change)
 COPY autonomy_launch/package.xml ${SOURCE_DIR}/autonomy_launch/package.xml
 COPY velocity_planner/package.xml ${SOURCE_DIR}/velocity_planner/package.xml
 COPY mcav_interfaces/package.xml ${SOURCE_DIR}/mcav_interfaces/package.xml
 COPY project_tracker/package.xml ${SOURCE_DIR}/project_tracker/package.xml
-COPY project_map/icp_localiser/package.xml ${SOURCE_DIR}/project_map/icp_localiser/package.xml
 COPY pure_pursuit/package.xml ${SOURCE_DIR}/pure_pursuit/package.xml
 COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
-COPY SD-VehicleInterface/sd_msgs/package.xml ${SOURCE_DIR}/SD-VehicleInterface/sd_msgs/package.xml
-COPY SD-VehicleInterface/vehicle_interface/package.xml ${SOURCE_DIR}/SD-VehicleInterface/vehicle_interface/package.xml
+
+# Clone external sources
+WORKDIR ${SOURCE_DIR}
+COPY ros.repos ${SOURCE_DIR}
+RUN vcs import . < ros.repos
+
 # Project-specific dependency install
 RUN apt-get update && rosdep update && DEBIAN_FRONTEND=noninteractive rosdep install --from-paths src --ignore-src -r -y \
-    && apt-get install -y python3-pcl \
+    && apt-get install -y \
+    python3-pcl \
     ros-${ROS_DISTRO}-tf2-geometry-msgs \
     ros-${ROS_DISTRO}-foxglove-bridge \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
+
 # Build project
 COPY . ${SOURCE_DIR}
 RUN /bin/bash -c '. /opt/ros/$ROS_DISTRO/setup.bash; cd /${COLCON_WS}; colcon build --symlink-install'
@@ -65,18 +68,6 @@ echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setupto
 COPY docker/.tmux.conf /home/${USERNAME}/.tmux.conf
 # Change owner of the files to non-root user
 RUN chown -R ${USERNAME} /home/${USERNAME}
-
-# # Install ROS 1 bridge
-# RUN echo "deb http://packages.ros.org/ros/ubuntu/ focal main" > /etc/apt/sources.list.d/ros1-latest.list
-# # setup keys
-# ENV ROS1_DISTRO noetic
-# ENV ROS2_DISTRO foxy
-# # install ros 1 packages
-# RUN apt-get update && apt-get install -y \
-# 	ros-noetic-ros-comm=1.15.14-1* \
-#         ros-foxy-ros1-bridge=0.9.6-1* \
-# 	ros-${ROS2_DISTRO}-velodyne-pointcloud \
-# 	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR ${SOURCE_DIR}
 CMD /bin/bash
