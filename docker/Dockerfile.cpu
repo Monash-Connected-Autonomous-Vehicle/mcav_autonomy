@@ -73,7 +73,7 @@ RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/${USERNAME}/.bashrc
 RUN echo "export PS1='\[\e]0;\u@docker: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@docker\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> /home/${USERNAME}/.bashrc
 # Add workspace sourcing alias (means you can type 'src' to source the workspace)
 RUN echo "alias src='source ~/mcav_ws/install/setup.bash'" >> /home/${USERNAME}/.bashrc
-# Suppress warning about setup.py being deprecated
+# Suppress warning about setup.py being deprecated (https://github.com/colcon/colcon-core/issues/454)
 echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> /home/${USERNAME}/.bashrc
 # Add tmux configuration file
 COPY docker/.tmux.conf /home/${USERNAME}/.tmux.conf
