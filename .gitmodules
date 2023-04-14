@@ -2,6 +2,3 @@
 	submodulesummary = 1
 [diff]
 	submodule = log
-[submodule "project_map"]
-	path = project_map
-	url = git@github.com:Monash-Connected-Autonomous-Vehicle/project_map.git
