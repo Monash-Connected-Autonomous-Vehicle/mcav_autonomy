@@ -1,0 +1,291 @@
+{
+  "configById": {
+    "3D!2w6jc0k": {
+      "cameraState": {
+        "perspective": true,
+        "distance": 42.89424004944337,
+        "phi": 53.50326991514599,
+        "thetaOffset": 76.77341031032087,
+        "targetOffset": [
+          7.9755492277531035,
+          -1.7852456273299404,
+          5.030814310869825e-15
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 4983.288801944404
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "meshUpAxis": "z_up",
+        "ignoreColladaUpAxis": true,
+        "syncCamera": false,
+        "enableStats": false
+      },
+      "transforms": {
+        "frame:base_link": {
+          "visible": false
+        },
+        "frame:velodyne": {
+          "visible": false
+        },
+        "frame:front_left_axle": {
+          "visible": false
+        },
+        "frame:front_right_axle": {
+          "visible": false
+        },
+        "frame:front_left_wheel": {
+          "visible": false
+        },
+        "frame:front_right_wheel": {
+          "visible": false
+        },
+        "frame:rear_left_wheel": {
+          "visible": false
+        },
+        "frame:rear_right_wheel": {
+          "visible": false
+        },
+        "frame:chassis": {
+          "visible": false
+        },
+        "frame:velodyne_base_link": {
+          "visible": false
+        },
+        "frame:front_left_camera_link": {
+          "visible": false
+        },
+        "frame:front_left_camera_link_optical": {
+          "visible": false
+        },
+        "frame:front_right_camera_link": {
+          "visible": false
+        },
+        "frame:front_right_camera_link_optical": {
+          "visible": false
+        },
+        "frame:front_center_camera_link": {
+          "visible": false
+        },
+        "frame:front_center_camera_link_optical": {
+          "visible": false
+        },
+        "frame:rear_center_camera_link": {
+          "visible": false
+        },
+        "frame:rear_center_camera_link_optical": {
+          "visible": false
+        },
+        "frame:right_forward_camera_link": {
+          "visible": false
+        },
+        "frame:right_forward_camera_link_optical": {
+          "visible": false
+        },
+        "frame:right_rearward_camera_link": {
+          "visible": false
+        },
+        "frame:right_rearward_camera_link_optical": {
+          "visible": false
+        },
+        "frame:left_forward_camera_link": {
+          "visible": false
+        },
+        "frame:left_forward_camera_link_optical": {
+          "visible": false
+        },
+        "frame:left_rearward_camera_link": {
+          "visible": false
+        },
+        "frame:left_rearward_camera_link_optical": {
+          "visible": false
+        }
+      },
+      "topics": {
+        "/points_raw": {
+          "visible": true,
+          "colorField": "ring",
+          "colorMode": "gradient",
+          "colorMap": "rainbow",
+          "explicitAlpha": 1,
+          "stixelsEnabled": false,
+          "pointSize": 1,
+          "pointShape": "square"
+        },
+        "/image_raw": {
+          "visible": true
+        },
+        "/ndt_pose": {
+          "visible": true
+        },
+        "/visualization_marker_array": {
+          "visible": true
+        },
+        "/local_visualization_marker_array": {
+          "visible": true
+        },
+        "/target_pose": {
+          "visible": true,
+          "axisScale": 1.3000000000000005,
+          "type": "arrow",
+          "showCovariance": false
+        },
+        "/move_base_simple/goal": {
+          "visible": false
+        },
+        "/initialpose": {
+          "visible": false
+        },
+        "/detected_objects_marker_array": {
+          "visible": false
+        },
+        "/current_pose": {
+          "visible": false
+        },
+        "/local_waypoint_markers": {
+          "visible": true,
+          "namespaces": {
+            "velocity": {
+              "visible": true
+            }
+          }
+        },
+        "/global_waypoint_markers": {
+          "visible": true,
+          "namespaces": {
+            "velocity": {
+              "visible": false
+            }
+          }
+        },
+        "/robot_description": {
+          "visible": true
+        }
+      },
+      "layers": {
+        "281b3546-c132-4a7e-a1b5-7ad2eac525cd": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "URDF",
+          "instanceId": "281b3546-c132-4a7e-a1b5-7ad2eac525cd",
+          "layerId": "foxglove.Urdf",
+          "url": "package://mcav_sd_model/urdf/sd_twizy.urdf.xacro",
+          "order": 1
+        }
+      },
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "followTf": "map",
+      "imageMode": {}
+    },
+    "Plot!302s74o": {
+      "paths": [
+        {
+          "value": "/ndt_pose.pose.position.x",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "x"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/ndt_pose.pose.position.y",
+          "enabled": true,
+          "label": "y"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/ndt_pose.pose.position.z",
+          "enabled": true,
+          "label": "z"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240,
+      "foxglovePanelTitle": "Plot",
+      "title": "Plot"
+    },
+    "TopicGraph!1nka3ar": {},
+    "Plot!3dq4xcn": {
+      "paths": [
+        {
+          "value": "/twist_cmd.twist.angular.z",
+          "enabled": true,
+          "timestampMethod": "receiveTime"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/current_pose.pose.position.x",
+          "enabled": false
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/twist_cmd.twist.linear.x",
+          "enabled": true
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240,
+      "foxglovePanelTitle": "Plot",
+      "title": "Plot"
+    },
+    "Tab!1xyw5ix": {
+      "activeTabIdx": 0,
+      "tabs": [
+        {
+          "layout": "3D!2w6jc0k",
+          "title": "3D"
+        },
+        {
+          "title": "IMU Plot",
+          "layout": "Plot!302s74o"
+        },
+        {
+          "title": "Topic Graph",
+          "layout": "TopicGraph!1nka3ar"
+        }
+      ]
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": {
+    "direction": "row",
+    "first": "Plot!3dq4xcn",
+    "second": "Tab!1xyw5ix",
+    "splitPercentage": 46.66357529738329
+  }
+}
