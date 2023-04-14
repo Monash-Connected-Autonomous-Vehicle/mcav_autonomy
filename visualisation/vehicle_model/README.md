@@ -16,16 +16,16 @@ The model is made up of .xacro files that are interpreted by the xacro library, 
 
 # How to run
 
-`colcon build --packages-select mcav_sd_model`
+`colcon build --packages-select vehicle_model`
 
 `source ~/colcon_ws/install/setup.bash`
 
-`ros2 launch mcav_sd_model mcav_sd_model.launch.py`
+`ros2 launch vehicle_model vehicle_model.launch.py`
 
 or, include it in a launch file:
 
 ### `my_launch_file.launch.xml`
 
-`<include file="$(find-pkg-share mcav_sd_model)/launch/mcav_sd_model.launch.py">`
+`<include file="$(find-pkg-share vehicle_model)/launch/vehicle_model.launch.py">`
 
 To view result, open rviz, Add, By Display Type, RobotModel and change Description Topic to `/robot_description`

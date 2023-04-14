@@ -9,7 +9,7 @@ This simulator is for evaluating planning and control in isolation. (i.e. withou
 To run:
 ```
 . ~/mcav_ws/install/setup.bash
-ros2 launch simulation simple_sim.launch.xml waypoint_filename:=/home/mcav/mcav_ws/src/mcav_autonomy/simulation/example_waypoints/straight.csv
+ros2 launch simulation simple_sim.launch.xml waypoints_file:=/home/mcav/mcav_ws/src/mcav_autonomy/simulation/example_waypoints/straight.csv
 ```
 
 ## `twist_stamp_remover.py`

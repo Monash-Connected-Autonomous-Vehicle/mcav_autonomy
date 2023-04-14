@@ -16,17 +16,17 @@ class WaypointReader(Node):
         timer_period = 2.0  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.waypoints = []
-        self.declare_parameter('waypoint_filename', "town01_path.csv")
-        wp_filename = self.get_parameter('waypoint_filename').get_parameter_value().string_value
+        self.declare_parameter('waypoints_file', "town01_path.csv")
+        wp_filename = self.get_parameter('waypoints_file').get_parameter_value().string_value
         self.init_waypoints(wp_filename)
         
 
-    def init_waypoints(self, waypoint_filename):
+    def init_waypoints(self, waypoints_file):
         """ Reads in waypoints from the given csv file and stores them """
         paths_csv_directory = os.path.join(get_package_share_directory('velocity_planner'))
 
         try:
-            filename = os.path.join(paths_csv_directory, waypoint_filename)
+            filename = os.path.join(paths_csv_directory, waypoints_file)
             with open(filename) as csvfile:
                 csv_reader = csv.DictReader(csvfile, delimiter=',')
 

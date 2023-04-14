@@ -12,10 +12,10 @@ All rights reserved
   <!-- ***************** -->
   <!-- Imported elements -->
   <!-- ***************** -->
-  <xacro:include filename="$(find mcav_sd_model)/urdf/bases/sd_twizy_body.urdf.xacro" />
-  <xacro:include filename="$(find mcav_sd_model)/urdf/wheels/sd_twizy_suspension.urdf.xacro" />
-  <xacro:include filename="$(find mcav_sd_model)/urdf/sensors/VLP-16.urdf.xacro"/>
-  <xacro:include filename="$(find mcav_sd_model)/urdf/sensors/cameras.urdf.xacro"/>
+  <xacro:include filename="$(find vehicle_model)/urdf/bases/sd_twizy_body.urdf.xacro" />
+  <xacro:include filename="$(find vehicle_model)/urdf/wheels/sd_twizy_suspension.urdf.xacro" />
+  <xacro:include filename="$(find vehicle_model)/urdf/sensors/VLP-16.urdf.xacro"/>
+  <xacro:include filename="$(find vehicle_model)/urdf/sensors/cameras.urdf.xacro"/>
 
 
   <!-- *************** -->

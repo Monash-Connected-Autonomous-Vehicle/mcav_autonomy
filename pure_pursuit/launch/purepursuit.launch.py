@@ -6,7 +6,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     waypoint_file_launch_arg = DeclareLaunchArgument(
-        'waypoint_filename', default_value=TextSubstitution(text='/home/mcav/sheng_ws/control_ws/town01_path.csv'), 
+        'waypoints_file', default_value=TextSubstitution(text='/home/mcav/sheng_ws/control_ws/town01_path.csv'), 
         description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats"
     )
 
@@ -31,7 +31,7 @@ def generate_launch_description():
             executable='waypoint_reader',
             name='waypoint_reader',
             parameters=[{
-                'waypoint_filename': LaunchConfiguration('waypoint_filename'), # absolute path
+                'waypoints_file': LaunchConfiguration('waypoints_file'), # absolute path
             }]
         ),
         Node(

@@ -81,7 +81,7 @@ Terminal 4 (Launch simulation)
 - `ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py`
     
 Existing waypoints in a csv file can be specified as follows:
-    ```ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py waypoint_filename:=/home/mcav/Sheng/control_ws/town01_path1.csv```
+    ```ros2 launch pure_pursuit purepursuit_simulation_standalone.launch.py waypoints_file:=/home/mcav/Sheng/control_ws/town01_path1.csv```
     
 ## Contributors ✨
 

@@ -11,7 +11,7 @@ import launch_ros.actions
 
 def generate_launch_description():
     # Load the URDF into a parameter
-    bringup_dir = get_package_share_directory('mcav_sd_model')
+    bringup_dir = get_package_share_directory('vehicle_model')
     xacro_path = os.path.join(bringup_dir, 'urdf', 'sd_twizy.urdf.xacro')
     robot_description = {"robot_description": xacro.process_file(xacro_path).toxml()}
 

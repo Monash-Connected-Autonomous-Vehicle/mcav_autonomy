@@ -25,16 +25,20 @@ mcav_ws/
 └── src
     └── mcav_autonomy
         ├── autonomy_launch         # Launch files for entire stack
+        ├── data
+        │   ├── pointclouds         # Pointcloud map files (.pcd)
+        │   └── rosbags             # Recorded rosbags
         ├── data_recording          # Launch files for creating rosbags
         ├── docker                  # Dockerfiles and run scripts
         ├── mcav_interfaces         # Shared ROS Message and Service definitions
-        ├── mcav_sd_model           # 3D vehicle models for visualisation
         ├── project_tracker         # Object detection and tracking
         ├── pure_pursuit            # Control system
         ├── sensors_launch          # Launch files for the sensors
         ├── SD-VehicleInterface     # Sends actuation commands, reads GPS/IMU and speedometer
-        ├── simulation              # CARLA simulation setup
+        ├── simulation              # CARLA & simple kinematics simulation setups
         └── velocity_planner        # Local planner
+        └── visualisation
+            └── vehicle_model       # 3D vehicle models for visualisation 
 ```
 
 Pointcloud map, rosbags, waypoints and other files that are data, not code, should be stored in `data/pointclouds`, `data/rosbags`, `data/waypoints` etc.
@@ -49,7 +53,20 @@ Terminal 2 (Launch CARLA ros-bridge):
 
 Terminal 3 (Launch autonomy stack):
 - `cd ~/mcav_ws && source install/setup.bash`
-- `ros2 launch autonomy_launch carla.launch.py waypoint_filename:=/home/mcav/Sheng/control_ws/town01_path1.csv`
+- `ros2 launch autonomy_launch carla.launch.py waypoints_file:=/home/mcav/Sheng/control_ws/town01_path1.csv`
+
+# How to run on Alienware
+
+Setup CAN and enter Docker container:
+```
+./main_launch.sh
+```
+
+Launch the stack:
+```
+src
+ros2 launch autonomy_launch streetdrone.launch.xml
+```
 
 # How to run on PX2
 Check out the tutorial [here](https://www.notion.so/monashcav/ROS-ROS2-Bridge-Docker-on-the-PX2-b467b22b85444f27a47ded13b8968370). 

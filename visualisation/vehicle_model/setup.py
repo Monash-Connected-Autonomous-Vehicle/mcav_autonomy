@@ -1,7 +1,7 @@
 from setuptools import setup
 from glob import glob
 
-package_name = 'mcav_sd_model'
+package_name = 'vehicle_model'
 
 setup(
     name=package_name,

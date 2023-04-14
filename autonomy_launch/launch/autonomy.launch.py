@@ -9,7 +9,7 @@ import os
 
 def generate_launch_description():
     waypoint_file_launch_arg = DeclareLaunchArgument(
-        'waypoint_filename', default_value=TextSubstitution(text='/home/mcav/mcav_ws/src/mcav_autonomy/velocity_planner/town01_small_waypoints.csv'),
+        'waypoints_file', default_value=TextSubstitution(text='/home/mcav/mcav_ws/src/mcav_autonomy/velocity_planner/town01_small_waypoints.csv'),
         description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats"
     )
 
@@ -47,7 +47,7 @@ def generate_launch_description():
             executable='waypoint_reader',
             name='waypoint_reader',
             parameters=[{
-                'waypoint_filename': LaunchConfiguration('waypoint_filename'), # absolute path
+                'waypoints_file': LaunchConfiguration('waypoints_file'), # absolute path
             }]
         ),
         Node(

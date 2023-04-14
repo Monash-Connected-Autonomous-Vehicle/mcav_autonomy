@@ -59,6 +59,8 @@ RUN echo "export PS1='\[\e]0;\u@docker: \w\a\]${debian_chroot:+($debian_chroot)}
 # Add short aliases for commonly-used commands
 COPY ./docker/aliases /home/${USERNAME}
 RUN echo "source ~/aliases" >> /home/${USERNAME}/.bashrc
+# Suppress warning about setup.py being deprecated
+echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> /home/${USERNAME}/.bashrc
 # Add tmux configuration file
 COPY docker/.tmux.conf /home/${USERNAME}/.tmux.conf
 # Change owner of the files to non-root user
