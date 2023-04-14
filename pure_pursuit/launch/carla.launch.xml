@@ -1,0 +1,7 @@
+<!-- Currently, this is just a minimal example of how to use the twist_stamp_remover node-->
+<launch>
+    <node pkg="pure_pursuit" exec="twist_stamp_remover">
+        <remap from="/twist_stamped_input" to="/twist_cmd" />
+        <remap from="/twist_unstamped_output" to="/carla/ego_vehicle/twist_cmd" />
+    </node>
+</launch>

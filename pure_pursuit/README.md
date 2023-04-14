@@ -12,17 +12,13 @@
 <!-- A screenshot or Gif of the working project -->
 ![](misc/PurePur.png)
 
-Pure Pursuit is a tracking algorithm which works by calculating the amount of curvature required to move a vehicle from its current position to some goal position. It tracks a reference path (made of waypoints) using the geometry of the vehicle kinematics as well as a fixed distance known as the look ahead distance. Ultimately, the vehicle chases a look ahead point which constantly changes as the vehicle moves. This look ahead point changes based on the current position of the vehicle until the last waypoint on the path and has a minimum distance of the look ahead relative to the vehicle. 
+Pure Pursuit is a tracking algorithm which works by calculating the amount of curvature required to move a vehicle from its current position to some goal position. It tracks a reference path (made of waypoints) using the geometry of the vehicle kinematics as well as a fixed distance known as the look ahead distance. Ultimately, the vehicle chases a look ahead point which constantly changes as the vehicle moves.
 
 <!-- All requirements of the project should be links to where we can install them -->
 <!-- pip dependencies must be added into a requirements.txt file -->
 ## Requirements
-- [Ubuntu 20.04](https://ubuntu.com/download/desktop)
-- [ROS2 Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
 - [CARLA 0.9.13](https://carla.readthedocs.io/en/latest/start_quickstart/#carla-installation) 
 - [CARLA ROS Bridge](https://carla.readthedocs.io/projects/ros-bridge/en/latest/ros_installation_ros2/)
-- [MCAV interfaces](https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces) should be in the same workspace
-- [Velocity planner](https://github.com/Monash-Connected-Autonomous-Vehicle/velocity_planner) should be in the same workspace
 
 <!-- Very simple installation procedure. If you can't install within 5 single line bullet points, you need to refactor your code to be  \
 able to do so -->
@@ -54,7 +50,7 @@ src
 
 ## Usage
 <!-- 
- Usage instructions must be concise. Any export statements must be added to .bashrc (add steps in either requirements of installation).
+ Usage instructions must be concise. Any export statements must be added to .bashrc (add steps in either requirements or installation).
 
 It should follow the structure mentioned below:
 Terminal # (What are we doing):
