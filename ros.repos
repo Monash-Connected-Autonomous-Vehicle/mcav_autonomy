@@ -1,13 +1,9 @@
 repositories:
   SD-VehicleInterface:
     type: git
-    url: git@github.com:Monash-Connected-Autonomous-Vehicle/SD-VehicleInterface.git
+    url: https://github.com/Monash-Connected-Autonomous-Vehicle/SD-VehicleInterface.git
     version: main
   kiss-icp:
     type: git
-    url: git@github.com:PRBonn/kiss-icp.git
-    version: main
-  mcav_autonomy:
-    type: git
-    url: git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git
+    url: https://github.com/PRBonn/kiss-icp.git
     version: main

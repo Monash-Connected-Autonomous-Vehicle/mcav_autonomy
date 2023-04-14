@@ -27,9 +27,12 @@ docker/run.sh
 
 ## Installation
 - Create a workspace: `mkdir -p ~/mcav_ws/src && cd ~/mcav_ws/src`
-- Install vcstool using `sudo apt install python3-vcstool` or `pip3 install vcstool`
-- Clone this repo and other packages in one command using `vcs import . --input https://raw.githubusercontent.com/Monash-Connected-Autonomous-Vehicle/mcav_autonomy/main/ros.repos`
-- Install ROS dependencies: `cd .. && rosdep install --from-paths src --ignore-src -r -y`
+- Install vcstool: `sudo apt install python3-vcstool` or `pip3 install vcstool`
+- Clone this repo: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git`
+- Change directory: `cd mcav_autonomy`
+- Clone source dependencies: `vcs import external/ < ros.repos`
+- Change directory: `cd ~/mcav_ws`
+- Install ROS dependencies: `rosdep install --from-paths src -i -r -y`
 - Build the packages: `colcon build --symlink-install`
 
 # Project Structure
@@ -38,9 +41,8 @@ This should result in a directory structure similar to the following:
 ```
 mcav_ws/                                                     
 ├── build
+├── install
 └── src
-    ├── SD-VehicleInterface         # Sends actuation commands, reads GPS/IMU and speedometer
-    ├── kiss-icp                    # Performs lidar-based odometry (see github.com/PRBonn/kiss-icp)
     └── mcav_autonomy
         ├── autonomy_launch         # Launch files for entire stack
         ├── data
@@ -49,6 +51,9 @@ mcav_ws/
         │   └── waypoints           # Global waypoints (.csv) 
         ├── data_recording          # Launch files for creating rosbags
         ├── docker                  # Dockerfiles and run scripts
+        ├── external                # External dependencies that come in source code form
+        │   ├── SD-VehicleInterface # Sends actuation commands, reads GPS/IMU and speedometer
+        │   └── kiss-icp            # Performs lidar-based odometry (see github.com/PRBonn/kiss-icp)
         ├── mcav_interfaces         # Shared ROS Message and Service definitions
         ├── project_tracker         # Object detection and tracking
         ├── pure_pursuit            # Control system

@@ -27,23 +27,24 @@ RUN groupadd --gid $USER_GID $USERNAME \
 ENV HOMEDIR=/home/${USERNAME}
 ENV COLCON_WS=${HOMEDIR}/mcav_ws
 ENV SOURCE_DIR=${COLCON_WS}/src/mcav_autonomy
-WORKDIR ${COLCON_WS}
-
-# Copy package xml files to decide dependencies (while avoiding cache invalidation when other files change)
-COPY autonomy_launch/package.xml ${SOURCE_DIR}/autonomy_launch/package.xml
-COPY velocity_planner/package.xml ${SOURCE_DIR}/velocity_planner/package.xml
-COPY mcav_interfaces/package.xml ${SOURCE_DIR}/mcav_interfaces/package.xml
-COPY project_tracker/package.xml ${SOURCE_DIR}/project_tracker/package.xml
-COPY pure_pursuit/package.xml ${SOURCE_DIR}/pure_pursuit/package.xml
-COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
 
 # Clone external sources
 WORKDIR ${SOURCE_DIR}
-COPY ros.repos ${SOURCE_DIR}
-RUN vcs import . < ros.repos
+COPY ros.repos .
+RUN mkdir external/ && vcs import external/ < ros.repos
+
+# Copy package xml files to decide dependencies (while avoiding cache invalidation when other files change)
+COPY autonomy_launch/package.xml ${SOURCE_DIR}/autonomy_launch/package.xml
+COPY mcav_interfaces/package.xml ${SOURCE_DIR}/mcav_interfaces/package.xml
+COPY project_tracker/package.xml ${SOURCE_DIR}/project_tracker/package.xml
+COPY pure_pursuit/package.xml ${SOURCE_DIR}/pure_pursuit/package.xml
+COPY sensors_launch/package.xml ${SOURCE_DIR}/sensors_launch/package.xml
+COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
+COPY velocity_planner/package.xml ${SOURCE_DIR}/velocity_planner/package.xml
 
 # Project-specific dependency install
-RUN apt-get update && rosdep update && DEBIAN_FRONTEND=noninteractive rosdep install --from-paths src --ignore-src -r -y \
+WORKDIR ${COLCON_WS}
+RUN apt-get update && rosdep update && DEBIAN_FRONTEND=noninteractive rosdep install --from-paths src --ignore-src -r --default-yes \
     && apt-get install -y \
     python3-pcl \
     ros-${ROS_DISTRO}-tf2-geometry-msgs \
@@ -63,7 +64,7 @@ RUN echo "export PS1='\[\e]0;\u@docker: \w\a\]${debian_chroot:+($debian_chroot)}
 COPY ./docker/aliases /home/${USERNAME}
 RUN echo "source ~/aliases" >> /home/${USERNAME}/.bashrc
 # Suppress warning about setup.py being deprecated (https://github.com/colcon/colcon-core/issues/454)
-echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> /home/${USERNAME}/.bashrc
+RUN echo "export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources" >> /home/${USERNAME}/.bashrc
 # Add tmux configuration file
 COPY docker/.tmux.conf /home/${USERNAME}/.tmux.conf
 # Change owner of the files to non-root user
