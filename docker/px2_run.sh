@@ -24,7 +24,7 @@ build_image()
 
 CONTAINER_NAME=mcav_autonomy_px2
 IMAGE_NAME=mcav_autonomy_px2
-DOCKER_FILE=docker/Dockerfile.px2
+DOCKER_FILE=docker/Dockerfile.arm
 
 case "$1" in
 "build")
