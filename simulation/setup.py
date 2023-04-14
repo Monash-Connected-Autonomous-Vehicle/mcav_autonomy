@@ -26,6 +26,7 @@ setup(
             'carla_spawn = simulation.carla_spawn:main',
             'generate_traffic = simulation.generate_traffic:main',
             'simple_sim = simulation.simple_sim:main',
+            'twist_stamp_remover = simulation.twist_stamp_remover:main',
         ],
     },
 )

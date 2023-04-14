@@ -3,7 +3,7 @@
 # interoperability of our stack that uses TwistStamped messages
 # (SD-VehicleInterface and pure_pursuit), with CARLA and gazebo, which use
 # Twist messages.
-# It is best use via a launch file that uses "remap" to specify the input and
+# It is best used via a launch file that uses "remap" to specify the input and
 # output topics.
 import rclpy
 from rclpy.node import Node
