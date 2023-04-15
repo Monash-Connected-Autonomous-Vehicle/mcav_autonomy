@@ -34,8 +34,7 @@ class PointCloudToPCL2(Node):
             time.sleep(0.05) # don't overcook the CPU 
 
     def publish_pcl2(self):
-        """Callback to publish"""
-        
+        """Publish binary pcd file as a pointcloud2 message."""
         if self.velodyne_file_paths:
             msg = self.convert_bin_to_PCL2(self.velodyne_file_paths.pop())
 
@@ -45,8 +44,7 @@ class PointCloudToPCL2(Node):
             self.get_logger().info("Restarting from beginning!")
 
     def convert_bin_to_PCL2(self, velodyne_file_path):
-        """Method to convert Lidar data in binary format to PCL2 message"""
-        
+        """Convert Lidar data in binary format to PCL2 message."""
         cloud = np.fromfile(velodyne_file_path, np.float32)
         cloud = cloud.reshape((-1, 4))
 

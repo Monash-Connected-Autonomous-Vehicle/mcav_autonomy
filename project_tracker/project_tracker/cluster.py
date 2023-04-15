@@ -29,7 +29,7 @@ class PCL2Subscriber(Node):
         self.subscription = self.create_subscription(
             PCL2,
             '/velodyne_filtered',
-            self._callback,
+            self.points_callback,
             10
         )
 
@@ -59,9 +59,8 @@ class PCL2Subscriber(Node):
         self.get_logger().set_level(logging.DEBUG)
 
 
-    def _callback(self, msg):
-        """Subscriber callback. Receives PCL2 message and converts it to points"""
-
+    def points_callback(self, msg):
+        """Receive PCL2 message and convert it to points."""
         # create and save a pythonpcl pointcloud and its numpy representation from the ros message
         self.np_pointcloud, self.pointcloud = self.load_pointcloud_from_ros_msg(msg)
 
@@ -130,7 +129,7 @@ class PCL2Subscriber(Node):
 
     def create_euclidean_cluster(self, pointcloud, kd_tree, cluster_tolerance, min_cluster_size, max_cluster_size):
         """
-        Perform euclidean clustering with a given pcl.PointCloud() and kdtree
+        Perform euclidean clustering with a given pcl.PointCloud() and kdtree.
 
         Parameters
         ----------
@@ -139,10 +138,12 @@ class PCL2Subscriber(Node):
         kd_tree : kdtree
             kdtree from pcl-python binding
         cluster_tolerance: float 
+            distance below which points are considered part of a cluster
         min_cluster_size: int
             minimum size of a cluster
         max_cluster_size: int
             maximum size of a cluster
+
         """
         # make euclidean cluster extraction method
         ec = pointcloud.make_EuclideanClusterExtraction()
@@ -158,8 +159,9 @@ class PCL2Subscriber(Node):
 
     def create_detected_objects(self, np_pointcloud_cluster_indices):
         """
-        Create detected objects from the clusters by finding their centre points and dimensions. This 
-        creates the constraints necessary to fit a bounding box later.
+        Create detected objects from the clusters by finding their centre points and dimensions.
+        
+        This creates the constraints necessary to fit a bounding box later.
         
         Tutorial at PCL docs helps with make_MomentOfInertiaEstimation aspect
         https://pcl.readthedocs.io/projects/tutorials/en/master/moment_of_inertia.html#moment-of-inertia
@@ -230,9 +232,7 @@ class PCL2Subscriber(Node):
 
 
     def fit_bounding_boxes(self, tracked_detected_objects):
-        """
-        Fit bounding boxes to tracked detected objects
-        """
+        """Fit bounding boxes to tracked detected objects."""
         self.markers = MarkerArray() # list of markers for visualisations of boxes/IDs
 
         for d_o in tracked_detected_objects.detected_objects:

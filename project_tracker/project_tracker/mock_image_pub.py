@@ -31,8 +31,7 @@ class MockImagePub(Node):
             time.sleep(1)
 
     def publish_Image(self):
-        """publisher"""
-        
+        """Convert to ROS image message if there is one available, otherwise restart."""
         if self.Images:
             msg = self.cv2ImageToRosImage(self.Images.pop())
             self._publisher.publish(msg)
@@ -43,7 +42,7 @@ class MockImagePub(Node):
             self.FrameCount = 1
     
     def cv2ImageToRosImage(self, imgPath):
-        """Method to convert openCV images to ROS Image message"""
+        """Convert openCV image to ROS Image message."""
         cv2_img = cv.imread(imgPath)
 
         bridge = CvBridge()

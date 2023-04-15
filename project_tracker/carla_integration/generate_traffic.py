@@ -6,7 +6,7 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-"""Example script to generate traffic in the simulation"""
+"""Example script to generate traffic in the simulation."""
 
 import glob
 import os

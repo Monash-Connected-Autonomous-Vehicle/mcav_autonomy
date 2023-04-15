@@ -10,7 +10,7 @@ class TrackedObject():
 
     def __init__(self, detected_object, object_id):
         """
-        Defintion for frame to track object through time
+        Represent an object that is tracked over time.
 
         Parameters
         ----------
@@ -18,6 +18,7 @@ class TrackedObject():
             DetectedObject to track over time
         object_id : int
             Index to give to tracked object
+
         """
         self.detected_object = detected_object
         self.detected_object.object_id = object_id
@@ -32,7 +33,7 @@ class Tracker():
                  dist_threshold=5, iou_threshold=0.8
         ):
         """
-        Class to track objects through frames using Hungarian Algorithm.
+        Track objects through frames using Hungarian Algorithm.
 
         Parameters
         ----------
@@ -49,8 +50,11 @@ class Tracker():
             - "iou" looks at a birds eye view and measures IOU (intersection over union)
                 between the two rectangles. Note, it moves the bounding boxes to axis-
                 aligned by taking the top left point and the width and height of the rectangle
+        iou_threshold : float
+            Minimum IOU (intersection over union) ratio for the objects to be considered the same
+            when they have moved between two frames
+
         """
-        
         self.tracking_method = tracking_method
         if tracking_method == "centre_distance":
             self.threshold = dist_threshold
@@ -74,7 +78,7 @@ class Tracker():
 
     def update(self, new_detects):
         """
-        Callback to update the tracked DetectedObject's when receiving a new frame.
+        Update the tracked DetectedObject's when receiving a new frame.
 
         Works by:
         1. Calculating cost matrix for some metric between DetectedObject's previous 2 frames
@@ -86,14 +90,13 @@ class Tracker():
 
         Parameters
         ----------
-        new_frame : DetectedObjectArray
+        new_detects : DetectedObjectArray
             Frame representing the most recent DetectedObjectArray 
         Returns
         -------
         DetectedObjectArray
 
         """
-        
         # 1. Create cost matrix
         try:
             prev_detects = [obj.detected_object for obj in self.frames[-1]]
@@ -187,7 +190,7 @@ class Tracker():
         return tracked_object_array
 
     def create_detected_object_array(self):
-        """Create DetectedObjectArray from tracked objects"""
+        """Create DetectedObjectArray from tracked objects."""
         # create DetectedObjectArray for sending to ROS topics
         tracked_object_array = DetectedObjectArray()
         tracked_object_array.detected_objects = [obj.detected_object for obj in self.tracked_objects]
@@ -195,9 +198,10 @@ class Tracker():
 
     def iou(self, bbox, candidates):
         """
+        Compute intersection over union.
+
         FROM: https://github.com/nwojke/deep_sort/blob/master/deep_sort/iou_matching.py
 
-        Computer intersection over union.
         Parameters
         ----------
         bbox : ndarray
@@ -206,12 +210,14 @@ class Tracker():
         candidates : ndarray
             A matrix of candidate bounding boxes (one per row) in the same format
             as `bbox`.
+
         Returns
         -------
         ndarray
             The intersection over union in [0, 1] between the `bbox` and each
             candidate. A higher score means a larger fraction of the `bbox` is
             occluded by the candidate.
+
         """
         # catch situation where there are no candidate bounding boxes
         try:

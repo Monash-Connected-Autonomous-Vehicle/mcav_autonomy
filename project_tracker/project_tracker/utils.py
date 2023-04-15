@@ -12,21 +12,24 @@ import ctypes
 
 def numpy_2_PCL2(cloud, timestamp, frame_id='velodyne', reflectance=True):
     """
-    Utility function to take in a numpy pointcloud array and return a PCL2 message for publishing in ROS2.
+    Take in a numpy pointcloud array and return a PCL2 message for publishing in ROS2.
 
     Parameters
     ----------
     cloud : np.array
-        Expected shape of [n, 3 or 4]. 3 if xyz, 4 if xyzr 
-    timestamp : ROS2 timestamp
+        Expected shape of nx3 or nx4. 3 if xyz, 4 if xyzr 
+    timestamp : int
+        ROS2 timestamp
     frame_id : str
         frame ID reference for use in conjunction with other pointclouds. i.e. where the data is relative 
         to other clouds in space. Allows for transformations between frames
     reflectance : bool
         Whether reflectance is being published in this message or if it has been discarded
+
     Returns
     -------
     PCL2 Message : PCL2 message for use with ROS topics.
+
     """
     header = Header()
     header.frame_id = frame_id
@@ -47,7 +50,7 @@ def numpy_2_PCL2(cloud, timestamp, frame_id='velodyne', reflectance=True):
 
 def PCL2_2_numpy(pcl2_msg, reflectance=True):
     """
-    Utility function to take in a PCL2 message from ROS2 topic and convert it to a numpy pointcloud array.
+    Take in a PCL2 message from ROS2 topic and convert it to a numpy pointcloud array.
 
     Parameters
     ----------
@@ -55,9 +58,11 @@ def PCL2_2_numpy(pcl2_msg, reflectance=True):
         PCL2 message from a ROS topic.
     reflectance : bool
         Whether reflectance is being received in this message or if it has been discarded
+
     Returns
     -------
     np.array : shape [n, 3 or 4]. 3 if xyz, 4 if xyzr
+
     """
     cloud_generator = point_cloud2.read_points(pcl2_msg)
     # convert cloud to numpy array
@@ -69,7 +74,7 @@ def PCL2_2_numpy(pcl2_msg, reflectance=True):
 
 
 def create_colour_list():
-    """Create list of colours in ROS float format for use in ROS PCL2 messages"""
+    """Create list of colours in ROS float format for use in ROS PCL2 messages."""
     colour_list = []
     rgb_list = []
     for _ in range(300):
@@ -80,12 +85,17 @@ def create_colour_list():
 
 
 def random_color_gen():
-    """ Generates a random color
+    """
+    Generate a random color.
     
-        Args: None
-        
-        Returns: 
-            list: 3 elements, R, G, and B
+    Parameters 
+    ----------
+        None
+    
+    Returns 
+    -------
+        list : 3 elements, R, G, and B
+
     """
     r = randint(0, 255)
     g = randint(0, 255)
@@ -94,18 +104,22 @@ def random_color_gen():
 
 
 def rgb_to_float(color):
-    """ 
-    Converts an RGB list to the packed float format used by PCL
-    
-    From the PCL docs:
-    "Due to historical reasons (PCL was first developed as a ROS package),
-        the RGB information is packed into an integer and casted to a float"
+    """
+    Convert an RGB list to the packed float format used by PCL.
 
-    Args:
-        color (list): 3-element list of integers [0-255,0-255,0-255]
-        
-    Returns:
-        float_rgb: RGB value packed as a float
+    From the PCL docs,
+    Due to historical reasons (PCL was first developed as a ROS package),
+    the RGB information is packed into an integer and casted to a float.
+
+    Parameters
+    ----------
+    color : List 
+        three integers between 0 and 255 inclusive
+
+    Returns
+    -------
+    RGB value packed as a float
+
     """
     hex_r = (0xff & color[0]) << 16
     hex_g = (0xff & color[1]) << 8
@@ -120,15 +134,23 @@ def rgb_to_float(color):
 
 def pcl_to_ros(pcl_array, timestamp, frame_id='velodyne'):
     """
-    Converts a pcl PointXYZRGB to a ROS PointCloud2 message
+    Convert a pcl PointXYZRGB to a ROS PointCloud2 message.
 
-    Args:
-        pcl_array (PointCloud_PointXYZRGB): A PCL XYZRGB point cloud
+    Parameters
+    ----------
+    pcl_array : np.array
+        A PCL XYZRGB point cloud
+    timestamp : int
+        ROS timestamp of the detection
+    frame_id : string 
+        name of the tf2 frame in which the object was detected
         
-    Returns:
-        PointCloud2: A ROS point cloud
+    Returns
+    -------
+    PointCloud2 : A ROS point cloud
 
-    https://github.com/mithi/point-cloud-clusters/blob/master/src/sensor_stick/scripts/pcl_helper.py
+    See https://github.com/mithi/point-cloud-clusters/blob/master/src/sensor_stick/scripts/pcl_helper.py
+
     """
     ros_msg = PCL2()
 
