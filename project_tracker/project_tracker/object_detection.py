@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
-
 import rclpy
-from rclpy.node import Node
-from sensor_msgs.msg import Image
-import logging
-import numpy as np
-
-import cv2 as cv
-from cv_bridge import CvBridge
-
 import torch
-
+import logging
+import cv2 as cv
+import numpy as np
+from rclpy.node import Node
+from cv_bridge import CvBridge
+from sensor_msgs.msg import Image
 
 class ObjectDetection(Node):
     def __init__(self):
         super(ObjectDetection, self).__init__('object_detection')
+        # Down sampled or raw image?
         self.subscription = self.create_subscription(Image, '/image_raw', self._callback, 10)
         self._publisher = self.create_publisher(Image, '/object_detected_image', 10)
         self.get_logger().set_level(logging.DEBUG)
 
         # Model
-        #self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x, custom
-        self.model = torch.hub.load('yolov5', 'custom', path='/home/mcav/mcav_ws/src/mcav_autonomy/yolov5s.pt', source='local')
+        # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x, custom
+        # self.model = torch.hub.load('yolov5', 'custom', path='/home/mcav/mcav_ws/src/mcav_autonomy/yolov5s.pt', source='local')
+ 
+        # Yolov8 - object detection
+        # Add the weights file to the github
+        self.model = torch.hub.load('yolov8', 'custom', path='/home/mcav/mcav_ws/src/mcav_autonomy/yolov5s.pt', source='local')
 
     def _callback(self, msg: Image):
         # convert ros2 image to cv_image to allow for processing through yolo
