@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# Official documentation - https://pytorch.org/hub/hustvl_yolop/
+# Requirements - pip install -qr https://github.com/hustvl/YOLOP/blob/main/requirements.txt 
+
+# Libraries and dependencies
 import rclpy
 import torch
 import logging
@@ -12,22 +17,29 @@ class SemanticSegmentation(Node):
     def __init__(self):
         super(SemanticSegmentation, self).__init__('semantic_segmentation')
         self._subscriber = self.create_subscription(Image, '/image_downsampled', self._callback, 10)
-        self._publisher = self.create_publisher(Image, '/segmented_image', 10)
+        self._lane_publisher = self.create_publisher(Image, '/lane_image', 10)
+        self._dz_publisher = self.create_publisher(Image, '/drivable_zone_image', 10)
+        
         self.get_logger().set_level(logging.DEBUG)
-        self.model = torch.hub.load('yolov8', 'custom', path='/home/mcav/mcav_ws/src/mcav_autonomy/project_tracker/project_tracker/yolov8n-seg.pt', source='local')
+        self.model = torch.hub.load('hustvl/yolop', 'yolop', pretrained=True, source='local')
 
     def _callback(self, msg: Image):
         bridge = CvBridge()
         cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
-        results = self.model(cv_image)
+        _, dz_out, lane_out = self.model(cv_image)
 
         # Reversing colour
-        seg_image_array = np.array(results.render()[0])[:,:,::-1]
-        seg_image_message = bridge.cv2_to_imgmsg(seg_image_array, encoding="passthrough")
-        seg_image_message.header.frame_id = msg.header.frame_id
+        dz_image_array = np.array(dz_out.render()[0])[:,:,::-1]
+        dz_image_message = bridge.cv2_to_imgmsg(dz_image_array, encoding="passthrough")
+        dz_image_message.header.frame_id = msg.header.frame_id
+
+        lane_image_array = np.array(lane_out.render()[0])[:,:,::-1]
+        lane_image_message = bridge.cv2_to_imgmsg(lane_image_array, encoding="passthrough")
+        lane_image_message.header.frame_id = msg.header.frame_id
 
         # Publishing segmented image
-        self._publisher.publish(seg_image_message)
+        self._publisher.publish(dz_image_message)
+        self._publisher.publish(lane_image_message)
 
 def main(args = None):
     rclpy.init(args=args)
