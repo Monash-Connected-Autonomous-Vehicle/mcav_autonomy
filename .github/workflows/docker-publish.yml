@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'main'
-      - 'ci_docker'
     tags:
       - 'v*'
   pull_request:
