@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="imu_calibration" exec="calibration"></node>
+	<include file="$(find-pkg-share ros2_socketcan)/launch/socket_can_bridge.launch.xml"/>
+</launch>
