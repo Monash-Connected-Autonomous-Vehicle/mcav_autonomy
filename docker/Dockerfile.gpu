@@ -48,6 +48,7 @@ COPY pure_pursuit/package.xml ${SOURCE_DIR}/pure_pursuit/package.xml
 COPY sensors_launch/package.xml ${SOURCE_DIR}/sensors_launch/package.xml
 COPY simulation/package.xml ${SOURCE_DIR}/simulation/package.xml
 COPY velocity_planner/package.xml ${SOURCE_DIR}/velocity_planner/package.xml
+COPY visualisation/vehicle_model/package.xml ${SOURCE_DIR}/visualisation/vehicle_model/package.xml
 
 # Project-specific dependency install
 WORKDIR ${COLCON_WS}

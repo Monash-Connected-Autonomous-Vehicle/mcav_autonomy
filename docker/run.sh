@@ -50,8 +50,8 @@ build_image()
 # Check for nvidia-container-runtime and set variables for GPU/no GPU accordingly
 if [[ $(docker info | grep Runtimes) =~ nvidia ]] ; then # computer has nvidia-container-runtime, use it for GPU support
     echo "GPU available"
-    CONTAINER_NAME=mcav_autonomy_cuda
-    IMAGE_NAME=ghcr.io/mcav/mcav_autonomy:main
+    CONTAINER_NAME=mcav_autonomy_gpu
+    IMAGE_NAME=ghcr.io/monash-connected-autonomous-vehicle/mcav_autonomy_gpu:main
     DOCKER_FILE=docker/Dockerfile.gpu
     GPU_ON=true
     PLATFORM=linux/amd64
@@ -61,13 +61,14 @@ else # no nvidia-container-runtime
     # Determine if running on ARM (jetson/M1) device or x86 (regular Intel computer)
     if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then # arm
         CONTAINER_NAME=mcav_autonomy_arm
-        IMAGE_NAME=mcav_autonomy_arm
+        IMAGE_NAME=ghcr.io/monash-connected-autonomous-vehicle/mcav_autonomy_arm:main
         DOCKER_FILE=docker/Dockerfile.arm
         PLATFORM=linux/arm64
     else # x86_64
         echo "not arm"
         CONTAINER_NAME=mcav_autonomy_cpu
         IMAGE_NAME=mcav_autonomy_cpu
+        IMAGE_NAME=ghcr.io/monash-connected-autonomous-vehicle/mcav_autonomy_cpu:main
         DOCKER_FILE=docker/Dockerfile.cpu
         PLATFORM=linux/amd64
     fi
@@ -79,11 +80,7 @@ case "$1" in
     build_image
     ;;
 "pull")
-    if [ "$GPU_ON" = true ] ; then
-        docker pull $IMAGE_NAME
-    else
-        echo "Can only pull the cuda image. For cpu, build the image instead."
-    fi
+    docker pull $IMAGE_NAME
     ;;
 "rm")
     if [[ $2 ]] ; then
