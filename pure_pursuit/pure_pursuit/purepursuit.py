@@ -9,7 +9,6 @@ from geometry_msgs.msg import TwistStamped, PointStamped
 import tf2_ros
 import velocity_planner.transforms as transforms
 import transforms3d as tf3d
-
 from typing import Tuple
   
 class PurePursuitNode(Node):
@@ -21,7 +20,7 @@ class PurePursuitNode(Node):
         super().__init__('purepursuit')
 
         self.waypoints = []
-        self.Lfc = None  # [m] default look-ahead distance
+        self.Lfc = None    # [m] default look-ahead distance
         self.stop = False  # stopping flag
         self.failsafe_thresh = 2.8  # positive change in velocity at which the car will stop at
         self.vehicle_frame_id = "base_link"
@@ -40,7 +39,7 @@ class PurePursuitNode(Node):
         self.timer_period = 0.01
         self.spinner = self.create_timer(self.timer_period, self.spin)
 
-        self.get_logger().info("pure_pursuit node started")
+        self.get_logger().info("Pure_pursuit node - Active")
     
     
     def waypoints_callback(self, wp_msg: WaypointArray):
@@ -88,7 +87,16 @@ class PurePursuitNode(Node):
             self.get_logger().warning(f"Waiting for local waypoints")
 
     def publish_lookahead_point(self, tx, ty):
-        # Publish the location of the lookahead point for visualisation/debugging
+        """
+        Description: 
+        This function publishes the location of the lookahead point for visualisation/debugging.
+        It looks up the transform between the waypoint frame and the vehicle frame using a 
+        time-stamped message. The transformed point is then published to the target_publisher. 
+        
+        Args: tx x coordinate of the lookahead point.
+              ty y coordinate of the lookahead point.
+        
+        """
         try:
             t = self.tf_buffer.lookup_transform(
                 target_frame=self.waypoint_frame_id,
@@ -99,6 +107,7 @@ class PurePursuitNode(Node):
             self.get_logger().error(
                 f'Could not transform {self.vehicle_frame_id} to {self.waypoint_frame_id}: {ex}')
             return
+        
         target_msg = PointStamped()
         target_msg.header.frame_id = self.waypoint_frame_id
         tf_mat = transforms.tf_to_homogenous_mat(t)
@@ -108,10 +117,15 @@ class PurePursuitNode(Node):
         self.target_publisher.publish(target_msg)
 
     def purepursuit(self) -> Tuple[float, float]:
-        """Pure pursuit algorithm. Calculates linear and angular velocity.
+        """
+        Description: This function implements the pure pursuit algorithm to calculate the linear 
+        and angular velocity of a vehicle. It first calls the target_searcher function to get the 
+        coordinates of the target point, then calls the steer_control function to calculate the 
+        steering angle, which is used to calculate the angular velocity. Finally, it returns the 
+        linear velocity and angular velocity as a tuple.
 
-        Returns:
-             Tuple[float, float]: linear and angular velocity
+        Returns: Tuple[float, float]: linear velocity and angular velocity
+        
         """
 
         tx, ty, vlinear = self.target_searcher()
@@ -123,7 +137,21 @@ class PurePursuitNode(Node):
 
 
     def convert2base(self, wp_list): # converts given waypoints to base_link frame
-        
+        """
+        Description: This function converts the given waypoints to the base_link frame. 
+        It uses the transformation buffer to lookup the transform between the vehicle_frame_id 
+        and the waypoint_frame_id, and then applies the transformation to the waypoints to 
+        convert them to the vehicle coordinate frame (base_link frame). Finally, it returns 
+        the converted x and y coordinates of the waypoints as a numpy array.
+
+        Args:
+        wp_list: Array containing a list of waypoints in the waypoint_frame_id frame.
+
+        Returns: (wp_x, wp_y) (tuple): Tuple containing numpy arrays of x and y coordinates of the 
+        converted waypoints in the vehicle_frame_id frame.
+
+        """
+
         # Wait until a transform is available from tf
         try:
             t = self.tf_buffer.lookup_transform(
@@ -131,13 +159,16 @@ class PurePursuitNode(Node):
                 source_frame=self.waypoint_frame_id,
                 time=rclpy.time.Time()
             )
+
         except tf2_ros.TransformException as ex:
             self.get_logger().error(
                 f'Could not transform {self.vehicle_frame_id} to {self.waypoint_frame_id}: {ex}')
+
             return
 
         wp_x = []
         wp_y = []
+
         for wp in wp_list:
             # Transform waypoint to vehicle coordinate frame
             vehicle_matrix = transforms.tf_to_homogenous_mat(t)
@@ -196,12 +227,14 @@ class PurePursuitNode(Node):
             else:
                 tx = tx_2
             ty = gradient*tx + y_inter
+        
         elif (wp_d <  self.Lfc).any(): 
             # target lookahead point in the trajectory of last waypoint if there are no points beyond lookahead distance
             bearing = math.atan2(wp_x[-1],wp_y[-1])
             tx = self.Lfc*math.sin(bearing)
             ty = self.Lfc*math.cos(bearing)
             vlinear = 0.0
+
         elif (wp_d >  self.Lfc).any():
             # target first point if there are no points before lookahead distance
             tx = wp_x[0]
@@ -221,7 +254,7 @@ class PurePursuitNode(Node):
             y (float): y coordinate of target waypoint
 
         Returns:
-             float: curvature to target
+            gamma (float): curvature to target
         """
         gamma = 2.0*y/(self.Lfc**2)  # gamma = 1/r
         return gamma
