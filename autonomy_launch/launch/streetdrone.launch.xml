@@ -16,8 +16,15 @@
 	    <arg name="lidar_topic" value="velodyne_points" />
     </include>
 
-    <!-- Map -->
-    <!-- Removed while we are not using a map for localisation -->
+    <!-- Localisation -->
+    <include file="$(find-pkg-share kiss_icp)/launch/odometry.launch.py" >
+        <arg name="topic" value="velodyne_points" />
+        <arg name="visualize" value="false" />
+    </include>
+    <!-- This setup uses odometry only, no localisation, so we publish an identity transform
+    between the map and odom frames -->
+    <node pkg="tf2_ros" exec="static_transform_publisher" args="0 0 0 0 0 0 1 map odom" />
+    <!-- PCD map publishing removed while we are not using a map for localisation -->
     <!-- <node pkg="pcd_map_publisher" exec="pcd_map_publisher" name="pcd_map_publisher" >
         <param name="pcd_path" value="$(var pcd_path)" />
     </node> -->
