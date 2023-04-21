@@ -10,7 +10,7 @@ class CalibrationPublisher(Node):
     def __init__(self, x=0, y=0, z=1):
         super().__init__('calibration_publisher')
         self.publisher_ = self.create_publisher(Frame, '/to_can_bus', 1)
-        self.data = [x, y, z, 0, 0, 0, 0]
+        self.data = [x, y, z, 1, 0, 0, 0, 0]
         # self.data = [2 if i == -1 else i for i in data] 
         
         time_period = 0.5
