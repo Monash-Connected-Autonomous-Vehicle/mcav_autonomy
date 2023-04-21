@@ -59,8 +59,9 @@ install(PROGRAMS
   ${PROJECT_NAME}/utils.py
   ${PROJECT_NAME}/config.py
   ${PROJECT_NAME}/tracking.py
+  ${PROJECT_NAME}/semantic_segmentation.py
   DESTINATION lib/${PROJECT_NAME})
-
+  
 #if(BUILD_TESTING)
   #find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
