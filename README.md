@@ -30,6 +30,7 @@ docker/run.sh
 - Install vcstool: `sudo apt install python3-vcstool` or `pip3 install vcstool`
 - Clone this repo: `git clone git@github.com:Monash-Connected-Autonomous-Vehicle/mcav_autonomy.git`
 - Change directory: `cd mcav_autonomy`
+- Create a space for source dependencies: `mkdir external/`
 - Clone source dependencies: `vcs import external/ < ros.repos`
 - Change directory: `cd ~/mcav_ws`
 - Install ROS dependencies: `rosdep install --from-paths src -i -r -y`

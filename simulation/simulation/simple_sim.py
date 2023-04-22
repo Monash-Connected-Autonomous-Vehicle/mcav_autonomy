@@ -50,8 +50,8 @@ class SimpleSim(Node):
         # Constants for converting SDControl message values (percentages) to Nm and radians
         # For now, these were chosen arbitrarily
         # TODO: determine the actual constants that correspond to the real-world vehicle
-        self.TORQUE_PERCENT_TO_NM = 0.5 # Nm / %
-        self.STEER_PERCENT_TO_RAD = 0.03 # Rad / %
+        self.TORQUE_PERCENT_TO_NM = 1.5 # Nm / %
+        self.STEER_PERCENT_TO_RAD = 0.005 # Rad / %.
 
         # Kinematic bicycle model state
         self.state_x = 0.0 # metres
@@ -59,7 +59,7 @@ class SimpleSim(Node):
         self.state_phi = 0.0 # radians
         self.state_v = 0.0 # m/s
         # Vehicle parameters
-        self.vehicle_mass_kg = 300.0 # approximate weight of the Renault Twizy is 500kg
+        self.vehicle_mass_kg = 500.0 # approximate weight of the Renault Twizy is 500kg
         
         self.get_logger().set_level(logging.DEBUG)
         
@@ -75,6 +75,8 @@ class SimpleSim(Node):
 
         self.current_torque_nm = msg.torque * self.TORQUE_PERCENT_TO_NM
         self.current_steer_angle_rad = msg.steer * self.STEER_PERCENT_TO_RAD
+
+        # self.get_logger().info(f"Steer angle is {self.current_steer_angle_rad*180/np.pi}")
 
     def initialpose_callback(self, msg: PoseWithCovarianceStamped):
         """ Sets current pose to the received pose, resets velocity """
@@ -106,6 +108,7 @@ class SimpleSim(Node):
         x_dot = self.state_v * np.cos(self.state_phi+beta)
         y_dot = self.state_v * np.sin(self.state_phi+beta)
         phi_dot = self.state_v*np.cos(beta)*np.tan(self.current_steer_angle_rad)/(lr+lf) # yaw angle (global)
+        #self.get_logger().info(f"timeelapsed: {elapsed_time}, phidot {phi_dot}, steerangle: {self.current_steer_angle_rad}, beta: {beta}, v: {self.state_v}")
         v_dot = self.current_torque_nm / self.vehicle_mass_kg
 
         # Integrate over time step
@@ -143,11 +146,10 @@ class SimpleSim(Node):
         vel_msg = TwistStamped()
         vel_msg.header.frame_id = vehicle_frame
         vel_msg.twist.linear.x = self.state_v
-        vel_msg.twist.angular.z = phi_dot # TODO: check if phi_dot represents angular vel
+        vel_msg.twist.angular.z = phi_dot
         self.current_vel_pub.publish(vel_msg)
 
         # self.get_logger().info(f"v: {self.state_v:.2f}, phi: {self.state_phi:.2f}")
-
 
 def z_angle_to_quat(angle):
     return rpy_to_quat(0.0, 0.0, angle)

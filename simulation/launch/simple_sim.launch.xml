@@ -21,7 +21,7 @@
     <!-- Planning -->
     <include file="$(find-pkg-share velocity_planner)/launch/velocity_planner.launch.xml">
         <arg name="pose_topic" value="/current_pose" />
-        <arg name="max_velocity" value="0.1" />
+        <arg name="max_velocity" value="3.5" />
     </include>
     
     <node pkg="velocity_planner" exec="waypoint_reader" name="waypoint_reader" >
