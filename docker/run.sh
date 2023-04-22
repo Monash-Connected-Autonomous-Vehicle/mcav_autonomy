@@ -47,17 +47,28 @@ build_image()
     docker build . --platform $PLATFORM -t $IMAGE_NAME -f $DOCKER_FILE
 }
 
+DISABLE_GPU=false
+# Loop through all arguments, check if the flag was passed to disable GPU detection
+for arg in "$@"
+do
+    case "$arg" in
+    "--disable-gpu")
+        DISABLE_GPU=true
+        ;;
+    esac
+done
+
 # Check for nvidia-container-runtime and set variables for GPU/no GPU accordingly
-if [[ $(docker info | grep Runtimes) =~ nvidia ]] ; then # computer has nvidia-container-runtime, use it for GPU support
+if [[ $(docker info | grep Runtimes) =~ nvidia ]] && [[ "$DISABLE_GPU" != false ]] ; then # computer has nvidia-container-runtime, use it for GPU support
     echo "GPU available"
     CONTAINER_NAME=mcav_autonomy_gpu
     IMAGE_NAME=ghcr.io/monash-connected-autonomous-vehicle/mcav_autonomy_gpu:main
     DOCKER_FILE=docker/Dockerfile.gpu
-    GPU_ON=true
+    GPU_AVAILABLE=true
     PLATFORM=linux/amd64
 else # no nvidia-container-runtime
     echo "GPU not available. Install nvidia container runtime to enable support."
-    GPU_ON=false
+    GPU_AVAILABLE=false
     # Determine if running on ARM (jetson/M1) device or x86 (regular Intel computer)
     if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then # arm
         CONTAINER_NAME=mcav_autonomy_arm
@@ -93,31 +104,33 @@ case "$1" in
 "--help")
     echo "Usage: docker/run.sh [command] [name]
 Available commands:
-    run.sh [name]
-        Attach a new terminal to the container (pulling/building, creating and starting it if necessary). name is optional
-    run.sh build [name]
-        Build a new image from the Dockerfile in the current directory. name is optional
-    run.sh rm [name]
-        Remove the container. name is optional
+    run.sh [-n name] [--disable-gpu]
+        Attach a new terminal to the container (pulling/building, creating and starting it if necessary).
+        If supplied, the container will be given a specific name.
+    run.sh build [--disable-gpu]
+        Build a new image from the Dockerfile in the current directory.
+    run.sh rm [-n name] [--disable-gpu]
+        Remove the container.
+        If name is supplied, it will remove the container with that name
+    The "--disable-gpu" flag disables the automatic NVIDIA GPU detection, so that you can force the CPU only image/container.
     run.sh --help
         Show this help message    
     "
     ;;
 *) # Attach a new terminal to the container (pulling, creating and starting it if necessary)
     if [[ $1 ]] ; then
-        NAME_POSTFIX=$1
-        CONTAINER_NAME="${CONTAINER_NAME}_${NAME_POSTFIX}"
+        CONTAINER_NAME=$1
     fi
 
     if [ -z "$(docker images -f reference=$IMAGE_NAME -q)" ]; then # if the image does not yet exist, pull it
-        if [ "$GPU_ON" = true ] ; then
+        if [ "$GPU_AVAILABLE" = true ] ; then
             build_image
         else
             build_image
         fi
     fi
     if [ -z "$(docker ps -qa -f name=$CONTAINER_NAME)" ]; then # if container has not yet been created, create it
-        if [ "$GPU_ON" = true ] ; then # computer has nvidia-container-runtime, use it for GPU support
+        if [ "$GPU_AVAILABLE" = true ] ; then # computer has nvidia-container-runtime, use it for GPU support
             echo "Initialising with GPU support"
             run_with_gpu
         else # no nvidia-container-runtime

@@ -5,7 +5,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from mcav_interfaces.msg import WaypointArray
-from geometry_msgs.msg import TwistStamped, PointStamped
+from geometry_msgs.msg import TwistStamped, PointStamped, PoseStamped
 import tf2_ros
 import velocity_planner.transforms as transforms
 import transforms3d as tf3d
@@ -36,6 +36,7 @@ class PurePursuitNode(Node):
         
         # Publishers
         self.target_publisher = self.create_publisher(PointStamped, 'lookahead_point', 1)
+        self.target_pose_publisher = self.create_publisher(PoseStamped, 'lookahead_pose', 1)
         self.pp_publisher = self.create_publisher(TwistStamped, '/twist_cmd', 1)
         self.timer_period = 0.01
         self.spinner = self.create_timer(self.timer_period, self.spin)
@@ -106,6 +107,13 @@ class PurePursuitNode(Node):
         target_msg.point.x = target_transformed[0]
         target_msg.point.y = target_transformed[1]
         self.target_publisher.publish(target_msg)
+
+        # Also publish as PoseStamped since Foxglove Studio can't visualise Points yet
+        target_pose_msg = PoseStamped()
+        target_pose_msg.header = target_msg.header
+        target_pose_msg.pose.position.x = target_msg.point.x
+        target_pose_msg.pose.position.y = target_msg.point.y
+        self.target_pose_publisher.publish(target_pose_msg)
 
     def purepursuit(self) -> Tuple[float, float]:
         """Pure pursuit algorithm. Calculates linear and angular velocity.
@@ -211,10 +219,12 @@ class PurePursuitNode(Node):
         # self.get_logger().info(f"x: {tx:5.3f} , y: {ty:5.3f}")
         
         return tx, ty, vlinear  
-    
-    
+
+
     def steer_control(self, x: float, y: float) ->  float:
         """Calculates curvature of trajectory to target point.
+
+        See "Implementation of the Pure Pursuit Path Tracking Algorithm, Coulter 1990"
 
         Args:
             x (float): x coordinate of target waypoint
