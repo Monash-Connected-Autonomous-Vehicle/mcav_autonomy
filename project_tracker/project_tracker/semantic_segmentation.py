@@ -11,13 +11,12 @@ import cv2 as cv
 import numpy as np
 from rclpy.node import Node
 from cv_bridge import CvBridge
-from sensor_msgs.msg import Image
 from sensor_msgs.msg import CompressedImage
 
 class SemanticSegmentation(Node):
     def __init__(self):
         super(SemanticSegmentation, self).__init__('semantic_segmentation')
-        self._subscriber = self.create_subscription(CompressedImage, '/gmsl_camera/port_0/cam_0/image_raw/compressed', self._callback, 10)
+        self._subscriber = self.create_subscription(CompressedImage, '/gmsl_camera/port_0/cam_0/image_raw/compressed_modified', self._callback, 10)
         self._lane_publisher = self.create_publisher(CompressedImage, '/lane_image', 10)
         self._dz_publisher = self.create_publisher(CompressedImage, '/drivable_zone_image', 10)   
         
@@ -29,7 +28,6 @@ class SemanticSegmentation(Node):
 
 
     def _callback(self, msg: CompressedImage):
-        msg.header.frame_id = "camera"
         bridge = CvBridge()
         cv_image = bridge.compressed_imgmsg_to_cv2(msg, desired_encoding="passthrough")
         cv_image_12ch = np.repeat(cv_image[:, :, np.newaxis, :], 12, axis=2)
