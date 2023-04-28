@@ -14,6 +14,7 @@
 
   <exec_depend>velodyne_driver</exec_depend>
   <exec_depend>velodyne_pointcloud</exec_depend>
+  <exec_depend>can_msgs</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

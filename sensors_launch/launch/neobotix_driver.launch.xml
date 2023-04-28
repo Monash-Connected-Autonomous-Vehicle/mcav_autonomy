@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="sensors_launch" exec="neobotix_driver.py"></node>
+	<include file="$(find-pkg-share ros2_socketcan)/launch/socket_can_bridge.launch.xml"/>
+</launch>
