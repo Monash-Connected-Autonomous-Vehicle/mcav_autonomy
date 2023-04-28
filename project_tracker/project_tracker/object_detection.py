@@ -1,62 +1,60 @@
 #!/usr/bin/env python3
+
+# Libraries and dependencies
 import rclpy
 import torch
 import logging
 import cv2 as cv
 import numpy as np
 from rclpy.node import Node
-from ultralytics import YOLO
 from cv_bridge import CvBridge
+from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import Image
-from ultralytics.yolo.v8.detect.predict import Detection
 
 class ObjectDetection(Node):
     def __init__(self):
         super(ObjectDetection, self).__init__('object_detection')
-        # Down sampled or raw image?
-        # self.subscription = self.create_subscription(Image, '/image_raw', self._callback, 10)
-        self.subscription = self.create_subscription(Image, '/image_downsampled', self._callback, 10)
-        self._publisher = self.create_publisher(Image, '/object_detected_image', 10)
         self.get_logger().set_level(logging.DEBUG)
+        self.get_logger().debug("YOLO object detection active")
+        self._subscriber = self.create_subscription(CompressedImage, '/modified_cam/compressed', self._callback, 10)
+        self._yolo_publisher = self.create_publisher(Image, '/yolo_image_pred', 10)
+
+        # Loading model
+        self.yolov5_model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+                
+        # Bridging messgaes to opencv
+        self.bridge = CvBridge()
+
+    def _callback(self, msg: CompressedImage):
+        # Converting a CompressedImage ROS message into an OpenCV Mat
+        cv_image = self.bridge.compressed_imgmsg_to_cv2(msg, desired_encoding="passthrough")
         
-        # Model
-        # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  # or yolov5m, yolov5l, yolov5x, custom
-        # self.model = torch.hub.load('yolov5', 'custom', path='/home/mcav/mcav_ws/src/mcav_autonomy/yolov5s.pt', source='local')
- 
-        # Yolov8 - object detection
-        self.model = YOLO("/home/mcav/mcav_ws/src/mcav_autonomy/project_tracker/project_tracker/yolov8n.pt").predict(source="0", show=True, conf=0.5)
-
-    def _callback(self, msg: Image):
-        # convert ros2 image to cv_image to allow for processing through yolo
-        bridge = CvBridge()
-        cv_image = bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
-
-        # Inference
-        results = self.model(cv_image)
+        # Predicting on a Mat array
+        yolo_out = self.yolov5_model([cv_image])
+        self.get_logger().debug(f"Output shape - {yolo_out}")
         
-        # print objects found in the console
-        # results.print()  # or .show(), .save(), .crop(), .pandas(), etc.
+        # Reversing colour
+        yolo_image_array = np.array(yolo_out.render()[0])[:, :, [0, 1, 2]]
+        # yolo_image_array = cv.cvtColor(yolo_out, cv.COLOR_BGR2RGB)
+        yolo_image_array_contiguous = np.ascontiguousarray(yolo_image_array)
+        yolo_image_message = self.bridge.cv2_to_imgmsg(yolo_image_array_contiguous)
+        yolo_image_message.header.frame_id = msg.header.frame_id
         
-        # numpy array representing the classified image
-        image_array = np.array(results.render()[0])[:,:,::-1] # reverse bgr to rgb
-        image_message = bridge.cv2_to_imgmsg(image_array, encoding="passthrough")
-        image_message.header.frame_id = msg.header.frame_id
-        self._publisher.publish(image_message)
+        # Publishing segmented image
+        self._yolo_publisher.publish(yolo_image_message)
+        self.get_logger().debug("Publishing images")
 
-
-def main(args=None):
+def main(args = None):
     rclpy.init(args=args)
-    object_detection = ObjectDetection()
+    semantic_segmentation = ObjectDetection()
 
     try:
-        rclpy.spin(object_detection)
+        rclpy.spin(semantic_segmentation)
     except KeyboardInterrupt:
-        object_detection.get_logger().debug("Keyboard interrupt")
-
-    # destroy node explicity
-    object_detection.destroy_node()
+        semantic_segmentation.get_logger().debug("Keyboard interrput for semantic segmentation")
+    
+    semantic_segmentation.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()

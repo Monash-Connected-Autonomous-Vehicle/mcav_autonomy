@@ -60,7 +60,6 @@ install(PROGRAMS
   ${PROJECT_NAME}/config.py
   ${PROJECT_NAME}/tracking.py
   ${PROJECT_NAME}/image_modifier.py
-  ${PROJECT_NAME}/semantic_segmentation.py
   DESTINATION lib/${PROJECT_NAME})
 
 #if(BUILD_TESTING)
