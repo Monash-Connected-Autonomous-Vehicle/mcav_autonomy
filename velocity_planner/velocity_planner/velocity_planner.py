@@ -1,29 +1,54 @@
+import math
 import rclpy
+import tf2_ros
 import logging
+import numpy as np
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
-from mcav_interfaces.msg import WaypointArray, Waypoint, DetectedObjectArray, DetectedObject
-import numpy as np
-import math
-import tf2_ros
 import velocity_planner.transforms as transforms
+from mcav_interfaces.msg import WaypointArray, Waypoint, DetectedObjectArray, DetectedObject
 
 class VelocityPlanner(Node):
+    """
+    VelocityPlanner performs velocity planning by determining the optimal velocity and trajectory for the 
+    StreetDrone to follow while avoiding detected objects. The maximum velocity, maximum acceleration, 
+    distance threshold for considering objects to be blocking the path, and number of waypoints to stop 
+    before an object is configurable parameters.
+    
+    Subscriptions:
+    - "current_pose"    : the current pose of the StreetDrone (geometry_msgs/PoseStamped).
+    - "global_waypoints": a list of waypoints to follow (mcav_interfaces/WaypointArray).
+    - "detected_objects": a list of objects detected by the robot (mcav_interfaces/DetectedObjectArray).
+    
+    Publishers:
+    - "local_waypoints" : a list of local waypoints to follow to the  topic (mcav_interfaces/WaypointArray).
 
+    
+
+    Functions:
+    - __init__(): constructor for the VelocityPlanner class. Initialises the node and sets up subscribers and publishers.
+    - current_pose_callback(): callback function for the "current_pose" topic subscriber. Updates the robot's position and orientation.
+    - waypoints_callback(): callback function for the "global_waypoints" topic subscriber. Updates the global list of waypoints.
+    - objects_callback(): callback function for the "detected_objects" topic subscriber. Transforms detected objects to the map frame.
+    - transform_to_map(): helper function that applies a transformation to the pose of an object so that it is with respect to the map frame.
+    - find_nearest_waypoint(): helper function that finds the nearest waypoint in a list to a given position.
+    - find_object_waypoints(): helper function that checks if a path is blocked by an object and returns the indices of the waypoints before the object.
+    - get_speed(): helper function that calculates the speed to follow for a given section of the path.
+    - spin(): function that is called periodically to perform velocity planning calculations and publish local waypoints.
+
+    """
     def __init__(self):
         super().__init__('velocity_planner')
-
         # Subscribers
         timer_period = 0.05  # seconds
         self.spinner = self.create_timer(timer_period, self.spin)
-        self.current_pose_sub = self.create_subscription(PoseStamped,
-            'current_pose', self.current_pose_callback, 10)
-        self.waypoints_sub = self.create_subscription(WaypointArray,
-            'global_waypoints', self.waypoints_callback, 10)
-        self.waypoints_sub  # prevent unused variable warning
-        self.objects_sub = self.create_subscription(DetectedObjectArray,
-            'detected_objects', self.objects_callback, 10)
-        self.objects_sub  # prevent unused variable warning
+        self.current_pose_sub = self.create_subscription(PoseStamped, 'current_pose', self.current_pose_callback, 10)
+        self.waypoints_sub = self.create_subscription(WaypointArray,'global_waypoints', self.waypoints_callback, 10)
+        self.objects_sub = self.create_subscription(DetectedObjectArray,'detected_objects', self.objects_callback, 10)
+
+        # Prevent unused variable warning
+        self.waypoints_sub
+        self.objects_sub
 
         # Publishers
         self.local_wp_pub = self.create_publisher(WaypointArray, 'local_waypoints', 10)
