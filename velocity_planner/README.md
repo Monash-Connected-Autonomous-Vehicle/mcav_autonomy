@@ -1,8 +1,11 @@
 # 🧶 Velocity Planner
 The velocity planner is designed to take in fixed global waypoints from a map, and the current world state (vehicle location, detected obstacles, detected traffic signals) and alter the velocities of the waypoints as required.
 
-![View in rviz of the planner slowing for a moving object](https://user-images.githubusercontent.com/7232997/153693042-92fc1265-6817-4bae-8867-90b4cb17fd1c.mov)
-Yellow cubes: global waypoints, Purple circle: current pose, Green/red circles: local planned waypoints
+https://user-images.githubusercontent.com/7232997/153693042-92fc1265-6817-4bae-8867-90b4cb17fd1c.mov
+
+View in rviz of the planner output
+
+Yellow cubes: global waypoints, Green/red circles: local planned waypoints
 
 ## Requirements
 
