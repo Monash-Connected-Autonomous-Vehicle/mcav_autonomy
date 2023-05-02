@@ -6,16 +6,15 @@ Yellow cubes: global waypoints, Purple circle: current pose, Green/red circles: 
 
 ## Requirements
 
-- [Ubuntu 20.04](https://ubuntu.com/download/desktop)
-- [ROS2 Foxy Fitzroy](https://docs.ros.org/en/foxy/Installation.html)
+- [Ubuntu 22.04](https://ubuntu.com/download/desktop)
+- [ROS2 Humble](https://docs.ros.org/en/humble/Installation.html)
 - [mcav_interfaces](https://github.com/Monash-Connected-Autonomous-Vehicle/mcav_interfaces)
-- A colcon workspace (assumed to be at `~/colcon_ws`). See the [Creating a Workspace](https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html) tutorial
 
 ## Installation
 
-- Go to the `src` directory: `cd ~/colcon_ws/src`
+- Go to the `src` directory: `cd ~/mcav_ws/src`
 - Clone the source code: `git clone `
-- Go to the root of the workspace: `cd ~/colcon_ws`
+- Go to the root of the workspace: `cd ~/mcav_ws`
 - Build: `colcon build --symlink-install --packages-up-to velocity_planner`
 
 ## Usage
@@ -30,8 +29,8 @@ Yellow cubes: global waypoints, Purple circle: current pose, Green/red circles: 
 - `ros2 launch velocity_planner velocity_planner.launch.py`
 
 ### Visualise global and local waypoints
-- `ros2 run velocity_planner waypoint_visualiser`
-- `cd velocity_planner/ && rviz2 -d planner.rviz`
+- `cd velocity_planner/`
+- `rviz2 -d planner.rviz`
 
 ## Publishing waypoints
 ### 1. Test using fake global waypoints
