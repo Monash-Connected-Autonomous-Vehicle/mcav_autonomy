@@ -2,6 +2,13 @@
 
 This package provides custom message and service definitions that are used in multiple packages across the mcav_autonomy software stack.
 
+<p align="center">
+  <img width="501" alt="An example visualisation of the Waypoint and DetectedObject messages" src="https://user-images.githubusercontent.com/7232997/235609518-885f3950-9dea-46e7-a768-ba16abd3a999.png">
+  <br />
+  <em>Figure 1: An example visualisation of the Waypoint (green circles) and DetectedObject (grey box) messages.</em>
+
+</p>
+
 ## Messages
 
 ### DetectedObject
