@@ -15,19 +15,21 @@ class neobotixPublisher(Node):
         self.create_timer(time_period, self.neobotix_callback)
 
     def neobotix_callback(self,Frame):
-        if Frame.id & (0x402 <= 0xFFF <= 0x403):
+        if Frame.id == 0x402 or Frame.id == 0x403:
             # Extract the sensor ID and distance data from the frame
-            sensor_id = Frame.id & 0xFFF - 0x400
+            sensor_id = Frame.id - 0x400
             distance = Frame.data[0] / 100.0
             # Create a new Range message and publish it
             range_msg = Range()
             range_msg.header.frame_id = f"ultrasonic_{sensor_id}"
-            range_msg.field_of_view = 0.1  # Assume a field of view of 0.1 radians==5deg => 5*2=10deg FOV
+            range_msg.field_of_view = 0.1  # Assume a field of view of 0.1 radians==5deg => 5*2=10deg FOV x-axisoof sensor
             range_msg.radiation_type = Range.ULTRASOUND
-            range_msg.min_range = 0.05  # Minimum detectable 5cm
+            range_msg.min_range = 0.15  # Minimum detectable 5cm
             range_msg.range = distance
             self.publisher.publish(range_msg)
       
+# Once driver is ready
+# ultrasonic message that encodes the range info for all the sensors
 def main():
     rclpy.init()
     neobotix_driver = neobotixPublisher()
