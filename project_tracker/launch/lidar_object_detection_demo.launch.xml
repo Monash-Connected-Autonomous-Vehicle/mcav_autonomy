@@ -1,0 +1,7 @@
+<launch>
+	<include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml">
+		<arg name="launch_velodyne" value="true" />
+	</include>
+	<node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
+	<include file="$(find-pkg-share vehicle_model)/launch/vehicle_model.launch.py" />
+</launch>

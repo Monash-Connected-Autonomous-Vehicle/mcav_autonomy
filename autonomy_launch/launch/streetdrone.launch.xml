@@ -8,13 +8,13 @@
 
     <!-- Sensing -->
     <include file="$(find-pkg-share sensors_launch)/launch/velodyne.launch.xml">
-        <arg name="launch_velodyne" value="$(var launch_lidar)"/>
+        <arg name="launch_velodyne_driver" value="$(var launch_lidar)"/>
     </include>
     
     <!-- Perception -->
-    <include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml" >
+    <!-- <include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml" >
 	    <arg name="lidar_topic" value="velodyne_points" />
-    </include>
+    </include>-->
 
     <!-- Localisation -->
     <include file="$(find-pkg-share kiss_icp)/launch/odometry.launch.py" >
@@ -42,8 +42,8 @@
     <!-- Control -->
     <node pkg="pure_pursuit" exec="purepursuit" name="purepursuit" />
     <include file="$(find-pkg-share sd_vehicle_interface)/launch/sd_vehicle_interface.launch.xml">
-        <arg name="sd_simulation_mode" value="true" />
-        <arg name="sd_speed_source" value="ndt_speed" />
+        <arg name="sd_simulation_mode" value="false" />
+        <arg name="sd_speed_source" value="vehicle_can_speed" />
     </include>
 
     <!-- Visualisation -->

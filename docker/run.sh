@@ -34,11 +34,12 @@ run_without_gpu()
         -v "/dev:/dev:rw" \
         -v "$(pwd):/home/mcav/mcav_ws/src/mcav_autonomy:rw" \
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-        -p 8765:8765 \
+	--net=host \
         --name $CONTAINER_NAME \
         --entrypoint /ros_entrypoint.sh \
         -d $IMAGE_NAME /usr/bin/tail -f /dev/null
         #--net=host \
+        #-p 8765:8765 \
 }
 
 build_image() 
@@ -59,7 +60,7 @@ do
 done
 
 # Check for nvidia-container-runtime and set variables for GPU/no GPU accordingly
-if [[ $(docker info | grep Runtimes) =~ nvidia ]] && [[ "$DISABLE_GPU" != false ]] ; then # computer has nvidia-container-runtime, use it for GPU support
+if [[ $(docker info | grep Runtimes) =~ nvidia ]] && [[ "$DISABLE_GPU" == false ]] ; then # computer has nvidia-container-runtime, use it for GPU support
     echo "GPU available"
     CONTAINER_NAME=mcav_autonomy_gpu
     IMAGE_NAME=ghcr.io/monash-connected-autonomous-vehicle/mcav_autonomy_gpu:main
