@@ -1,17 +1,15 @@
+# Is this RVIZ based visualization or for foxglove
 import rclpy
 from rclpy.node import Node
-
-from visualization_msgs.msg import Marker, MarkerArray
 from mcav_interfaces.msg import DetectedObjectArray
+from visualization_msgs.msg import Marker, MarkerArray
 
 class ObjectVisualiser(Node):
 
     def __init__(self):
         super().__init__('object_visualiser')
-
-        self.global_sub = self.create_subscription(DetectedObjectArray,
-            'detected_objects', self.object_callback, 10)
-
+        # Trying running this bit for better understanding
+        self.global_sub = self.create_subscription(DetectedObjectArray, 'detected_objects', self.object_callback, 10)
         self.objects_vis_pub_ = self.create_publisher(MarkerArray, 'detected_objects_marker_array', 0)
 
     def object_callback(self, msg):

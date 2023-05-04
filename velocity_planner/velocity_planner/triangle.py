@@ -1,7 +1,7 @@
+# What is this? Why does this exist? Where is this used
 import rclpy
-from rclpy.node import Node
 import numpy as np
-
+from rclpy.node import Node
 from geometry_msgs.msg import TwistStamped
 
 class Triangle(Node):

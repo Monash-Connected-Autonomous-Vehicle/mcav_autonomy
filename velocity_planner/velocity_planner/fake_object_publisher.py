@@ -1,6 +1,7 @@
+# Where is this getting used?
 import rclpy
-from rclpy.node import Node
 import numpy as np
+from rclpy.node import Node
 
 from mcav_interfaces.msg import DetectedObject, DetectedObjectArray
 

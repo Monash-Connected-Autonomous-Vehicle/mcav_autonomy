@@ -1,11 +1,10 @@
+# Where is this getting used?
 import rclpy
-from rclpy.node import Node
 import numpy as np
-
+from rclpy.node import Node
 from mcav_interfaces.msg import Waypoint, WaypointArray
 
 class FakeWaypoints(Node):
-
     def __init__(self):
         super().__init__('fake_waypoint_publisher')
         self.publisher_ = self.create_publisher(WaypointArray, 'global_waypoints', 10)
@@ -14,6 +13,7 @@ class FakeWaypoints(Node):
         self.waypoints = []
         self.init_waypoints()
         self.get_logger().info('Publishing "%d" waypoints' % len(self.waypoints))
+
 
     def init_waypoints(self):
         """ Modifies self.waypoints """
