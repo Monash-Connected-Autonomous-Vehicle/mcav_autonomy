@@ -5,7 +5,10 @@ from geometry_msgs.msg import TwistStamped
 
 class SimpleTrapezoidalPlanner(Node):
     """
-    Plans a trapezoidal velocity profile for the car.
+    Node that tells the vehicle to wait at rest, then speed up to a certain max velocity, remain at that velocity,
+    then slow down until it reaches rest, then remain at rest.
+    This can be used to get an idea of nice max speed and acceleration/deceleration values to use when
+    controlling the car.
     """
 
     def __init__(self):
