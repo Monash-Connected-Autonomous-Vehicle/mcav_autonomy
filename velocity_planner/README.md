@@ -27,11 +27,12 @@ Yellow cubes: global waypoints, Green/red circles: local planned waypoints
 | Node | Description | Inputs | Outputs |
 | --- | --- | --- | --- |
 | `velocity_planner` | Takes in global waypoints and the current vehicle location and outputs a set of local waypoints | `/current_pose` - current location of the vehicle (`geometry_msgs/Pose`) <br> `/global_waypoints` - waypoints for the vehicle to follow (`mcav_interfaces/WaypointArray`) | `/local_waypoints` (`mcav_interfaces/WaypointArray`) |
+| `waypoint_reader` | Reads waypoint coordinates and velocities stored in a .csv file in the format exported by [Tier IV's Vector Map Builder](https://tools.tier4.jp/feature/vector_map_builder_ll2/) | A csv file as an argument | `/global_waypoints` (`mcav_interfaces/WaypointArray`) |
+| `waypoint_visualiser` | Publishes visualisation markers so waypoints can be viewed in RViz | `/global_waypoints` - waypoints for the vehicle to follow (`mcav_interfaces/WaypointArray`) | `/global_waypoint_markers` (`visualization_msgs/MarkerArray`) |
 | `object_visualiser` | Publishes visualisation markers so objects can be viewed in RViz | `/detected_objects` - a list of detected objects (`mcav_interfaces/DetectedObjectArray`) | `/detected_objects_marker_array` (`visualization_msgs/MarkerArray`) |
 | `fake_waypoint_publisher` | Publishes an array of waypoints beginning at 0,0,0. Used for testing during development. | None | `/global_waypoints` (`mcav_interfaces/WaypointArray`) |
 | `fake_object_publisher` | Publishes an object that oscillates back and forth. Used for checking that the planner reacts objects. | `/detected_objects` - a list of detected objects (`mcav_interfaces/DetectedObjectArray`) | `/detected_objects_marker_array` (`visualization_msgs/MarkerArray`) |
 | `pose_estimate_to_tf` | Broadcasts a tf2 transform between map and base_link when a 2D Pose Estimate is sent in RViz. Useful for debugging the planner. | `/initialpose` - the pose topic that RViz publishes to when you use 2D Pose Estimate (`geometry_msgs/PoseStamped`) | `/current_pose` (`geometry_msgs/Pose`) <br> `/tf` - A transform from `map` to `base_link` frames using tf2 |
-| `waypoint_reader` | Reads waypoint coordinates and velocities stored in a .csv file in the format exported by [Tier IV's Vector Map Builder](https://tools.tier4.jp/feature/vector_map_builder_ll2/) | A csv file as an argument | `/global_waypoints` (`mcav_interfaces/WaypointArray`) |
 
 ## Usage
 ### Run the planner
