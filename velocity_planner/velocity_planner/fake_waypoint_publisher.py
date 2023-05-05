@@ -1,10 +1,10 @@
-# Where is this getting used?
 import rclpy
 import numpy as np
 from rclpy.node import Node
 from mcav_interfaces.msg import Waypoint, WaypointArray
 
 class FakeWaypoints(Node):
+    """ Publishes a list of waypoints. Can be used for testing in place of actual waypoints """
     def __init__(self):
         super().__init__('fake_waypoint_publisher')
         self.publisher_ = self.create_publisher(WaypointArray, 'global_waypoints', 10)
@@ -28,6 +28,7 @@ class FakeWaypoints(Node):
             self.waypoints.append(waypoint)
 
     def timer_callback(self):
+        """ Publishes the waypoints """
         msg = WaypointArray()
         msg.waypoints = self.waypoints
         msg.frame_id = "map"

@@ -39,6 +39,8 @@ Yellow cubes: global waypoints, Green/red circles: local planned waypoints
 ### 1. Test using fake global waypoints
 - `. install/setup.bash`
 - `ros2 run velocity_planner fake_waypoint_publisher`
+### 2. Test with a fake detected object
+- `ros2 run velocity_planner fake_object_publisher`
 
 ### or 2. Test using waypoints from a csv file
 - `. install/setup.bash`
