@@ -1,0 +1,4 @@
+bool lidar_conncted
+bool imu_connected
+float64 lidar_conn_rate
+float64 imu_conn_rate
