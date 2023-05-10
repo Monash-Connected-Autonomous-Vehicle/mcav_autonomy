@@ -11,7 +11,14 @@ class neobotixPublisher(Node):
             Frame, '/from_can_bus', self.neobotix_callback, 10)
         
         # not too sure about the publisher - need to have different publishers for each sensors
-        self.publisher = self.create_publisher(Frame,'/to_can_bus',1)
+        self.publisher_ultrasonic1 = self.create_publisher(Range,'/ultrasonic_1',1)
+        self.publisher_ultrasonic2 = self.create_publisher(Range,'/ultrasonic_2',1)
+        self.publisher_ultrasonic3 = self.create_publisher(Range,'/ultrasonic_3',1)
+        self.publisher_ultrasonic4 = self.create_publisher(Range,'/ultrasonic_4',1)
+        self.publisher_ultrasonic5 = self.create_publisher(Range,'/ultrasonic_5',1)
+        self.publisher_ultrasonic6 = self.create_publisher(Range,'/ultrasonic_6',1)
+        self.publisher_ultrasonic7 = self.create_publisher(Range,'/ultrasonic_7',1)
+        self.publisher_ultrasonic8 = self.create_publisher(Range,'/ultrasonic_8',1)
 
         time_period = 0.5
         self.create_timer(time_period, self.neobotix_callback)
@@ -49,21 +56,30 @@ class neobotixPublisher(Node):
             range_msg_sensor1.radiation_type = Range.ULTRASOUND
             range_msg_sensor1.min_range = 0.15
             range_msg_sensor1.range = int(Frame.data[2]) / 100.0
+            self.publisher_ultrasonic1(range_msg_sensor1) # Create a new Range message and publish it
+            self.get_logger().info('Publishing: "%s"' % range_msg_sensor1.range)
 
             range_msg_sensor2.field_of_view = 0.1 # Assume a field of view of 0.1 radians==5deg => 5*2=10deg FOV x-axisoof sensor
             range_msg_sensor2.radiation_type = Range.ULTRASOUND
             range_msg_sensor2.min_range = 0.15
             range_msg_sensor2.range = int(Frame.data[3]) / 100.0
+            self.publisher_ultrasonic2(range_msg_sensor2)
+            self.get_logger().info('Publishing: "%s"' % range_msg_sensor2.range)
 
             range_msg_sensor3.field_of_view = 0.1 # Assume a field of view of 0.1 radians==5deg => 5*2=10deg FOV x-axisoof sensor
             range_msg_sensor3.radiation_type = Range.ULTRASOUND
             range_msg_sensor3.min_range = 0.15
             range_msg_sensor3.range = int(Frame.data[4]) / 100.0
+            self.publisher_ultrasonic3(range_msg_sensor3)
+            self.get_logger().info('Publishing: "%s"' % range_msg_sensor3.range)
 
             range_msg_sensor4.field_of_view = 0.1 # Assume a field of view of 0.1 radians==5deg => 5*2=10deg FOV x-axisoof sensor
             range_msg_sensor4.radiation_type = Range.ULTRASOUND
             range_msg_sensor4.min_range = 0.15
-            range_msg_sensor4.range = int(Frame.data[5]) / 100.0   
+            range_msg_sensor4.range = int(Frame.data[5]) / 100.0 
+            self.publisher_ultrasonic4(range_msg_sensor4)
+            self.get_logger().info('Publishing: "%s"' % range_msg_sensor4.range)
+
         elif Frame.id == 0x403:
             # Extract the sensor distance data from the frame
             range_msg_sensor8 = Range()
@@ -75,26 +91,30 @@ class neobotixPublisher(Node):
             range_msg_sensor5.radiation_type = Range.ULTRASOUND
             range_msg_sensor5.min_range = 0.15
             range_msg_sensor5.range = int(Frame.data[2]) / 100.0
+            self.publisher_ultrasonic5(range_msg_sensor5)
+            self.get_logger().info('Publishing: "%s"' % range_msg_sensor5.range)
 
             range_msg_sensor6.field_of_view = 0.1 # Assume a field of view of 0.1 radians==5deg => 5*2=10deg FOV x-axisoof sensor
             range_msg_sensor6.radiation_type = Range.ULTRASOUND
             range_msg_sensor6.min_range = 0.15
             range_msg_sensor6.range = int(Frame.data[3]) / 100.0
+            self.publisher_ultrasonic6(range_msg_sensor6)
+            self.get_logger().info('Publishing: "%s"' % range_msg_sensor6.range)
 
             range_msg_sensor7.field_of_view = 0.1 # Assume a field of view of 0.1 radians==5deg => 5*2=10deg FOV x-axisoof sensor
             range_msg_sensor7.radiation_type = Range.ULTRASOUND
             range_msg_sensor7.min_range = 0.15
             range_msg_sensor7.range = int(Frame.data[4]) / 100.0
+            self.publisher_ultrasonic7(range_msg_sensor7)
+            self.get_logger().info('Publishing: "%s"' % range_msg_sensor7.range)
 
             range_msg_sensor8.field_of_view = 0.1 # Assume a field of view of 0.1 radians==5deg => 5*2=10deg FOV x-axisoof sensor
             range_msg_sensor8.radiation_type = Range.ULTRASOUND
             range_msg_sensor8.min_range = 0.15
             range_msg_sensor8.range = int(Frame.data[5]) / 100.0
-
-            # Create a new Range message and publish it
-            self.publisher.publish(range_msg)
-            
-      
+            self.publisher_ultrasonic8(range_msg_sensor8)
+            self.get_logger().info('Publishing: "%s"' % range_msg_sensor8.range)
+             
 # Once driver is ready
 # ultrasonic message that encodes the range info for all the sensors
 def main():
