@@ -15,4 +15,3 @@ def generate_launch_description():
             name='fake_object_publisher',
         ),
     ])
-

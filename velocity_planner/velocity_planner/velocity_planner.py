@@ -134,6 +134,7 @@ class VelocityPlanner(Node):
 
         Outputs:
         - stopping_indices: A list of integers representing the indices of the waypoints where the car needs to slow down or stop. These indices are relative to the waypoints list.
+
         """
         waypoint_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in waypoints])
         stopping_indices = []
@@ -166,8 +167,8 @@ class VelocityPlanner(Node):
         
         Outputs:
         slowed_waypoints: a list of waypoints with adjusted velocity at curves
-
         """
+
         main_speed = max(wp.velocity.linear.x for wp in waypoints)
         max_accel = self.get_parameter('max_acceleration').get_parameter_value().double_value
 
@@ -238,7 +239,6 @@ class VelocityPlanner(Node):
         capped_waypoints: a list of waypoints with the velocities capped at a specified maximum speed limit.
         
         """
-
         capped_waypoints = waypoints.copy()
         max_velocity = self.get_parameter('max_velocity').get_parameter_value().double_value
 
