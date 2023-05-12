@@ -2,6 +2,7 @@ import rclpy
 import logging
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Odometry
 from mcav_interfaces.msg import WaypointArray, Waypoint, DetectedObjectArray, DetectedObject
 import numpy as np
 import math
@@ -18,6 +19,8 @@ class VelocityPlanner(Node):
         self.spinner = self.create_timer(timer_period, self.spin)
         self.current_pose_sub = self.create_subscription(PoseStamped,
             'current_pose', self.current_pose_callback, 10)
+        self.odometry_sub = self.create_subscription(Odometry,
+            'odometry', self.odometry_callback, 10)
         self.waypoints_sub = self.create_subscription(WaypointArray,
             'global_waypoints', self.waypoints_callback, 10)
         self.waypoints_sub  # prevent unused variable warning
@@ -42,7 +45,6 @@ class VelocityPlanner(Node):
         self.tf_listener = tf2_ros.transform_listener.TransformListener(self.tf_buffer, self)
 
         self.position = np.array([])
-        self.yaw = None
         self.global_waypoints = []
         self.global_wp_coords = np.array([])
         self.objects = []
@@ -50,13 +52,19 @@ class VelocityPlanner(Node):
         self.get_logger().set_level(logging.DEBUG)
 
     def current_pose_callback(self, pose_msg: PoseStamped):
-        self.position = np.array([pose_msg.pose.position.x, pose_msg.pose.position.y])
-        self.yaw = pose_msg.pose.orientation.z
-
         if len(self.position) == 0:
             self.get_logger().info("Received position")
-        
-        
+
+        self.position = np.array([pose_msg.pose.position.x, pose_msg.pose.position.y])
+
+    def odometry_callback(self, odom_msg: Odometry):
+        if len(self.position) == 0:
+            self.get_logger().info("Received odometry")
+
+        self.position = np.array([odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y])
+
+    
+
     def waypoints_callback(self, msg: WaypointArray):
         # TODO: transform so that they can be in different coordinate systems
         if len(self.global_wp_coords) == 0:
