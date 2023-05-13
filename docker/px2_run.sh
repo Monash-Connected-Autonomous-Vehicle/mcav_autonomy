@@ -6,6 +6,7 @@ run_without_gpu()
     docker run -e DISPLAY -e TERM \
         --privileged \
         -v "/dev:/dev:rw" \
+        -v "/lib/modules:/lib/modules:rw" \
         -v "$(pwd):/home/mcav/mcav_ws/src/mcav_autonomy:rw" \
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
         --net=host \

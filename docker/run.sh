@@ -18,27 +18,41 @@ run_with_gpu()
     docker run -e DISPLAY -e TERM \
         --privileged \
         -v "/dev:/dev:rw" \
+        -v "/lib/modules:/lib/modules:rw" \
         -v "$(pwd):/home/mcav/mcav_ws/src/mcav_autonomy:rw" \
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+        # Run using nvidia's runtime for GPU support
         --runtime=nvidia \
         --net=host \
         --name $CONTAINER_NAME \
+        # Enable all GPUs
         --gpus all \
         --entrypoint /ros_entrypoint.sh \
         -d $IMAGE_NAME /usr/bin/tail -f /dev/null
 }
 run_without_gpu()
 {
-    docker run -e DISPLAY -e TERM \
+    docker run \ 
+        # Allow the container to access the host's X Server
+        -e DISPLAY \
+        # Allow the container to access the host's terminal
+        -e TERM \
+        # Enable access to the host's USB and other devices
         --privileged \
         -v "/dev:/dev:rw" \
+        # Allow loading of kernel modules (for peak_usb)
+        -v "/lib/modules:/lib/modules:rw" \
+        # Mount the current directory into the container
         -v "$(pwd):/home/mcav/mcav_ws/src/mcav_autonomy:rw" \
+        # Allow the container to display windows on the host's X Server
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-        -p 8765:8765 \
+        # Allow the container to access the host's network freely
+        --net=host \
         --name $CONTAINER_NAME \
+        # Source the ROS environment variables on startup
         --entrypoint /ros_entrypoint.sh \
+        # Run the container in the background
         -d $IMAGE_NAME /usr/bin/tail -f /dev/null
-        #--net=host \
 }
 
 build_image() 
