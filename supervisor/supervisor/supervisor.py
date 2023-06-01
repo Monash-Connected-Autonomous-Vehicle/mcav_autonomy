@@ -19,6 +19,8 @@ class Supervisor(Node):
         super().__init__('supervisor')
         self.last_timer_reset = self.get_time().now()
         timer_period = 0.1  # seconds
+        self.imu_messages = []
+        self.lidar_messages = []
         self.timer = self.create_timer(timer_period, self.status_check_callback)
         self.state_publisher_ = self.create_publisher(Bool, '~/is_okay', 10)
         self.cpu_publisher_ = self.create_publisher(Float64, '~/cpu_usage', 10)
