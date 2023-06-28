@@ -6,6 +6,7 @@ from mcav_interfaces.msg import WaypointArray
 import colorsys
 
 class WaypointVisualiser(Node):
+    """ Publishes markers for visualising waypoints in rviz / foxglove """
 
     def __init__(self):
         super().__init__('waypoint_visusaliser')

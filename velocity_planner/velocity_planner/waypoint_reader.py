@@ -16,7 +16,7 @@ class WaypointReader(Node):
         timer_period = 2.0  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.waypoints = []
-        self.declare_parameter('waypoints_file', "town01_path.csv")
+        self.declare_parameter('waypoints_file', "town01_small_waypoints.csv")
         wp_filename = self.get_parameter('waypoints_file').get_parameter_value().string_value
         self.init_waypoints(wp_filename)
         

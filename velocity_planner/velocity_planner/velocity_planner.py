@@ -1,39 +1,42 @@
+import math
 import rclpy
+import tf2_ros
 import logging
+import numpy as np
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
-from mcav_interfaces.msg import WaypointArray, Waypoint, DetectedObjectArray, DetectedObject
-import numpy as np
-import math
-import tf2_ros
 import velocity_planner.transforms as transforms
+from mcav_interfaces.msg import WaypointArray, Waypoint, DetectedObjectArray, DetectedObject
+
 
 class VelocityPlanner(Node):
+    """
+    The velocity_planner takes in fixed global waypoints from a map, and the current
+    world state (vehicle location, detected obstacles, detected traffic signals) and alter the 
+    velocities of the waypoints as required.
+    """
 
     def __init__(self):
         super().__init__('velocity_planner')
-
         # Subscribers
         timer_period = 0.05  # seconds
         self.spinner = self.create_timer(timer_period, self.spin)
-        self.current_pose_sub = self.create_subscription(PoseStamped,
-            'current_pose', self.current_pose_callback, 10)
-        self.waypoints_sub = self.create_subscription(WaypointArray,
-            'global_waypoints', self.waypoints_callback, 10)
-        self.waypoints_sub  # prevent unused variable warning
-        self.objects_sub = self.create_subscription(DetectedObjectArray,
-            'detected_objects', self.objects_callback, 10)
-        self.objects_sub  # prevent unused variable warning
+        self.current_pose_sub = self.create_subscription(PoseStamped, 'current_pose', self.current_pose_callback, 10) # current position of the vehicle
+        self.waypoints_sub = self.create_subscription(WaypointArray,'global_waypoints', self.waypoints_callback, 10) # longer list of waypoints to follow
+        self.objects_sub = self.create_subscription(DetectedObjectArray,'detected_objects', self.objects_callback, 10)
+
+        # Prevent unused variable warning
+        self.waypoints_sub
+        self.objects_sub
 
         # Publishers
-        self.local_wp_pub = self.create_publisher(WaypointArray, 'local_waypoints', 10)
-        
+        self.local_wp_pub = self.create_publisher(WaypointArray, 'local_waypoints', 10) # shorter list of waypoints to follow, with appropriate velocities to avoid collisions
+
         # Parameters (can be changed in launch file)
         self.declare_parameter('max_velocity', 0.1) # maximum waypoint velocity used for speed capping
         self.declare_parameter('local_plan_max_length', 25) # number of waypoints to plan ahead
         self.declare_parameter('max_acceleration', 0.5) # m/s/waypoint
-        self.declare_parameter('obj_waypoint_distance_threshold', 2.0) # if an object is within this distance of a path,
-        # it will be considered as blocking the path
+        self.declare_parameter('obj_waypoint_distance_threshold', 2.0) # when object is within the threshold in the path, it isconsidered as blocking the path
         self.declare_parameter('obj_stopping_waypoint_count', 3) # number of waypoints before object to stop at
         self.declare_parameter('vehicle_frame_id', "base_link")
 
@@ -49,7 +52,9 @@ class VelocityPlanner(Node):
         
         self.get_logger().set_level(logging.DEBUG)
 
+
     def current_pose_callback(self, pose_msg: PoseStamped):
+        # Extracts position and orientation information.
         self.position = np.array([pose_msg.pose.position.x, pose_msg.pose.position.y])
         self.yaw = pose_msg.pose.orientation.z
 
@@ -58,24 +63,27 @@ class VelocityPlanner(Node):
         
         
     def waypoints_callback(self, msg: WaypointArray):
-        # TODO: transform so that they can be in different coordinate systems
+        # Extracts waypoint information. Updates it to _____ frame ----------------------------------------------------------------------------------------------------------- 
+        # TODO: transform so that they can be in different coordinate systems @Dylan @Owen
+
         if len(self.global_wp_coords) == 0:
             self.get_logger().info("Received global waypoints")
+
         self.global_waypoints = msg.waypoints
         self.waypoints_frame = msg.frame_id
         self.global_wp_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in msg.waypoints])
         
 
     def objects_callback(self, msg: DetectedObjectArray):
-        # Convert objects to the map frame so everything is in the same frame
+        # Updates the latest objects detected by the LiDAR in the map frame 
         self.objects = [self.transform_to_map(obj) for obj in msg.detected_objects]
     
+
     def transform_to_map(self, obj: DetectedObject):
-        """ Applies a transformation to the pose of the object so that it is with respect to the map frame """
+        # Applies transformation of the detected object from current frame to map frame
         # Wait until a transform is available from tf
-        map_frame_id = "map"
         try:
-            to_frame_rel = map_frame_id
+            to_frame_rel = self.waypoints_frame
             from_frame_rel = obj.frame_id
             t = self.tf_buffer.lookup_transform(
                 to_frame_rel,
@@ -86,7 +94,7 @@ class VelocityPlanner(Node):
             object_matrix = transforms.pose_to_homogenous_mat(obj.pose)
             new_object_matrix = np.dot(tf_matrix, object_matrix)
             new_object = obj
-            new_object.frame_id = map_frame_id
+            new_object.frame_id = self.waypoints_frame
             new_object.pose = transforms.homogenous_mat_to_pose(new_object_matrix)
 
             return new_object
@@ -97,17 +105,37 @@ class VelocityPlanner(Node):
 
 
     def find_nearest_waypoint(self, waypoint_coords, position) -> int:
-        """ Inputs: position 1x2 numpy array [x, y] """
-        # Algorithm from https://codereview.stackexchange.com/a/28210
+        """ 
+        Find the waypoint along the path that is closest to the current position.
+        Algorithm from https://codereview.stackexchange.com/a/28210
+
+        Inputs: 
+        position 1x2 numpy array [x, y]
+
+        Ouput: 
+        index of the waypoint with the smallest distance
+                
+        """
+        # Calculate the Euclidean distance between the current position and all waypoints. 
         deltas = waypoint_coords - position
         dist_2 = np.einsum('ij,ij->i', deltas, deltas)
-        return np.argmin(dist_2)
+
+        # Find the index of the waypoint with the smallest distance
+        closest_index = np.argmin(dist_2)
+        return closest_index
 
 
-    def find_object_waypoints(self, waypoints):
-        """ Checks if path is blocked by an object. Path is considered blocked if the closest waypoint
-        on the path to an object is within a distance threshold, and the object is in front of that waypoint,
-        not behind. """
+    def find_object_waypoints(self, waypoints: list[Waypoint]):
+        """
+        Finds the waypoints where the car needs to slow down or stop to avoid obstacles along its planned path.
+
+        Inputs:
+        - waypoints: A list of Waypoint objects representing the planned path for the car.
+
+        Outputs:
+        - stopping_indices: A list of integers representing the indices of the waypoints where the car needs to slow down or stop. These indices are relative to the waypoints list.
+
+        """
         waypoint_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in waypoints])
         stopping_indices = []
         distance_threshold = self.get_parameter('obj_waypoint_distance_threshold').get_parameter_value().double_value
@@ -127,7 +155,20 @@ class VelocityPlanner(Node):
 
         return stopping_indices
 
-    def slow_to_stop(self, waypoints, stopping_index):
+
+    def slow_to_stop(self, waypoints: list[Waypoint], stopping_index: int):
+        """
+        Gradually slow down a list of waypoints with constant deceleration until a stopping index, 
+        then set velocities to zero past that index.
+
+        Inputs:
+        waypoints: a list of waypoints containing position and velocity information.
+        stopping_index: an integer index indicating the point in waypoints where the vehicle should come to a stop
+        
+        Outputs:
+        slowed_waypoints: a list of waypoints with adjusted velocity at curves
+        """
+
         main_speed = max(wp.velocity.linear.x for wp in waypoints)
         max_accel = self.get_parameter('max_acceleration').get_parameter_value().double_value
 
@@ -146,8 +187,19 @@ class VelocityPlanner(Node):
 
         return slowed_waypoints
 
-    def slow_at_curve(self, waypoints):
-        """ Regulates velocity of waypoints at curves """
+
+    def slow_at_curve(self, waypoints: list[Waypoint]):
+        """
+        Reduce the velocity of waypoints that are part of the curve. While the car can travel
+        full speed along straight lines, it must slow down at curves to avoid going off the track.
+
+        Inputs:
+        waypoints: a list of waypoints containing position and velocity information.
+        
+        Outputs:
+        slowed_waypoints: a list of waypoints with adjusted velocity at curves
+        
+        """
         mu = 0.2 
         g = 9.81
         slowed_waypoints = waypoints.copy()
@@ -175,8 +227,18 @@ class VelocityPlanner(Node):
 
         return slowed_waypoints
 
-    def speed_cap(self, waypoints):
-        """ Failsafe to cap the speed of the car """
+
+    def speed_cap(self, waypoints: list[Waypoint]):
+        """ 
+        Sets a speed limit for the vehicle's waypoints.
+
+        Inputs: 
+        waypoints: a list of waypoints (vehicle's velocity information)
+
+        Outputs: 
+        capped_waypoints: a list of waypoints with the velocities capped at a specified maximum speed limit.
+        
+        """
         capped_waypoints = waypoints.copy()
         max_velocity = self.get_parameter('max_velocity').get_parameter_value().double_value
 

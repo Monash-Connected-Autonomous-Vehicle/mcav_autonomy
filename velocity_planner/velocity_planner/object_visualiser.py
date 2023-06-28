@@ -1,24 +1,22 @@
 import rclpy
 from rclpy.node import Node
-
-from visualization_msgs.msg import Marker, MarkerArray
 from mcav_interfaces.msg import DetectedObjectArray
+from visualization_msgs.msg import Marker, MarkerArray
 
 class ObjectVisualiser(Node):
+    """ Publishes markers for visualising detected objects in rviz / foxglove """
 
     def __init__(self):
         super().__init__('object_visualiser')
-
-        self.global_sub = self.create_subscription(DetectedObjectArray,
-            'detected_objects', self.object_callback, 10)
-
+        self.global_sub = self.create_subscription(DetectedObjectArray, 'detected_objects', self.object_callback, 10)
         self.objects_vis_pub_ = self.create_publisher(MarkerArray, 'detected_objects_marker_array', 0)
 
     def object_callback(self, msg):
         self.publish_markers(msg.detected_objects)
 
     def publish_markers(self, objects):
-        # TODO: expand this to differentiate between classes of objects
+        # TODO: expand this to differentiate between classes of objects e.g. pedestrians, cars, etc. could
+        # have different colours and / or different shapes
         markers = []
         for index, object in enumerate(objects):
             obj_marker = Marker()

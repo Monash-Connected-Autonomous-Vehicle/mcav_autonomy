@@ -1,11 +1,11 @@
 import rclpy
-from rclpy.node import Node
 import numpy as np
-
+from rclpy.node import Node
 from mcav_interfaces.msg import DetectedObject, DetectedObjectArray
 
 class FakeObjects(Node):
 
+    """ Publishes a fake detected object to be used for checking the behaviour of the velocity planner """
     def __init__(self):
         super().__init__('fake_object_publisher')
         self.publisher_ = self.create_publisher(DetectedObjectArray, 'detected_objects', 10)
@@ -38,6 +38,7 @@ class FakeObjects(Node):
     def timer_callback(self):
         time_elapsed = self.get_clock().now().nanoseconds - self.start_time
         for obj in self.detected_objects:
+            # Move the object back and forth along the y direction (left to right)
             obj.pose.position.y = np.sin(time_elapsed/700000000)
 
         msg = DetectedObjectArray()

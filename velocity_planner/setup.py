@@ -31,7 +31,6 @@ setup(
             'waypoint_reader = velocity_planner.waypoint_reader:main',
             'simple_trapezoidal = velocity_planner.simple_trapezoidal:main',
             'pose_estimate_to_tf = velocity_planner.pose_estimate_to_tf:main',
-            'initial_pose_publisher = velocity_planner.initial_pose_publisher:main',
         ],
     },
 )

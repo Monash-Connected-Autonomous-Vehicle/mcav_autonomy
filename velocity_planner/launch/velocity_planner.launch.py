@@ -31,4 +31,3 @@ def generate_launch_description():
             name='object_visualiser',
         ),
     ])
-
