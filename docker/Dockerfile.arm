@@ -3,6 +3,8 @@ FROM ros:humble
 # Dev tools
 # Try to keep ROS-related dependencies out of here and inside package.xml to be installed with rosdep instead
 RUN apt-get -y update && apt-get install -y \
+    # x11-apps gives us the test program xeyes to check whether graphical display are working
+    x11-apps \
     python3-pip \
     build-essential \
     vim \
