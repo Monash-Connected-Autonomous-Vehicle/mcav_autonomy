@@ -59,6 +59,7 @@ install(PROGRAMS
   ${PROJECT_NAME}/utils.py
   ${PROJECT_NAME}/config.py
   ${PROJECT_NAME}/tracking.py
+  ${PROJECT_NAME}/image_modifier.py
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

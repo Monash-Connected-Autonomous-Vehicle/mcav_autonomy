@@ -6,6 +6,7 @@
   <description>Package to take LiDAR sensor data and inputs from Multi-Task Panoptic Perception model to create accurate pose and velocity estimates of an object over time in 3D space.</description>
   <maintainer email="amir@gmail.com">amir</maintainer>
   <maintainer email="bedw0004@student.monash.edu">bened-wards</maintainer>
+  <maintainer email="ssri0033@student.monash.edu">Srihari</maintainer>
   <license>The MIT License</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -22,17 +23,20 @@
   <depend>sensor_msgs</depend> 
 
   <exec_depend>pcl_conversions</exec_depend>
+  <exec_depend>python3-pandas</exec_depend>  
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>mcav_interfaces</exec_depend>
   <exec_depend>rclpy</exec_depend>
   <exec_depend>sensor_msgs_py</exec_depend>
   <exec_depend>tf_transformations</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>python3-tqdm</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>python3-opencv</exec_depend> 
   <exec_depend>python3-scipy</exec_depend>
   <exec_depend>python3-transforms3d</exec_depend>
   <exec_depend>python-pytorch-pip</exec_depend>
+  <exec_depend>python3-seaborn</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
