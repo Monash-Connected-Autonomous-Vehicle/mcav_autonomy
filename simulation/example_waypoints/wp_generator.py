@@ -10,13 +10,13 @@ def print_entry(x, y, z, yaw, velocity):
 
 def straight():
     print_header()
-    for wp_index in range(100):
+    for wp_index in range(200):
         distance = 0.5 # metres
         x = distance * wp_index
         y = 0.0
         z = 0.0
         yaw = math.pi
-        velocity = 3.0 # m/s
+        velocity = 10.0 # m/s
         print_entry(x, y, z, yaw, velocity)
 
 
@@ -50,5 +50,5 @@ def sine():
 if __name__ == "__main__":
     print("\nStraight line")
     straight()
-    print("\nSine wave")
-    sine()
+    # print("\nSine wave")
+    # sine()

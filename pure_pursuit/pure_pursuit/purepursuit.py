@@ -50,7 +50,7 @@ class PurePursuitNode(Node):
         Args:
             wp_msg (WaypointArray): array of waypoints of type Waypoint
         """
-        default_lookahead = 2.0
+        default_lookahead = 10.0
         self.waypoint_frame_id = wp_msg.frame_id
         self.waypoints = wp_msg.waypoints
         # shorten the lookahead distance when slow (determined experimentally)
@@ -84,7 +84,7 @@ class PurePursuitNode(Node):
                 twist_msg.twist.angular.z = v_angular
                 
             self.pp_publisher.publish(twist_msg)
-            # self.get_logger().info(f"Stop: {self.stop}, Linear vel: {twist_msg.twist.linear.x:5.3f}, Angular vel: {twist_msg.twist.angular.z:5.3f}")
+            self.get_logger().info(f"Stop: {self.stop}, Linear vel: {twist_msg.twist.linear.x:5.3f}, Angular vel: {twist_msg.twist.angular.z:5.3f}")
         else:
             self.get_logger().warning(f"Waiting for local waypoints")
 
@@ -210,6 +210,7 @@ class PurePursuitNode(Node):
             tx = self.Lfc*math.sin(bearing)
             ty = self.Lfc*math.cos(bearing)
             vlinear = 0.0
+            self.get_logger().info("Last waypoint reached")
         elif (wp_d >  self.Lfc).any():
             # target first point if there are no points before lookahead distance
             tx = wp_x[0]

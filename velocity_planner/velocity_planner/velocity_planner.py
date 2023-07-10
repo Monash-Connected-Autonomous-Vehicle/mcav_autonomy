@@ -33,7 +33,7 @@ class VelocityPlanner(Node):
         
         # Parameters (can be changed in launch file)
         self.declare_parameter('max_velocity', 0.1) # maximum waypoint velocity used for speed capping
-        self.declare_parameter('local_plan_max_length', 25) # number of waypoints to plan ahead
+        self.declare_parameter('local_plan_max_length', 5) # 25 number of waypoints to plan ahead
         self.declare_parameter('max_acceleration', 0.5) # m/s/waypoint
         self.declare_parameter('obj_waypoint_distance_threshold', 2.0) # if an object is within this distance of a path,
         # it will be considered as blocking the path
@@ -161,7 +161,7 @@ class VelocityPlanner(Node):
         slowed_waypoints = waypoints.copy()
         wp_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in waypoints])
         vel_cap = self.get_parameter('max_velocity').get_parameter_value().double_value # global velocity cap
-        vel_max = vel_cap
+        vel_max = 6.0
         
         for i in range(len(waypoints) - 2):
             len_b = np.linalg.norm(wp_coords[i] - wp_coords[i+1])
