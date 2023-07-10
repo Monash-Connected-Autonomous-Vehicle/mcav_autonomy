@@ -2,7 +2,7 @@
 Takes input from /initial_pose_guess, /pointcloud_map, /lidar_points to perform local
 registration of the pointclouds to find the Transform between the two frames /map and 
 /initial_pose. This refines the initial pose estimate using local registration to 
-get an accurate /initial_pose_transform and publishes the Transform between the initial pose guess to the lidar corrected pose
+get an accurate /initial_pose_transform and publishes the Transform between the /pointcloud_map to the lidar corrected pose
 """
 
 import rclpy
