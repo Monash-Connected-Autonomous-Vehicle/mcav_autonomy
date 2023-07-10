@@ -8,7 +8,7 @@ get an accurate /initial_pose_transform and publishes the Transform between the 
 import rclpy
 from rclpy.node import Node
 
-from geometry_msgs.msg import PoseStamped, TransformStamped, Transform
+from geometry_msgs.msg import PoseStamped, TransformStamped, Transform, Quaternion, Vector3
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py import point_cloud2 as pc2
 import open3d as o3d # Open3d for ICP implementation
@@ -32,8 +32,8 @@ class PoseInitialisation(Node):
         # Publisher # TODO: determine out topic name to publish to
         self.transform_pub = self.create_publisher(TransformStamped, '/initial_pose_transform', 10)
         timer_period = 0.1 # seconds
-        self.timer = self.craete_timer(timer_period, self.timer_callback)
-        self.start_time = self.get_clock.now().nanoseconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.start_time = self.get_clock().now().nanoseconds
         
         # Listened inputs
         self.map = None
@@ -87,7 +87,17 @@ class PoseInitialisation(Node):
             
             # Convert to a Transform (quaternion and translation vector) to publish 
             # TODO: Decide on a stable method to find a quaternion to represent the rotation matrix
-            
+            # Using the identity of trace + 1 = 4w^2
+            trace = result[0, 0] + result[1, 1] + result[2, 2]
+            r = trace**0.5
+            s = 1/(2*r)
+            w = 0.5*r 
+            x = (result[2, 1] - result[1, 2])*s
+            y = (result[0, 2] - result[2, 0])*s
+            z = (result[1, 0] - result[0, 1])*s
+            rotation = Quaternion(x,y,z,w)
+            translation = Vector3(result[0, 3], result[1, 3], result[2, 3])
+            self.correction_transform = Transform(translation, rotation)
             
     def set_map(self, pointcloud_msg: PointCloud2):
         if self.map is None:
@@ -100,12 +110,13 @@ class PoseInitialisation(Node):
         self.lidar_points = pointcloud_msg
         
     def timer_callback(self):
-        msg = TransformStamped()
-        # TODO: find frame id of lidar
-        msg.header.frame_id = None
-        msg.header.stamp = self.get_clock.now().to_msg()
-        msg.transform = self.correction_transform
-        self.transform_pub.publish(msg)
+        if self.correction_transform is not None:
+            msg = TransformStamped()
+            # TODO: find frame id of lidar
+            msg.header.frame_id = 'lidar' # This is a temp name
+            msg.header.stamp = self.get_clock().now().to_msg()
+            msg.transform = self.correction_transform
+            self.transform_pub.publish(msg)
         
 def main(args=None):
     rclpy.init(args=args)
