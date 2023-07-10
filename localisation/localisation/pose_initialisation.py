@@ -2,16 +2,16 @@
 Takes input from /initial_pose_guess, /pointcloud_map, /lidar_points to perform local
 registration of the pointclouds to find the Transform between the two frames /map and 
 /initial_pose. This refines the initial pose estimate using local registration to 
-get an accurate /initial_pose
+get an accurate /initial_pose_transform and publishes the Transform between the initial pose guess to the lidar corrected pose
 """
 
 import rclpy
 from rclpy.node import Node
 
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, TransformStamped, Transform
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py import point_cloud2 as pc2
-import open3d as o3d # Assuming we are using open3d
+import open3d as o3d # Open3d for ICP implementation
 
 class PoseInitialisation(Node):
     def __init__(self):
@@ -29,11 +29,19 @@ class PoseInitialisation(Node):
         self.lidar_points_sub = self.create_subscription(PointCloud2,
             '/lidar_points', self.set_lidar_points, 10)
             
-        # Publisher #TODO figure out what to publish and which topic
+        # Publisher # TODO: determine out topic name to publish to
+        self.transform_pub = self.create_publisher(TransformStamped, '/initial_pose_transform', 10)
+        timer_period = 0.1 # seconds
+        self.timer = self.craete_timer(timer_period, self.timer_callback)
+        self.start_time = self.get_clock.now().nanoseconds
         
+        # Listened inputs
         self.map = None
         self.initial_pose_guess = None
         self.lidar_points = None
+        
+        # Results to be published
+        self.correction_transform = None
         
         # Run ICP until below threshold error or max iterations reached
         self.threshold = 0.02 # Local registration threshold for RMSE of pose estimate
@@ -62,19 +70,24 @@ class PoseInitialisation(Node):
             # Converting initial pose guess ROS2 PoseStamped 
             # to an affine transformation matrix
             pose = self.inital_pose_guess.pose
-            # Quarternion values of the form (r,i,j,k) = (w,x,y,z)
+            # Quarternion values as coefficients in (w*r,x*i,y*j,z*k) for (w,x,y,z)
             w,x,y,z = pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z
             # s = np.abs(Pose.orientation) **-2 # Should be 1 for unit quaternions
             # TODO: Check that this was transcribed correctly
+            # Alternatively: o3d.geometry.get_rotation_matrix_from_quaternion exists
             transform_guess = np.asarry([[1 - 2*(y**2 + z**2), 2*(x*y - z*w), 2*(y*z + y*w), pose.point.x],
                                          [2*(x*y + z*w), 1-2*(x**2+z**2), 2*(y*z - x*w), pose.point.y],
                                          [2*(x*z - y*w), 2*(y*z + x*w), 1 - 2*(x**2 + y**2), pose.point.z],[0,0,0,1]])
-            # TODO: Choose between Point to Point or Point to Plane ICP method
+            # Optional: Choose between Point to Point or Point to Plane ICP method (Point to Plane can perform better if the environment has flat surfaces)
             reg_p2p = o3d.pipelines.registration.registration_icp(
-            source, target, self.threshold, transform_guess,
-            o3d.pipelines.registration.TransformationEstimationPointToPoint(),
-            o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration = self.max_iteration))
-            Result = reg_p2p.transformation # Publish this in desired format, probably as a PoseStamped again?
+                source, target, self.threshold, transform_guess,
+                o3d.pipelines.registration.TransformationEstimationPointToPoint(),
+                o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration = self.max_iteration))
+            result = reg_p2p.transformation # This is a 4x4 transformation matrix
+            
+            # Convert to a Transform (quaternion and translation vector) to publish 
+            # TODO: Decide on a stable method to find a quaternion to represent the rotation matrix
+            
             
     def set_map(self, pointcloud_msg: PointCloud2):
         if self.map is None:
@@ -85,6 +98,14 @@ class PoseInitialisation(Node):
         if self.lidar_points is None:
             self.get_logger().info('Received lidar point cloud')
         self.lidar_points = pointcloud_msg
+        
+    def timer_callback(self):
+        msg = TransformStamped()
+        # TODO: find frame id of lidar
+        msg.header.frame_id = None
+        msg.header.stamp = self.get_clock.now().to_msg()
+        msg.transform = self.correction_transform
+        self.transform_pub.publish(msg)
         
 def main(args=None):
     rclpy.init(args=args)
