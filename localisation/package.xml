@@ -11,6 +11,7 @@
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>sensor_msgs_py</depend>
+  <depend>std_msgs</depend>
   <depend>open3d</depend>
   <depend>numpy</depend>
 

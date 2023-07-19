@@ -20,7 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'initialise_pose        = localisation.pose_initialisation:main',
+            'refine_pose        = localisation.pose_initialisation:main',
+            'rough_pose_guess   = localisation.rough_pose_guess:main',
+            'test_publisher     = localisation.test_pcd_publisher:main',
         ],
     },
 )

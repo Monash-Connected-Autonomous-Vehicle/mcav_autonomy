@@ -13,6 +13,7 @@ from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py import point_cloud2 as pc2
 import open3d as o3d # Open3d for ICP implementation
 import numpy as np
+import math
 
 class PoseInitialisation(Node):
     def __init__(self):
@@ -30,7 +31,7 @@ class PoseInitialisation(Node):
         self.lidar_points_sub = self.create_subscription(PointCloud2,
             '/lidar_points', self.set_lidar_points, 10)
             
-        # Publisher # TODO: determine out topic name to publish to
+        # Publisher for transform from map frame to lidar frame
         self.transform_pub = self.create_publisher(TransformStamped, '/initial_pose_transform', 10)
         timer_period = 0.1 # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -118,9 +119,9 @@ class PoseInitialisation(Node):
         s = (x**2+y**2+z**2+w**2) **-2 # Should be 1 for unit quaternions
         # TODO: Check that this was transcribed correctly
         # Alternatively: o3d.geometry.get_rotation_matrix_from_quaternion exists
-        rot_matrix = np.asarry([[1 - 2*s*(y**2 + z**2), 2*s*(x*y - z*w), 2*s*(y*z + y*w),
+        rot_matrix = np.asarry([[1 - 2*s*(y**2 + z**2), 2*s*(x*y - z*w), 2*s*(y*z + y*w)],
                                      [2*s*(x*y + z*w), 1-2*s*(x**2+z**2), 2*s*(y*z - x*w)],
-                                     [2*s*(x*z - y*w), 2*s*(y*z + x*w), 1 - 2*s*(x**2 + y**2)])
+                                     [2*s*(x*z - y*w), 2*s*(y*z + x*w), 1 - 2*s*(x**2 + y**2)]])
         return rot_matrix
         
     def rotation_matrix_to_quarternion(rot_matrix):
@@ -129,7 +130,7 @@ class PoseInitialisation(Node):
            # Using the identity of trace + 1 = 4w^2 and the unit quaternion definition
            """
         trace = rot_matrix[0, 0] + rot_matrix[1, 1] + rot_matrix[2, 2]
-        r = trace**0.5
+        r = math.sqrt(trace)
         s = 1/(2*r)
         w = 0.5*r 
         x = (rot_matrix[2, 1] - rot_matrix[1, 2])*s
