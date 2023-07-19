@@ -1,8 +1,8 @@
 """
-Takes input from /initial_pose_guess, /pointcloud_map, /lidar_points to perform local
+Takes input from /rough_pose_guess, /pointcloud_map, /lidar_points to perform local
 registration of the pointclouds to find the Transform between the two frames /map and 
-/initial_pose. This refines the initial pose estimate using local registration to 
-get an accurate /initial_pose_transform and publishes the Transform between the /pointcloud_map to the lidar corrected pose
+/lidar_points. This refines the initial pose estimate using local registration to 
+get an accurate /initial_pose_transform and publishes the Transform
 """
 
 import rclpy
@@ -12,14 +12,15 @@ from geometry_msgs.msg import PoseStamped, TransformStamped, Transform, Quaterni
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py import point_cloud2 as pc2
 import open3d as o3d # Open3d for ICP implementation
+import numpy as np
 
 class PoseInitialisation(Node):
     def __init__(self):
         super().__init__('pose_initialisation')
         
-        # Subscriber to /initial_pose_guess
-        self.initial_pose_guess_sub = self.create_subscription(PoseStamped,
-            '/initial_pose_guess', self.initial_pose_callback, 10)
+        # Subscriber to /rough_pose_guess
+        self.rough_pose_guess_sub = self.create_subscription(PoseStamped,
+            '/rough_pose_guess', self.rough_pose_callback, 10)
         
         # Subscriber to /pointcloud_map
         self.pointcloud_map_sub = self.create_subscription(PointCloud2,
@@ -37,7 +38,7 @@ class PoseInitialisation(Node):
         
         # Listened inputs
         self.map = None
-        self.initial_pose_guess = None
+        self.rough_pose_guess = None
         self.lidar_points = None
         
         # Results to be published
@@ -47,15 +48,14 @@ class PoseInitialisation(Node):
         self.threshold = 0.02 # Local registration threshold for RMSE of pose estimate
         self.max_iteration = 1000 # Maximum number of iterations of ICP performed
         
-    def initial_pose_callback(self, pose_msg: PoseStamped):
+    def rough_pose_callback(self, pose_msg: PoseStamped):
         """
-        After receiving initial pose guess, if the lidar points and reference map have been received, 
+        After receiving rough pose guess, if the lidar points and reference map have been received, 
         find the current pose by the transform from the reference map to the frame of the lidar points 
         measured using Iterative-Closest-Point for local registration.
         """
-        if self.initial_pose_guess is None:
-            self.get_logger().info('Received initial pose guess')
-        self.initial_pose_guess = pose_msg
+        self.get_logger().info('Received rough pose guess')
+        self.rough_pose_guess = pose_msg
         # Run local registration on point clouds if both have been received
         # Assumes remaining stationary until the initial pose is determined
         if self.map is not None and self.lidar_points is not None:
@@ -67,17 +67,16 @@ class PoseInitialisation(Node):
                 o3d.utility.Vector3dVector(pc2.read_points(self.map)))
             target = o3d.geometry.PointCloud(
                 o3d.utility.Vector3dVector(pc2.read_points(self.lidar_points)))
-            # Converting initial pose guess ROS2 PoseStamped 
+            # Converting rough pose guess ROS2 PoseStamped 
             # to an affine transformation matrix
             pose = self.inital_pose_guess.pose
-            # Quarternion values as coefficients in (w*r,x*i,y*j,z*k) for (w,x,y,z)
-            w,x,y,z = pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z
-            # s = np.abs(Pose.orientation) **-2 # Should be 1 for unit quaternions
-            # TODO: Check that this was transcribed correctly
+            
             # Alternatively: o3d.geometry.get_rotation_matrix_from_quaternion exists
-            transform_guess = np.asarry([[1 - 2*(y**2 + z**2), 2*(x*y - z*w), 2*(y*z + y*w), pose.point.x],
-                                         [2*(x*y + z*w), 1-2*(x**2+z**2), 2*(y*z - x*w), pose.point.y],
-                                         [2*(x*z - y*w), 2*(y*z + x*w), 1 - 2*(x**2 + y**2), pose.point.z],[0,0,0,1]])
+            rot_matrix = quaternion_to_rotation_matrix(pose.orientation)
+            
+            transform_guess = np.eye(4)
+            transform_guess[0:3, 0:3] = rot_matrix
+            transform_guess[0:3, 3] = np.asarray([pose.position.x,pose.position.y,pose.position.z]).T
             # Optional: Choose between Point to Point or Point to Plane ICP method (Point to Plane can perform better if the environment has flat surfaces)
             reg_p2p = o3d.pipelines.registration.registration_icp(
                 source, target, self.threshold, transform_guess,
@@ -85,17 +84,7 @@ class PoseInitialisation(Node):
                 o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration = self.max_iteration))
             result = reg_p2p.transformation # This is a 4x4 transformation matrix
             
-            # Convert to a Transform (quaternion and translation vector) to publish 
-            # TODO: Decide on a stable method to find a quaternion to represent the rotation matrix
-            # Using the identity of trace + 1 = 4w^2
-            trace = result[0, 0] + result[1, 1] + result[2, 2]
-            r = trace**0.5
-            s = 1/(2*r)
-            w = 0.5*r 
-            x = (result[2, 1] - result[1, 2])*s
-            y = (result[0, 2] - result[2, 0])*s
-            z = (result[1, 0] - result[0, 1])*s
-            rotation = Quaternion(x,y,z,w)
+            rotation = rotation_matrix_to_quaternion(result[0:3, 0:3])
             translation = Vector3(result[0, 3], result[1, 3], result[2, 3])
             self.correction_transform = Transform(translation, rotation)
             
@@ -112,12 +101,42 @@ class PoseInitialisation(Node):
     def timer_callback(self):
         if self.correction_transform is not None:
             msg = TransformStamped()
-            # TODO: find frame id of lidar
-            msg.header.frame_id = 'lidar' # This is a temp name
+            msg.header.frame_id = 'map_transform_lidar' # This is the approximate transform that places the map onto the lidar pointcloud
             msg.header.stamp = self.get_clock().now().to_msg()
             msg.transform = self.correction_transform
             self.transform_pub.publish(msg)
+            
+    def quaternion_to_rotation_matrix(quaternion):
+        """
+        Input: ROS2 Quaternion
+        Output: 3x3 Rotation matrix as a numpy array
+        Using a quaternion, q, to rotate p to p' is p'=q*p*q^-1, a rotation matrix is of the form p' = Rp
+        # Quarternion values as coefficients in (w*r,x*i,y*j,z*k) for (w,x,y,z)
+        Assumes unit quaternions, maybe
+        """
+        x,y,z,w = quaternion.x, quaternion.y, quaternion.z, quaternion.w
+        s = (x**2+y**2+z**2+w**2) **-2 # Should be 1 for unit quaternions
+        # TODO: Check that this was transcribed correctly
+        # Alternatively: o3d.geometry.get_rotation_matrix_from_quaternion exists
+        rot_matrix = np.asarry([[1 - 2*s*(y**2 + z**2), 2*s*(x*y - z*w), 2*s*(y*z + y*w),
+                                     [2*s*(x*y + z*w), 1-2*s*(x**2+z**2), 2*s*(y*z - x*w)],
+                                     [2*s*(x*z - y*w), 2*s*(y*z + x*w), 1 - 2*s*(x**2 + y**2)])
+        return rot_matrix
         
+    def rotation_matrix_to_quarternion(rot_matrix):
+        """Input: a 3x3 rotation matrix as a numpy array
+           Output: a ROS2 Quaternion representing the same rotation
+           # Using the identity of trace + 1 = 4w^2 and the unit quaternion definition
+           """
+        trace = rot_matrix[0, 0] + rot_matrix[1, 1] + rot_matrix[2, 2]
+        r = trace**0.5
+        s = 1/(2*r)
+        w = 0.5*r 
+        x = (rot_matrix[2, 1] - rot_matrix[1, 2])*s
+        y = (rot_matrix[0, 2] - rot_matrix[2, 0])*s
+        z = (rot_matrix[1, 0] - rot_matrix[0, 1])*s
+        return Quaternion(x=x,y=y,z=z,w=w)
+    
 def main(args=None):
     rclpy.init(args=args)
     poseInitialise = PoseInitialisation()
