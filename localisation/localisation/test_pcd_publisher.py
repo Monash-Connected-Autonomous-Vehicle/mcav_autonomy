@@ -25,8 +25,9 @@ class TestPublisher(Node):
         source = pc2.create_cloud_xyz32(header = std_msgs.msg.Header(),
             points = np.asarray(o3d.io.read_point_cloud(demo_icp_pcds.paths[0]).points))
         array = pc2.read_points(source)
-        self.get_logger().info(f"Size: {array.size}")
-        self.get_logger().info(f"Point 0: {array[0]}")
+        #self.get_logger().info(f"Size: {array.size}")
+        #self.get_logger().info(f"Point 0: {array[0]}")
+        
         target = pc2.create_cloud_xyz32(header = std_msgs.msg.Header(),
             points = np.asarray(o3d.io.read_point_cloud(demo_icp_pcds.paths[1]).points))
         self.map_pub.publish(source)

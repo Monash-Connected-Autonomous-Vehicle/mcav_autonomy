@@ -55,12 +55,9 @@ class RoughPoseGuess(Node):
             
             # Convert ROS2 messages into open3D data types
             # Converting ROS2 PointCloud2 to Open3D PointCloud
-            nparray = pc2.read_points_numpy(self.map)
-            vector = o3d.utility.Vector3dVector(nparray)
-            pcl = o3d.geometry.PointCloud(vector)
-            source = pcl
-            # source = o3d.geometry.PointCloud(
-            #    o3d.utility.Vector3dVector(pc2.read_points(self.map)))
+
+            source = o3d.geometry.PointCloud(
+                o3d.utility.Vector3dVector(pc2.read_points_numpy(self.map)))
             target = o3d.geometry.PointCloud(
                 o3d.utility.Vector3dVector(pc2.read_points_numpy(self.lidar_points)))
             
@@ -69,9 +66,13 @@ class RoughPoseGuess(Node):
             result_ransac = execute_global_registration(source_down, target_down,
                                                         source_fpfh, target_fpfh,
                                                         self.voxel_size)
+            # After this, either ICP for local registration with the initial transform produced
+            # Or instead the fast global registration can be used
+            # What is the error required?
             trans_matrix = result_ransac.transformation
-            self.get_logger().info(f"Rotation: {trans_matrix[0:3, 0:3]}")
-            self.get_logger().info(f"Trace: {sum(np.diag(trans_matrix[0:3,0:3]))}")
+            self.get_logger().info(str(result_ransac))
+            # self.get_logger().info(f"Rotation: {trans_matrix[0:3, 0:3]}")
+            # self.get_logger().info(f"Trace: {sum(np.diag(trans_matrix[0:3,0:3]))}")
             rotation = rotation_matrix_to_quarternion(trans_matrix[0:3, 0:3])
 
             translation = Vector3(x=trans_matrix[0,3],y=trans_matrix[1,3],z=trans_matrix[2,3])
@@ -117,7 +118,7 @@ def rotation_matrix_to_quarternion(rot_matrix):
        # Using the identity of trace + 1 = 4w^2 and the unit quaternion definition
        """
     trace = rot_matrix[0, 0] + rot_matrix[1, 1] + rot_matrix[2, 2]
-    r = math.sqrt(trace)
+    r = math.sqrt(1+trace)
     s = 1/(2*r)
     w = 0.5*r 
     x = (rot_matrix[2, 1] - rot_matrix[1, 2])*s
