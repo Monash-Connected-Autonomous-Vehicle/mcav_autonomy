@@ -1,7 +1,17 @@
 <launch>
+	<arg name="rviz" default="false" />
+	<arg name="foxglove" default="true" />
+
 	<include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml">
 		<arg name="launch_velodyne" value="true" />
 	</include>
 	<node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
 	<include file="$(find-pkg-share vehicle_model)/launch/vehicle_model.launch.py" />
+
+	<group if="$(var foxglove)">
+		<include file="$(find-pkg-share foxglove_bridge)/foxglove_bridge_launch.xml">
+			<arg name="port" value="8765" />
+		</include>
+	</group>
+	
 </launch>
