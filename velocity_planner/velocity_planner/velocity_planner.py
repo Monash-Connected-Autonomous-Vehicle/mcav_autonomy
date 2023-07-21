@@ -161,6 +161,7 @@ class VelocityPlanner(Node):
         slowed_waypoints = waypoints.copy()
         wp_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in waypoints])
         vel_cap = self.get_parameter('max_velocity').get_parameter_value().double_value # global velocity cap
+       	#self.get_logger().info(f'vel_cap: {vel_cap}')
         vel_max = 6.0
         
         for i in range(len(waypoints) - 2):
@@ -177,6 +178,7 @@ class VelocityPlanner(Node):
             curvature = abs(2*math.sin(thet_bac)/len_a) # Menger curvature
             vel_flipped = max(1.0/vel_cap, math.sqrt(curvature/(mu*g))) # limiting maximum possible curve velocity to avoid exploding numbers
             vel_max = min(vel_max, 1.0/vel_flipped) # local maximum velocity given curvature of waypoints
+            #self.get_logger().info(f'Vel flipped: {vel_flipped}, Vel_max: {vel_max}') 
 
         for wp in slowed_waypoints:
             wp.velocity.linear.x = min(vel_max, wp.velocity.linear.x)
@@ -209,7 +211,8 @@ class VelocityPlanner(Node):
             local_waypoints = slowed_global[nearest_index:final_wp_index+1]
 
             # Regulates velocity of waypoints at curves
-            local_waypoints = self.slow_at_curve(local_waypoints)
+            # Change -- commented out!
+            #local_waypoints = self.slow_at_curve(local_waypoints)
 
             # Stop for the first detected object that blocks path
             stopping_indices = self.find_object_waypoints(local_waypoints)

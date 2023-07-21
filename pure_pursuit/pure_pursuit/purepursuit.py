@@ -50,13 +50,15 @@ class PurePursuitNode(Node):
         Args:
             wp_msg (WaypointArray): array of waypoints of type Waypoint
         """
-        default_lookahead = 5.3#10.0
+        default_lookahead = 3.0
         self.waypoint_frame_id = wp_msg.frame_id
         self.waypoints = wp_msg.waypoints
         # shorten the lookahead distance when slow (determined experimentally)
         is_low_velocity = False
         if len(wp_msg.waypoints) > 0:
             linear_vel = self.waypoints[0].velocity.linear.x
+            self.get_logger().info('Vel: {linear_vel}')
+
             is_low_velocity = linear_vel < 4.0
             is_low_velocity = True #this has been hardcoded in!!!
             if is_low_velocity:

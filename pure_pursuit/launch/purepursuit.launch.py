@@ -17,7 +17,7 @@ def generate_launch_description():
             executable='velocity_planner',
             name='velocity_planner',
             parameters=[{
-                'max_acceleration': 0.5,
+                'max_acceleration': 2.0,
                 'local_plan_max_length': 25,
             }]
         ),
