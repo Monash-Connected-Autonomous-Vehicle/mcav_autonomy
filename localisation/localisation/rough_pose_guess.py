@@ -29,7 +29,7 @@ class RoughPoseGuess(Node):
         self.start_time = self.get_clock().now().nanoseconds
         
         #Global registration parameters
-        self.voxel_size = 0.5
+        self.voxel_size = 0.2 # Decrease to increase fitness and reduce rmse, results in more correspondences found.
         
         # Listened inputs
         self.map = None
@@ -63,7 +63,7 @@ class RoughPoseGuess(Node):
             
             source_down, source_fpfh = preprocess_point_cloud(source, self.voxel_size)
             target_down, target_fpfh = preprocess_point_cloud(target,self.voxel_size)
-            result_ransac = execute_global_registration(source_down, target_down,
+            result_ransac = execute_fast_global_registration(source_down, target_down,
                                                         source_fpfh, target_fpfh,
                                                         self.voxel_size)
             # After this, either ICP for local registration with the initial transform produced
@@ -110,6 +110,17 @@ def execute_global_registration(source_down, target_down, source_fpfh,
             o3d.pipelines.registration.CorrespondenceCheckerBasedOnDistance(
                 distance_threshold)
         ], o3d.pipelines.registration.RANSACConvergenceCriteria(100000, 0.999))
+    return result
+
+def execute_fast_global_registration(source_down, target_down, source_fpfh,
+                                     target_fpfh, voxel_size):
+    distance_threshold = voxel_size * 0.5
+    print(":: Apply fast global registration with distance threshold %.3f" \
+            % distance_threshold)
+    result = o3d.pipelines.registration.registration_fgr_based_on_feature_matching(
+        source_down, target_down, source_fpfh, target_fpfh,
+        o3d.pipelines.registration.FastGlobalRegistrationOption(
+            maximum_correspondence_distance=distance_threshold))
     return result
     
 def rotation_matrix_to_quarternion(rot_matrix):
