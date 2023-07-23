@@ -33,6 +33,7 @@ class VelocityPlanner(Node):
         
         # Parameters (can be changed in launch file)
         self.declare_parameter('max_velocity', 0.1) # maximum waypoint velocity used for speed capping
+        self.declare_parameter('min_velocity', 2.5) # minimum waypoint velocity used to prevent stalling
         self.declare_parameter('local_plan_max_length', 5) # 25 number of waypoints to plan ahead
         self.declare_parameter('max_acceleration', 0.5) # m/s/waypoint
         self.declare_parameter('obj_waypoint_distance_threshold', 2.0) # if an object is within this distance of a path,
@@ -192,6 +193,7 @@ class VelocityPlanner(Node):
 
         for wp in capped_waypoints:
             wp.velocity.linear.x = min(max_velocity, wp.velocity.linear.x) # Velocity cap for pure pursuit
+            wp.velocity.linear.x = max(min_velocity, wp.velocity.linear.x) # Velocity cap for pure pursuit
                          
         return capped_waypoints
 
