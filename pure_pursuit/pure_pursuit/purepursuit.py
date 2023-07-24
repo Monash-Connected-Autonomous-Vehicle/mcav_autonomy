@@ -5,7 +5,8 @@ import math
 import rclpy
 from rclpy.node import Node
 from mcav_interfaces.msg import WaypointArray
-from geometry_msgs.msg import TwistStamped, PointStamped, PoseStamped
+from geometry_msgs.msg import TwistStamped, PointStamped, PoseStamped, Point
+from visualization_msgs.msg import Marker
 import tf2_ros
 import velocity_planner.transforms as transforms
 import transforms3d as tf3d
@@ -40,9 +41,11 @@ class PurePursuitNode(Node):
         self.pp_publisher = self.create_publisher(TwistStamped, '/twist_cmd', 1)
         self.timer_period = 0.01
         self.spinner = self.create_timer(self.timer_period, self.spin)
+        self.steering_path_publisher = self.create_publisher(Marker, 'steering_path', 1)
 
         self.get_logger().info("pure_pursuit node started")
     
+        self.line_strip_ = self.create_line_strip()
     
     def waypoints_callback(self, wp_msg: WaypointArray):
         """Waypoint subscriber callback function.
@@ -50,7 +53,7 @@ class PurePursuitNode(Node):
         Args:
             wp_msg (WaypointArray): array of waypoints of type Waypoint
         """
-        default_lookahead = 3.0
+        default_lookahead = 3
         self.waypoint_frame_id = wp_msg.frame_id
         self.waypoints = wp_msg.waypoints
         # shorten the lookahead distance when slow (determined experimentally)
@@ -225,6 +228,90 @@ class PurePursuitNode(Node):
         return tx, ty, vlinear  
 
 
+    def create_line_strip(self):
+        line_strip = Marker()
+        line_strip.header.frame_id = 'base_link'
+        line_strip.header.stamp = self.get_clock().now().to_msg()
+        line_strip.frame_locked = True
+        line_strip.type = Marker.LINE_STRIP
+        line_strip.action = Marker.ADD
+        line_strip.pose.orientation.w = 1.0
+        line_strip.scale.x = 0.1
+        line_strip.color.r = 1.0
+        line_strip.color.a = 1.0
+        return line_strip
+
+    def draw_steering_path(self, gamma: float):
+        self.get_logger().info(f'Gamma: {gamma}')
+        step = 0.2
+        upper = 1/gamma * 2
+        y = -1/gamma * 2
+        max_val = 20
+        
+        #set lower bound for visualisation
+        if gamma  < 0:
+            y = min(y, max_val) #y > 0
+            upper = max(upper, -max_val) #upper < 0, 
+            step *= -1
+        else:
+            y = max(y, -max_val) #y < 0
+            upper = min(upper, max_val) #upper > 0
+
+        origin = Point(x=0.0, y=0.0, z=0.0)
+        points = [origin]
+        points_neg = [origin]
+
+        while True:
+            if step > 0 and round(y,2) > upper + step:
+                self.get_logger().info(f'BREAK: step: {step}')
+                break
+            if step < 0 and round(y,2) < upper + step:
+                self.get_logger().info(f'BREAK: step: {step}')
+                break
+
+            val = (1/abs(gamma))**2 - (y - 1/gamma)** 2
+
+            if val < 0:
+                #self.get_logger().info(f'Val: {val}')
+                y += step
+                continue
+
+            #self.get_logger().info(f'Val: {val}')
+
+            x = float(math.sqrt(val))
+            points.append(Point(x=x, y=y, z=0.0))
+            points_neg.append(Point(x=-x, y=y, z=0.0))
+
+            y += step
+
+        points_neg = reversed(points_neg)
+        points += points_neg
+
+        self.line_strip_.points = points
+        self.steering_path_publisher.publish(self.line_strip_)
+
+
+        """
+        try:
+            t = self.tf_buffer.lookup_transform(
+                target_frame='base_link',
+                source_frame='map',
+                time=rclpy.time.Time()
+            )
+        except tf2_ros.TransformException as ex:
+            self.get_logger().error(
+                f'Could not transform {self.vehicle_frame_id} to {self.waypoint_frame_id}: {ex}')
+            return
+
+        target_msg = Marker()
+        target_msg.header.frame_id = self.waypoint_frame_id
+        tf_mat = transforms.tf_to_homogenous_mat(t)
+        target_transformed = tf_mat @ np.array([tx, ty, 0.0, 1.0])
+        target_msg.point.x = target_transformed[0]
+        target_msg.point.y = target_transformed[1]
+        self.target_publisher.publish(target_msg)
+        """
+
     def steer_control(self, x: float, y: float) ->  float:
         """Calculates curvature of trajectory to target point.
 
@@ -238,7 +325,14 @@ class PurePursuitNode(Node):
              float: curvature to target
         """
         gamma = 2.0*y/(self.Lfc**2)  # gamma = 1/r
+
+        self.draw_steering_path(gamma)
+
+	
         return gamma
+
+        
+   	
 
 
 # Main function

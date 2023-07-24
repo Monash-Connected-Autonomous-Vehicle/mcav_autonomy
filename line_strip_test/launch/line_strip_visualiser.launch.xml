@@ -1,0 +1,6 @@
+<launch>
+	<node pkg="line_strip_test" exec="line_strip_publisher" name="line_strip_publisher" />
+	<include file="$(find-pkg-share foxglove_bridge)/foxglove_bridge_launch.xml">
+		<arg name="port" value="8765" />
+	</include>
+</launch>
