@@ -2,7 +2,19 @@
    <!-- Arguments -->
 	<arg name="waypoints_file" default="/home/mcav/sd_simulation_ws/src/mcav_autonomy/straight.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
   <arg name="rviz" default="false" />
-  
+
+  <!-- Turtlesim -->
+
+  <node pkg="turtlesim" exec="turtlesim_node" name="sim" namespace="turtlesim"/>
+  <!-- Pose Stamper for turtle sim to velocity planner communication-->
+  <node pkg="turtle_simulation" exec="stamper" name="pose_stamper">
+    <remap from="pose_topic" to="/turtlesim/turtle1/pose"/>
+    <remap from="pose_stamped_topic" to="/ndt_pose"/>
+    <remap from="twist_topic" to="/turtlesim/turtle1/cmd_vel"/>
+    <remap from="twist_stamped_topic" to="/twist_cmd"/>
+  </node>
+  <!-- Publish a transform from base_link to map for pure_pursuit-->
+  <node pkg="turtle_simulation" exec="transforms" name="turtle_frame"/>  
   <!-- Planning -->
   <include file="$(find-pkg-share velocity_planner)/launch/velocity_planner.launch.xml">
       <arg name="pose_topic" value="/ndt_pose" />
@@ -14,21 +26,11 @@
   </node>
   
   <!-- Control -->
-  <node pkg="pure_pursuit" exec="purepursuit" name="purepursuit">
-    <remap from="/twist_cmd" to="/turtlesim/turtle1/cmd_vel"/>
-  </node>
+  <node pkg="pure_pursuit" exec="purepursuit" name="purepursuit"/>
 
   <!-- Visualisation -->
   <group if="$(var rviz)">
       <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
   </group>
-  <!-- Turtlesim -->
-
-  <node pkg="turtlesim" exec="turtlesim_node" name="sim" namespace="turtlesim"/>
-  <!-- Pose Stamper for turtle sim to velocity planner communication-->
-  <node pkg="turtle_simulation" exec="stamper" name="pose_stamper">
-    <remap from="pose_topic" to="/turtlesim/turtle1/pose"/>
-    <remap from="stamped_topic" to="/ndt_pose"/>
-  </node>
 
 </launch>

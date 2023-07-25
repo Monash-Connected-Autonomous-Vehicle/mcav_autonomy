@@ -43,12 +43,12 @@ namespace turtlesim
 
 TurtleFrame::TurtleFrame(rclcpp::Node::SharedPtr& node_handle, QWidget* parent, Qt::WindowFlags f)
 : QFrame(parent, f)
-, path_image_(500, 500, QImage::Format_ARGB32)
+, path_image_(10000, 10000, QImage::Format_ARGB32)
 , path_painter_(&path_image_)
 , frame_count_(0)
 , id_counter_(0)
 {
-  setFixedSize(500, 500);
+  setFixedSize(10000, 10000);
   setWindowTitle("TurtleSim");
 
   srand(time(NULL));

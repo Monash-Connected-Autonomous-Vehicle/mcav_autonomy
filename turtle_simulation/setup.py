@@ -23,7 +23,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'stamper = turtle_simulation.pose_stamper:main',
+            'stamper = turtle_simulation.stamper:main',
+            'transforms = turtle_simulation.frame_broadcaster:main',
         ],
     },
 )
