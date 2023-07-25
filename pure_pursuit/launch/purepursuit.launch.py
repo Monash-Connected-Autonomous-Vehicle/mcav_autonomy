@@ -25,6 +25,9 @@ def generate_launch_description():
             package='pure_pursuit',
             executable='purepursuit',
             name='purepursuit',
+            parameters=[{
+                'lookahead_distance': 10,
+            }]
         ),
         Node(
             package='velocity_planner',

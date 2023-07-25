@@ -35,6 +35,11 @@ class WaypointReader(Node):
                     waypoint.pose.position.x = float(row['x'])
                     waypoint.pose.position.y = float(row['y'])
                     waypoint.velocity.linear.x = float(row['velocity']) # m/s
+                    try:
+                        waypoint.lookahead = float(row['lookahead'])
+                        #waypoint.lookahead = 5.0
+                    except:
+                        waypoint.lookahead = 5.0
                     self.waypoints.append(waypoint)
 
                 self.get_logger().info('Publishing "%d" waypoints' % len(self.waypoints))

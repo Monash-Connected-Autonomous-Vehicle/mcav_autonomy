@@ -27,6 +27,7 @@ class WaypointVisualiser(Node):
 
         self.text_scale = 0.3
         self.text_offset = self.text_scale * 3 # used to move text so it doesn't overlap waypoints
+        self.text_offset_2 = self.text_scale * 6 # used to move text so it doesn't overlap waypoints
 
     def local_callback(self, msg):
         markers = []
@@ -78,6 +79,28 @@ class WaypointVisualiser(Node):
 
             markers.append(velocity_marker)
 
+            """
+            lookahead_marker = Marker()
+            lookahead_marker.header.frame_id = msg.frame_id
+            lookahead_marker.ns = 'velocity'
+            lookahead_marker.id = index
+            lookahead_marker.type = Marker.TEXT_VIEW_FACING
+            lookahead_marker.action = Marker.ADD
+            lookahead_marker.pose.position.x = waypoint.pose.position.x
+            lookahead_marker.pose.position.y = waypoint.pose.position.y + self.text_offset 
+            lookahead_marker.scale.x = self.text_scale
+            lookahead_marker.scale.y = self.text_scale
+            lookahead_marker.scale.z = self.text_scale
+            lookahead_marker.color.a = 0.9 # Don't forget to set the alpha!
+            lookahead_marker.text = f"{waypoint.lookahead:.2f}"
+
+            lookahead_marker.color.r = float(r)
+            lookahead_marker.color.g = float(g)
+            lookahead_marker.color.b = float(b)
+
+            markers.append(lookahead_marker)
+            """
+
         # Remove extra markers
         for index in range(len(msg.waypoints), self.local_waypoints_length):
             marker = Marker()
@@ -93,6 +116,16 @@ class WaypointVisualiser(Node):
             marker.id = index
             marker.action = Marker.DELETE
             markers.append(marker)
+
+        """
+        for index in range(len(msg.waypoints), self.local_waypoints_length):
+            marker = Marker()
+            marker.header.frame_id = msg.frame_id
+            marker.ns = 'lookahead'
+            marker.id = index
+            marker.action = Marker.DELETE
+            markers.append(marker)
+        """
 
         # update record of number of markers published so they can be deleted next time
         self.local_waypoints_length = len(msg.waypoints) 
@@ -141,6 +174,26 @@ class WaypointVisualiser(Node):
 
             markers.append(velocity_marker)
 
+            lookahead_marker = Marker()
+            lookahead_marker.header.frame_id = msg.frame_id
+            lookahead_marker.ns = 'lookahead'
+            lookahead_marker.id = index
+            lookahead_marker.type = Marker.TEXT_VIEW_FACING
+            lookahead_marker.action = Marker.ADD
+            lookahead_marker.pose.position.x = waypoint.pose.position.x
+            lookahead_marker.pose.position.y = waypoint.pose.position.y + self.text_offset_2
+            lookahead_marker.scale.x = self.text_scale
+            lookahead_marker.scale.y = self.text_scale
+            lookahead_marker.scale.z = self.text_scale
+            lookahead_marker.color.a = 0.9 # Don't forget to set the alpha!
+            lookahead_marker.text = f"{waypoint.lookahead:.2f}"
+
+            lookahead_marker.color.r = 1.0
+            lookahead_marker.color.g = 1.0
+            lookahead_marker.color.b = 0.0
+
+            markers.append(lookahead_marker)
+
         # Remove extra markers
         for index in range(self.global_waypoints_length):
             marker = Marker()
@@ -153,6 +206,13 @@ class WaypointVisualiser(Node):
             marker = Marker()
             marker.header.frame_id = msg.frame_id
             marker.ns = 'velocity'
+            marker.id = index
+            marker.action = Marker.DELETE
+            markers.append(marker)
+        for index in range(self.global_waypoints_length):
+            marker = Marker()
+            marker.header.frame_id = msg.frame_id
+            marker.ns = 'lookahead'
             marker.id = index
             marker.action = Marker.DELETE
             markers.append(marker)

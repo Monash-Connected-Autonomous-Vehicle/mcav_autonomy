@@ -27,9 +27,11 @@ class VelocityPlanner(Node):
         self.objects_sub = self.create_subscription(DetectedObjectArray,
             'detected_objects', self.objects_callback, 10)
         self.objects_sub  # prevent unused variable warning
+        self.lookahead_sub = self.create_subscription(PoseStamped, 'lookahead_pose', self.lookahead_callback, 10)
 
         # Publishers
         self.local_wp_pub = self.create_publisher(WaypointArray, 'local_waypoints', 10)
+
         
         # Parameters (can be changed in launch file)
         self.declare_parameter('max_velocity', 0.1) # maximum waypoint velocity used for speed capping
@@ -40,10 +42,13 @@ class VelocityPlanner(Node):
         # it will be considered as blocking the path
         self.declare_parameter('obj_stopping_waypoint_count', 3) # number of waypoints before object to stop at
         self.declare_parameter('vehicle_frame_id', "base_link")
-
+        self.declare_parameter('turning_speed_scalar', 1.5)
+        
         # Initialise tf buffer and listener
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.transform_listener.TransformListener(self.tf_buffer, self)
+
+        self.lookahead_position = np.array([])
 
         self.position = np.array([])
         self.global_waypoints = []
@@ -51,6 +56,11 @@ class VelocityPlanner(Node):
         self.objects = []
         
         self.get_logger().set_level(logging.DEBUG)
+
+    
+    def lookahead_callback(self, msg: PoseStamped):
+        self.lookahead_position = np.array([msg.pose.position.x, msg.pose.position.y])
+        
 
     def current_pose_callback(self, pose_msg: PoseStamped):
         if len(self.position) == 0:
@@ -193,16 +203,45 @@ class VelocityPlanner(Node):
 
         for wp in capped_waypoints:
             wp.velocity.linear.x = min(max_velocity, wp.velocity.linear.x) # Velocity cap for pure pursuit
-            wp.velocity.linear.x = max(min_velocity, wp.velocity.linear.x) # Velocity cap for pure pursuit
+            wp.velocity.linear.x = max(self.get_parameter('min_velocity').get_parameter_value().double_value, wp.velocity.linear.x) # Velocity cap for pure pursuit
                          
         return capped_waypoints
+
+    def regulate_speed(self, waypoints):
+        mu = 0.1 
+        g = 9.81
+        slowed_waypoints = waypoints.copy()
+        wp_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in waypoints])
+        vel_cap = self.get_parameter('max_velocity').get_parameter_value().double_value # global velocity cap
+       	#self.get_logger().info(f'vel_cap: {vel_cap}')
+        
+        for i in range(len(waypoints) - 2):
+            len_b = np.linalg.norm(wp_coords[i] - wp_coords[i+1])
+            len_a = np.linalg.norm(wp_coords[i] - wp_coords[i+2])
+            len_c = np.linalg.norm(wp_coords[i+1] - wp_coords[i+2])
+            cos_theta = (len_b**2 + len_c**2 - len_a**2)/(2*len_b*len_c)
+            if abs(cos_theta) > 1.0:
+                # can occur due to floating point rounding errors
+                # limit to +/- 180 degrees
+                thet_bac = np.pi * np.sign(cos_theta) 
+            else:
+                thet_bac = math.acos((len_b**2 + len_c**2 - len_a**2)/(2*len_b*len_c)) # cos rule. angle between segments [i,i+1] and [i+1,i+2]
+            curvature = abs(2*math.sin(thet_bac)/len_a) # Menger curvature
+
+            #
+
+            slowed_waypoints[i].velocity.linear.x = math.sqrt(1/curvature) * self.get_parameter('turning_speed_scalar').get_parameter_value().double_value
+
+        return slowed_waypoints
 
     def spin(self):
         if len(self.position) > 0 and len(self.global_wp_coords) > 0:
             nearest_index = self.find_nearest_waypoint(self.global_wp_coords, self.position)
+            self.get_logger().info(f'nearest index: {nearest_index}')
 
             # Speed cap
             capped_speed = self.speed_cap(self.global_waypoints)
+            
 
             # Stop at the end of the global waypoints
             slowed_global = self.slow_to_stop(capped_speed, len(capped_speed)-1)
@@ -215,6 +254,10 @@ class VelocityPlanner(Node):
             # Regulates velocity of waypoints at curves
             # Change -- commented out!
             #local_waypoints = self.slow_at_curve(local_waypoints)
+            #local_waypoints = self.speed_cap(local_waypoints)
+            local_waypoints = self.regulate_speed(local_waypoints)
+            local_waypoints = self.speed_cap(local_waypoints)
+            
 
             # Stop for the first detected object that blocks path
             stopping_indices = self.find_object_waypoints(local_waypoints)

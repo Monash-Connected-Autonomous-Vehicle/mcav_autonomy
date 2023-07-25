@@ -43,9 +43,15 @@ class PurePursuitNode(Node):
         self.spinner = self.create_timer(self.timer_period, self.spin)
         self.steering_path_publisher = self.create_publisher(Marker, 'steering_path', 1)
 
+        #Parameters
+        self.declare_parameter('lookahead_distance', 5.0)
+
         self.get_logger().info("pure_pursuit node started")
     
         self.line_strip_ = self.create_line_strip()
+
+        default_lookahead = self.get_parameter('lookahead_distance').get_parameter_value().double_value
+        self.get_logger().info(f'-----LOOKAHEAD------ {default_lookahead}')
     
     def waypoints_callback(self, wp_msg: WaypointArray):
         """Waypoint subscriber callback function.
@@ -53,7 +59,7 @@ class PurePursuitNode(Node):
         Args:
             wp_msg (WaypointArray): array of waypoints of type Waypoint
         """
-        default_lookahead = 3
+        default_lookahead = 5
         self.waypoint_frame_id = wp_msg.frame_id
         self.waypoints = wp_msg.waypoints
         # shorten the lookahead distance when slow (determined experimentally)
@@ -65,7 +71,12 @@ class PurePursuitNode(Node):
             is_low_velocity = linear_vel < 4.0
             is_low_velocity = True #this has been hardcoded in!!!
             if is_low_velocity:
-                self.Lfc = default_lookahead
+                #self.Lfc = self.get_parameter('lookahead_distance').get_parameter_value().double_value
+                try:
+                    self.Lfc = self.waypoints[0].lookahead
+                except:
+                    self.Lfc = default_lookahead
+
             else:
                 self.Lfc = 4.0 * linear_vel - 8.0 # formula determined experimentally for Tesla Model 3 in CARLA
                 # self.Lfc = 11.028*linear_vel - 63.5  # Nissan Micra
@@ -94,7 +105,7 @@ class PurePursuitNode(Node):
         else:
             self.get_logger().warning(f"Waiting for local waypoints")
 
-    def publish_lookahead_point(self, tx, ty):
+    def publish_lookahead_point(self, tx, ty) -> Tuple[float, float]:
         # Publish the location of the lookahead point for visualisation/debugging
         try:
             t = self.tf_buffer.lookup_transform(
@@ -121,6 +132,14 @@ class PurePursuitNode(Node):
         target_pose_msg.pose.position.y = target_msg.point.y
         self.target_pose_publisher.publish(target_pose_msg)
 
+        return target_msg.point.x, target_msg.point.y
+
+    def find_nearest_waypoint(self, waypoint_coords, position) -> int:
+        deltas = waypoint_coords - position
+        dist_2 = np.einsum('ij,ij->i', deltas, deltas)
+        self.get_logger().info(f'DIST_2: {dist_2}')
+        return np.argmin(dist_2)
+
     def purepursuit(self) -> Tuple[float, float]:
         """Pure pursuit algorithm. Calculates linear and angular velocity.
 
@@ -129,8 +148,23 @@ class PurePursuitNode(Node):
         """
 
         tx, ty, vlinear = self.target_searcher()
-        self.publish_lookahead_point(tx, ty)
+        new_tx, new_ty = self.publish_lookahead_point(tx, ty)
         gamma = self.steer_control(tx, ty)
+
+        #new changes
+        local_wp_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in self.waypoints])
+        nearest_wp = self.find_nearest_waypoint(local_wp_coords, np.array([new_tx,new_ty]))
+        self.get_logger().info(f'tx, ty = {new_tx,new_ty}')
+        self.get_logger().info(f'nearest wp: {nearest_wp}')
+        vlinear = self.waypoints[nearest_wp].velocity.linear.x
+        self.get_logger().info(f'vlinear: {vlinear}')
+
+        self.get_logger().info('-----------------------------------')
+        for wp in self.waypoints:
+            self.get_logger().info(f'wp: {wp.velocity.linear.x}')
+            
+        self.get_logger().info('----------------------------------------')
+        #-------
         v_angular = vlinear*gamma
         
         return vlinear, v_angular
@@ -184,6 +218,7 @@ class PurePursuitNode(Node):
             d_prev_i = np.argmax(L_less)
             x1 = (wp_x[points_within])[d_prev_i]
             y1 = (wp_y[points_within])[d_prev_i]
+            self.get_logger().info(f'lookahead: {points_within}')
             # coordinates of closest point beyond lookahead range
             L_more = wp_d[points_beyond]  # distance of points beyond lookahead range
             d_next_i = np.argmin(L_more)
@@ -242,7 +277,6 @@ class PurePursuitNode(Node):
         return line_strip
 
     def draw_steering_path(self, gamma: float):
-        self.get_logger().info(f'Gamma: {gamma}')
         step = 0.2
         upper = 1/gamma * 2
         y = -1/gamma * 2
@@ -263,10 +297,8 @@ class PurePursuitNode(Node):
 
         while True:
             if step > 0 and round(y,2) > upper + step:
-                self.get_logger().info(f'BREAK: step: {step}')
                 break
             if step < 0 and round(y,2) < upper + step:
-                self.get_logger().info(f'BREAK: step: {step}')
                 break
 
             val = (1/abs(gamma))**2 - (y - 1/gamma)** 2
@@ -290,28 +322,6 @@ class PurePursuitNode(Node):
         self.line_strip_.points = points
         self.steering_path_publisher.publish(self.line_strip_)
 
-
-        """
-        try:
-            t = self.tf_buffer.lookup_transform(
-                target_frame='base_link',
-                source_frame='map',
-                time=rclpy.time.Time()
-            )
-        except tf2_ros.TransformException as ex:
-            self.get_logger().error(
-                f'Could not transform {self.vehicle_frame_id} to {self.waypoint_frame_id}: {ex}')
-            return
-
-        target_msg = Marker()
-        target_msg.header.frame_id = self.waypoint_frame_id
-        tf_mat = transforms.tf_to_homogenous_mat(t)
-        target_transformed = tf_mat @ np.array([tx, ty, 0.0, 1.0])
-        target_msg.point.x = target_transformed[0]
-        target_msg.point.y = target_transformed[1]
-        self.target_publisher.publish(target_msg)
-        """
-
     def steer_control(self, x: float, y: float) ->  float:
         """Calculates curvature of trajectory to target point.
 
@@ -328,12 +338,7 @@ class PurePursuitNode(Node):
 
         self.draw_steering_path(gamma)
 
-	
         return gamma
-
-        
-   	
-
 
 # Main function
 def main(args = None):
@@ -344,7 +349,6 @@ def main(args = None):
     ppnode.twist_callback()
     ppnode.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
