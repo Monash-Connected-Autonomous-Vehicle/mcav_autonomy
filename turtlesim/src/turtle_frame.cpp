@@ -48,7 +48,7 @@ TurtleFrame::TurtleFrame(rclcpp::Node::SharedPtr& node_handle, QWidget* parent, 
 , frame_count_(0)
 , id_counter_(0)
 {
-  setFixedSize(1000, 1000);
+  setFixedSize(1080, 1920);
   setWindowTitle("TurtleSim");
 
   srand(time(NULL));
