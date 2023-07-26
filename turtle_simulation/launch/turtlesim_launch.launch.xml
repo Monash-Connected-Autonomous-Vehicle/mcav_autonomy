@@ -1,6 +1,6 @@
 <launch>
    <!-- Arguments -->
-	<arg name="waypoints_file" default="/home/mcav/anthony_ws/src/mcav_autonomy/straight.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
+	<arg name="waypoints_file" default="/home/mcav/anthony_ws/src/mcav_autonomy/straight-offset.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
   <arg name="rviz" default="false" />
 
   <!-- Turtlesim -->

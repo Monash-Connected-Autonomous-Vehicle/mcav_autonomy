@@ -82,7 +82,7 @@ class PurePursuitNode(Node):
                 vlinear, v_angular = self.purepursuit()
                 twist_msg.twist.linear.x = vlinear
                 twist_msg.twist.angular.z = v_angular
-                
+            self.get_logger().info(f"{twist_msg.twist}")
             self.pp_publisher.publish(twist_msg)
             # self.get_logger().info(f"Stop: {self.stop}, Linear vel: {twist_msg.twist.linear.x:5.3f}, Angular vel: {twist_msg.twist.angular.z:5.3f}")
         else:
