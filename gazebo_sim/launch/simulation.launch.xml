@@ -1,0 +1,66 @@
+<launch>
+    <!-- Arguments -->
+	<arg name="waypoints_file" default="/home/newuser/simulation_ws/src/mcav_autonomy/straight.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
+    <arg name="pcd_path" default="/home/mcav/mcav_ws/src/mcav_autonomy/pointclouds/n1level4-autoware-221006.pcd" description="Absolute path of a .pcd file" />
+    <arg name="launch_lidar" default="true" />
+    <arg name="rviz" default="false" />
+    <arg name="foxglove" default="true" />
+
+    <!-- Gazebo sim -->
+    <include file="$(find-pkg-share gazebo_sim)/gazebo_playground.launch.xml"/>
+
+    <!-- Simulation Topic Converter -->
+    <node pkg="gazebo_sim" exec="sim_converter" name="converter">
+        <remap from="twist_stamped_topic" to="twist_cmd"/>
+        <remap from="twist_topic" to="simulated_vehicle/cmd_vel"/>
+    </node>
+    
+    <!-- Perception -->
+    <include file="$(find-pkg-share project_tracker)/launch/tracking.launch.xml" >
+	    <arg name="lidar_topic" value="velodyne_points" />
+    </include>
+
+    <!-- Localisation -->
+    <include file="$(find-pkg-share kiss_icp)/launch/odometry.launch.py" >
+        <arg name="topic" value="lidar_points" />
+        <arg name="visualize" value="false" />
+    </include>
+    <!-- This setup uses odometry only, no localisation, so we publish an identity transform
+    between the map and odom frames -->
+    <node pkg="tf2_ros" exec="static_transform_publisher" args="0 0 0 0 0 0 1 map odom" />
+    <!-- PCD map publishing removed while we are not using a map for localisation -->
+    <!-- <node pkg="pcd_map_publisher" exec="pcd_map_publisher" name="pcd_map_publisher" >
+        <param name="pcd_path" value="$(var pcd_path)" />
+    </node> -->
+
+    <!-- Planning -->
+    <include file="$(find-pkg-share velocity_planner)/launch/velocity_planner.launch.xml">
+        <arg name="pose_topic" value="/ndt_pose" />
+        <arg name="max_velocity" value="5.6" />
+    </include>
+    
+    <node pkg="velocity_planner" exec="waypoint_reader" name="waypoint_reader" >
+        <param name="waypoints_file" value="$(var waypoints_file)"/>
+    </node>
+    
+    <!-- Control -->
+    <node pkg="pure_pursuit" exec="purepursuit" name="purepursuit"/>
+
+    <include file="$(find-pkg-share sd_vehicle_interface)/launch/sd_vehicle_interface.launch.xml">
+        <arg name="sd_simulation_mode" value="true" />
+        <arg name="sd_speed_source" value="ndt_speed" />
+    </include>
+
+    <!-- Visualisation -->
+    <group if="$(var rviz)">
+        <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
+    </group>
+
+    <group if="$(var foxglove)">
+        <include file="$(find-pkg-share foxglove_bridge)/foxglove_bridge_launch.xml">
+            <arg name="port" value="8765" />
+        </include>
+    </group>
+
+    <include file="$(find-pkg-share vehicle_model)/launch/vehicle_model.launch.py" />
+</launch>
