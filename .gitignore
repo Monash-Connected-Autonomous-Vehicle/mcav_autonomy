@@ -3,5 +3,5 @@ __pycache__
 yolov5/
 yolov5s.pt
 .DS_Store
-data/
 external/
+data/rosbags
