@@ -8,8 +8,8 @@ class Converter(Node):
         -Unstamp Twist msgs"""
     def __init__(self):
         super().__init__('converter')
-        self.twist_sub = self.create_subscription(TwistStamped, "twist_stamped_topic", self.twist_callback, 10)
-        self.twist_pub = self.create_publisher(Twist, "twist_topic", 10)
+        self.twist_sub = self.create_subscription(TwistStamped, "/twist_cmd", self.twist_callback, 10)
+        self.twist_pub = self.create_publisher(Twist, "/simulated_vehicle/cmd_vel", 10)
     
     def twist_callback(self, msg):
         self.twist_pub.publish(msg.twist)

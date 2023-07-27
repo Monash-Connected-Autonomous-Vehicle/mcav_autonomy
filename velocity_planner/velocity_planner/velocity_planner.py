@@ -2,6 +2,7 @@ import rclpy
 import logging
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Odometry
 from mcav_interfaces.msg import WaypointArray, Waypoint, DetectedObjectArray, DetectedObject
 import numpy as np
 import math
@@ -20,6 +21,7 @@ class VelocityPlanner(Node):
             'current_pose', self.current_pose_callback, 10)
         self.waypoints_sub = self.create_subscription(WaypointArray,
             'global_waypoints', self.waypoints_callback, 10)
+        self.odometry_sub = self.create_subscription(Odometry, 'odometry', self.odometry_callback, 10)
         self.waypoints_sub  # prevent unused variable warning
         self.objects_sub = self.create_subscription(DetectedObjectArray,
             'detected_objects', self.objects_callback, 10)
@@ -55,7 +57,13 @@ class VelocityPlanner(Node):
 
         if len(self.position) == 0:
             self.get_logger().info("Received position")
-        
+    
+    def odometry_callback(self, odom_msg: Odometry):
+        if len(self.position) == 0:
+            self.get_logger().info("Received odometry")
+
+        self.position = np.array([odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y])
+
         
     def waypoints_callback(self, msg: WaypointArray):
         # TODO: transform so that they can be in different coordinate systems

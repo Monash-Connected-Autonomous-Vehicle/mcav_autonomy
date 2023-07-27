@@ -1,6 +1,6 @@
 <launch>
     <!-- Arguments -->
-	<arg name="waypoints_file" default="/home/newuser/simulation_ws/src/mcav_autonomy/straight.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
+	<arg name="waypoints_file" default="/home/mcav/sd_simulation_ws/src/mcav_autonomy/data/waypoints/straight.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
     <arg name="pcd_path" default="/home/mcav/mcav_ws/src/mcav_autonomy/pointclouds/n1level4-autoware-221006.pcd" description="Absolute path of a .pcd file" />
     <arg name="launch_lidar" default="true" />
     <arg name="rviz" default="false" />
@@ -11,8 +11,8 @@
 
     <!-- Simulation Topic Converter -->
     <node pkg="gazebo_sim" exec="sim_converter" name="converter">
-        <remap from="twist_stamped_topic" to="twist_cmd"/>
-        <remap from="twist_topic" to="simulated_vehicle/cmd_vel"/>
+        <!-- <remap from="twist_stamped_topic" to="twist_cmd"/> -->
+        <!-- <remap from="twist_topic" to="simulated_vehicle/cmd_vel"/> -->
     </node>
     
     <!-- Perception -->
@@ -22,7 +22,7 @@
 
     <!-- Localisation -->
     <include file="$(find-pkg-share kiss_icp)/launch/odometry.launch.py" >
-        <arg name="topic" value="lidar_points" />
+	    <arg name="topic" value="/lidar/points" />
         <arg name="visualize" value="false" />
     </include>
     <!-- This setup uses odometry only, no localisation, so we publish an identity transform
@@ -44,7 +44,7 @@
     </node>
     
     <!-- Control -->
-    <node pkg="pure_pursuit" exec="purepursuit" name="purepursuit"/>
+    <!-- <node pkg="pure_pursuit" exec="purepursuit" name="purepursuit"/> -->
 
     <include file="$(find-pkg-share sd_vehicle_interface)/launch/sd_vehicle_interface.launch.xml">
         <arg name="sd_simulation_mode" value="true" />
@@ -56,11 +56,13 @@
         <node pkg="rviz2" exec="rviz2" args='-d $(find-pkg-share autonomy_launch)/rviz/autonomy.rviz'/>
     </group>
 
+<!--
     <group if="$(var foxglove)">
         <include file="$(find-pkg-share foxglove_bridge)/foxglove_bridge_launch.xml">
             <arg name="port" value="8765" />
         </include>
     </group>
+-->
 
     <include file="$(find-pkg-share vehicle_model)/launch/vehicle_model.launch.py" />
 </launch>
