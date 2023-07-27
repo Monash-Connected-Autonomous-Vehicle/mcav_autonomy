@@ -134,9 +134,10 @@
       </link>
     </model>
 
-    <model name="box"> <!-- A random red box -->
-      <pose>0 -1 0.5 0 0 0</pose>
-      <link name="box_link">
+
+    <model name="box1"> 
+      <pose>5 -1 0.5 0 0 0</pose>
+      <link name="box1_link">
         <inertial>
           <inertia>
             <ixx>1</ixx>
@@ -148,18 +149,129 @@
           </inertia>
           <mass>1.0</mass>
         </inertial>
-        <collision name="box_collision">
+        <collision name="box1_collision">
           <geometry>
             <box>
-              <size>1 1 1</size>
+              <size>3 20 2</size>
             </box>
           </geometry>
         </collision>
 
-        <visual name="box_visual">
+        <visual name="box1_visual">
           <geometry>
             <box>
-              <size>1 1 1</size>
+              <size>3 20 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+            <specular>1 0 0 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+        <model name="box2"> <!-- A random red box -->
+      <pose>-5 7 0.5 0 0 1.5708</pose>
+      <link name="box2_link">
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1.0</mass>
+        </inertial>
+        <collision name="box2_collision">
+          <geometry>
+            <box>
+              <size>3 15 2</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name="box2_visual">
+          <geometry>
+            <box>
+              <size>3 15 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+            <specular>1 0 0 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+     <model name="box3"> <!-- A random red box -->
+      <pose>-7 -4 0.5 0 0 1.5708</pose>
+      <link name="box3_link">
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1.0</mass>
+        </inertial>
+        <collision name="box3_collision">
+          <geometry>
+            <box>
+              <size>3 10 2</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name="box3_visual">
+          <geometry>
+            <box>
+              <size>3 10 2</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+            <specular>1 0 0 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+    
+    <model name="box4"> 
+      <pose>-3 -9.5 0.5 0 0 0</pose>
+      <link name="box4_link">
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1.0</mass>
+        </inertial>
+        <collision name="box4_collision">
+          <geometry>
+            <box>
+              <size>3 15 2</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name="box4_visual">
+          <geometry>
+            <box>
+              <size>3 15 2</size>
             </box>
           </geometry>
           <material>
@@ -406,13 +518,20 @@
         <odom_publish_frequency>1</odom_publish_frequency>
       </plugin>
     </model>
-    
-    <include> <!-- The playground -->
+<!-- Removing playground for now 
+  <model name='playground 1'>
+    <include>
+      <pose>0 0 0 0 0 1.57</pose>
+      <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/Playground</uri>
+    </include>
+ </model>   
+ 
+ <model name='playground 2'>
+    <include>
       <pose>5 0 0 0 0 1.57</pose>
       <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/Playground</uri>
     </include>
-    
-
-
+ </model>
+ !-->
   </world>
 </sdf>
