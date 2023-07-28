@@ -258,7 +258,8 @@ class PurePursuitNode(Node):
             ty = wp_y[0]
             vlinear = self.waypoints[0].velocity.linear.x
         
-        # self.get_logger().info(f"x: {tx:5.3f} , y: {ty:5.3f}")
+        self.get_logger().info(f'Lfc: {self.Lfc}')
+        self.get_logger().info(f"x: {tx:5.3f} , y: {ty:5.3f}")
         
         return tx, ty, vlinear  
 
