@@ -154,16 +154,10 @@ class PurePursuitNode(Node):
         #new changes
         local_wp_coords = np.array([(wp.pose.position.x, wp.pose.position.y) for wp in self.waypoints])
         nearest_wp = self.find_nearest_waypoint(local_wp_coords, np.array([new_tx,new_ty]))
-        self.get_logger().info(f'tx, ty = {new_tx,new_ty}')
-        self.get_logger().info(f'nearest wp: {nearest_wp}')
         vlinear = self.waypoints[nearest_wp].velocity.linear.x
-        self.get_logger().info(f'vlinear: {vlinear}')
 
-        self.get_logger().info('-----------------------------------')
-        for wp in self.waypoints:
-            self.get_logger().info(f'wp: {wp.velocity.linear.x}')
-            
-        self.get_logger().info('----------------------------------------')
+        #THIS HAS BEEN HARDCODED IN!!!
+        vlinear = 3.0
         #-------
         v_angular = vlinear*gamma
         
@@ -218,7 +212,6 @@ class PurePursuitNode(Node):
             d_prev_i = np.argmax(L_less)
             x1 = (wp_x[points_within])[d_prev_i]
             y1 = (wp_y[points_within])[d_prev_i]
-            self.get_logger().info(f'lookahead: {points_within}')
             # coordinates of closest point beyond lookahead range
             L_more = wp_d[points_beyond]  # distance of points beyond lookahead range
             d_next_i = np.argmin(L_more)

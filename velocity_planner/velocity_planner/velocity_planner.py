@@ -35,14 +35,14 @@ class VelocityPlanner(Node):
         
         # Parameters (can be changed in launch file)
         self.declare_parameter('max_velocity', 0.1) # maximum waypoint velocity used for speed capping
-        self.declare_parameter('min_velocity', 2.5) # minimum waypoint velocity used to prevent stalling
+        self.declare_parameter('min_velocity', 3.0) # minimum waypoint velocity used to prevent stalling
         self.declare_parameter('local_plan_max_length', 5) # 25 number of waypoints to plan ahead
         self.declare_parameter('max_acceleration', 0.5) # m/s/waypoint
         self.declare_parameter('obj_waypoint_distance_threshold', 2.0) # if an object is within this distance of a path,
         # it will be considered as blocking the path
         self.declare_parameter('obj_stopping_waypoint_count', 3) # number of waypoints before object to stop at
         self.declare_parameter('vehicle_frame_id', "base_link")
-        self.declare_parameter('turning_speed_scalar', 1.5)
+        self.declare_parameter('turning_speed_scalar', 1.0)
         
         # Initialise tf buffer and listener
         self.tf_buffer = tf2_ros.Buffer()
