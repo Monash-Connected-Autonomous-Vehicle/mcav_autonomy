@@ -1,0 +1,10 @@
+# This yaml file is read by the ros_gz_bridge parameter_bridge node that 
+# facilitates transport of messages between gazebo and ROS
+- ros_topic_name: "/simulated_vehicle/cmd_vel"
+  gz_topic_name: "/model/simulated_vehicle/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "ignition.msgs.Twist"
+
+- topic_name: "/lidar/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "ignition.msgs.PointCloudPacked"

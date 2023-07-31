@@ -1,0 +1,10 @@
+<launch>
+    <!-- <node pkg="rviz2" exec="rviz2" /> -->
+    <node pkg="ros_gz_bridge" exec="parameter_bridge" >
+        <param name="config_file" value="$(find-pkg-share gazebo_sim)/gazebo_topics.yaml" />
+    </node>
+
+    <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py" >
+        <arg name="gz_args" value="$(find-pkg-share gazebo_sim)/lidar_playground.sdf" />
+    </include>
+</launch>
