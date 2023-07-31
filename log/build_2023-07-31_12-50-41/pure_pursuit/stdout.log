@@ -1,0 +1,25 @@
+running egg_info
+writing ../build/pure_pursuit/pure_pursuit.egg-info/PKG-INFO
+writing dependency_links to ../build/pure_pursuit/pure_pursuit.egg-info/dependency_links.txt
+writing entry points to ../build/pure_pursuit/pure_pursuit.egg-info/entry_points.txt
+writing requirements to ../build/pure_pursuit/pure_pursuit.egg-info/requires.txt
+writing top-level names to ../build/pure_pursuit/pure_pursuit.egg-info/top_level.txt
+reading manifest file '../build/pure_pursuit/pure_pursuit.egg-info/SOURCES.txt'
+writing manifest file '../build/pure_pursuit/pure_pursuit.egg-info/SOURCES.txt'
+running build
+running build_py
+copying pure_pursuit/purepursuit.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit
+running install
+running install_lib
+copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/purepursuit.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit
+byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/purepursuit.py to purepursuit.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../build/pure_pursuit/pure_pursuit.egg-info to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit-0.0.0-py3.10.egg-info
+running install_scripts
+Installing carla_global_planner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit
+Installing carla_spawner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit
+Installing carla_spawner_local_planner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit
+Installing purepursuit script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit
+writing list of installed files to '/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/install.log'

@@ -32,7 +32,7 @@ class PurePursuitNode(Node):
         # Subscribers
         self.wp_subscriber = self.create_subscription(WaypointArray, 'local_waypoints', self.waypoints_callback, qos_profile=rclpy.qos.qos_profile_sensor_data)
         self.wp_subscriber  # prevent 'unused variable' warning
-        self.sd_subscriber = self.create_subscription(TwistStamped, 'sd_current_twist', self.sd_callback, 10)
+        self.sd_subscriber = self.create_subscription(TwistStamped, 'sd_current_twist', self.sd_callback)
 
         # Initialise tf buffer and listener
         self.tf_buffer = tf2_ros.Buffer()
@@ -59,13 +59,8 @@ class PurePursuitNode(Node):
     def sd_callback(self, msg: TwistStamped):
         """Callback for the sd_current_twist topic to be used in lookahead distance calcs
         """
-        self.abs_velocity = math.sqrt(msg.twist.linear.x**2 + msg.twist.linear.y**2)
-        self.get_logger().info(f'Sd current velocity: {msg.twist.linear.x}')
-        if self.abs_velocity < 2.5:
-                self.Lfc = 3.0
-        else:
-                #self.Lfc = self.lookahead_ratio * self.abs_velocity
-                self.Lfc = self.abs_velocity
+        self.abs_velocity = math.sqrt(msg.Twist.linear.x**2 + msg.Twist.linear.y**2)
+        self.Lfc = self.lookahead_ratio * self.abs_velocity
     
     def waypoints_callback(self, wp_msg: WaypointArray):
         """Waypoint subscriber callback function.
@@ -80,10 +75,10 @@ class PurePursuitNode(Node):
         is_low_velocity = False
         if len(wp_msg.waypoints) > 0:
             linear_vel = self.waypoints[0].velocity.linear.x
+            self.get_logger().info('Vel: {linear_vel}')
 
-            """
             is_low_velocity = linear_vel < 4.0
-            is_low_velocity = True #this has been hardcoded in!!!
+            is_low_velocity = False #this has been hardcoded in!!!
             if is_low_velocity:
                 #self.Lfc = self.get_parameter('lookahead_distance').get_parameter_value().double_value
                 try:
@@ -94,7 +89,6 @@ class PurePursuitNode(Node):
             else:
                 self.Lfc = 4.0 * linear_vel - 8.0 # formula determined experimentally for Tesla Model 3 in CARLA
                 # self.Lfc = 11.028*linear_vel - 63.5  # Nissan Micra
-            """
         else:
             self.Lfc = default_lookahead
     
@@ -152,6 +146,7 @@ class PurePursuitNode(Node):
     def find_nearest_waypoint(self, waypoint_coords, position) -> int:
         deltas = waypoint_coords - position
         dist_2 = np.einsum('ij,ij->i', deltas, deltas)
+        self.get_logger().info(f'DIST_2: {dist_2}')
         return np.argmin(dist_2)
 
     def purepursuit(self) -> Tuple[float, float]:

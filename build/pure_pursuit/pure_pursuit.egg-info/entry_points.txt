@@ -1,0 +1,6 @@
+[console_scripts]
+carla_global_planner = pure_pursuit.carla_global_planner:main
+carla_spawner = pure_pursuit.carla_spawner:main
+carla_spawner_local_planner = pure_pursuit.carla_spawner_local_planner:main
+purepursuit = pure_pursuit.purepursuit:main
+

@@ -1,0 +1,77 @@
+[0.000000] (-) TimerEvent: {}
+[0.000085] (-) JobUnselected: {'identifier': 'autonomy_launch'}
+[0.000142] (-) JobUnselected: {'identifier': 'data_recording'}
+[0.000191] (-) JobUnselected: {'identifier': 'gazebo_sim'}
+[0.000318] (-) JobUnselected: {'identifier': 'kiss_icp'}
+[0.000386] (-) JobUnselected: {'identifier': 'line_strip_test'}
+[0.000426] (-) JobUnselected: {'identifier': 'mcav_interfaces'}
+[0.000499] (-) JobUnselected: {'identifier': 'project_tracker'}
+[0.000543] (-) JobUnselected: {'identifier': 'sd_msgs'}
+[0.000567] (-) JobUnselected: {'identifier': 'sd_vehicle_interface'}
+[0.001083] (-) JobUnselected: {'identifier': 'sensors_launch'}
+[0.001113] (-) JobUnselected: {'identifier': 'simulation'}
+[0.001158] (-) JobUnselected: {'identifier': 'supervisor'}
+[0.001183] (-) JobUnselected: {'identifier': 'vehicle_model'}
+[0.001198] (-) JobUnselected: {'identifier': 'velocity_planner'}
+[0.001231] (pure_pursuit) JobQueued: {'identifier': 'pure_pursuit', 'dependencies': OrderedDict()}
+[0.001249] (pure_pursuit) JobStarted: {'identifier': 'pure_pursuit'}
+[0.099050] (-) TimerEvent: {}
+[0.199294] (-) TimerEvent: {}
+[0.299544] (-) TimerEvent: {}
+[0.399780] (-) TimerEvent: {}
+[0.497261] (pure_pursuit) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../build/pure_pursuit', 'build', '--build-base', '/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build', 'install', '--record', '/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/install.log', '--single-version-externally-managed'], 'cwd': '/home/mcav/mcav_ws/src/mcav_autonomy/pure_pursuit', 'env': {'PYTHONWARNINGS': 'ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources', 'TMUX': '/tmp/tmux-1000/default,20615,0', 'HOSTNAME': 'civil', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib', 'SOURCE_DIR': '/home/mcav/mcav_ws/src/mcav_autonomy', 'HOME': '/home/mcav', 'TERM_PROGRAM_VERSION': '3.2a', 'ROS_PYTHON_VERSION': '3', 'PS1': '\\[\x1b]0;\\u@docker: \\w\x07\\]\\[\x1b[01;32m\\]\\u@docker\\[\x1b[00m\\]:\\[\x1b[01;34m\\]\\w\\[\x1b[00m\\]$', 'ROS_DISTRO': 'humble', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'NVIDIA_DRIVER_CAPABILITIES': 'graphics', 'TERM': 'screen-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'DISPLAY': ':0', 'LANG': 'C.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'TERM_PROGRAM': 'tmux', 'AMENT_PREFIX_PATH': '/opt/ros/humble', 'SHELL': '/bin/sh', 'COLCON_WS': '/home/mcav/mcav_ws', 'PWD': '/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit', 'LC_ALL': 'C.UTF-8', 'HOMEDIR': '/home/mcav', 'PYTHONPATH': '/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/prefix_override:/home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'NVIDIA_VISIBLE_DEVICES': 'all', 'COLCON': '1', 'TMUX_PANE': '%0'}, 'shell': False}
+[0.499902] (-) TimerEvent: {}
+[0.600141] (-) TimerEvent: {}
+[0.671967] (pure_pursuit) StdoutLine: {'line': b'running egg_info\n'}
+[0.672398] (pure_pursuit) StdoutLine: {'line': b'creating ../build/pure_pursuit/pure_pursuit.egg-info\n'}
+[0.672494] (pure_pursuit) StdoutLine: {'line': b'writing ../build/pure_pursuit/pure_pursuit.egg-info/PKG-INFO\n'}
+[0.672727] (pure_pursuit) StdoutLine: {'line': b'writing dependency_links to ../build/pure_pursuit/pure_pursuit.egg-info/dependency_links.txt\n'}
+[0.672890] (pure_pursuit) StdoutLine: {'line': b'writing entry points to ../build/pure_pursuit/pure_pursuit.egg-info/entry_points.txt\n'}
+[0.672989] (pure_pursuit) StdoutLine: {'line': b'writing requirements to ../build/pure_pursuit/pure_pursuit.egg-info/requires.txt\n'}
+[0.673046] (pure_pursuit) StdoutLine: {'line': b'writing top-level names to ../build/pure_pursuit/pure_pursuit.egg-info/top_level.txt\n'}
+[0.673120] (pure_pursuit) StdoutLine: {'line': b"writing manifest file '../build/pure_pursuit/pure_pursuit.egg-info/SOURCES.txt'\n"}
+[0.674263] (pure_pursuit) StdoutLine: {'line': b"reading manifest file '../build/pure_pursuit/pure_pursuit.egg-info/SOURCES.txt'\n"}
+[0.674799] (pure_pursuit) StdoutLine: {'line': b"writing manifest file '../build/pure_pursuit/pure_pursuit.egg-info/SOURCES.txt'\n"}
+[0.674918] (pure_pursuit) StdoutLine: {'line': b'running build\n'}
+[0.674969] (pure_pursuit) StdoutLine: {'line': b'running build_py\n'}
+[0.675193] (pure_pursuit) StdoutLine: {'line': b'creating /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build\n'}
+[0.675279] (pure_pursuit) StdoutLine: {'line': b'creating /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib\n'}
+[0.675360] (pure_pursuit) StdoutLine: {'line': b'creating /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit\n'}
+[0.675440] (pure_pursuit) StdoutLine: {'line': b'copying pure_pursuit/carla_global_planner.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit\n'}
+[0.675676] (pure_pursuit) StdoutLine: {'line': b'copying pure_pursuit/__init__.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit\n'}
+[0.675790] (pure_pursuit) StdoutLine: {'line': b'copying pure_pursuit/purepursuit.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit\n'}
+[0.675933] (pure_pursuit) StdoutLine: {'line': b'copying pure_pursuit/carla_spawner.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit\n'}
+[0.676346] (pure_pursuit) StdoutLine: {'line': b'running install\n'}
+[0.676558] (pure_pursuit) StdoutLine: {'line': b'running install_lib\n'}
+[0.677200] (pure_pursuit) StdoutLine: {'line': b'creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit\n'}
+[0.677353] (pure_pursuit) StdoutLine: {'line': b'copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/carla_global_planner.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit\n'}
+[0.677436] (pure_pursuit) StdoutLine: {'line': b'copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/__init__.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit\n'}
+[0.677576] (pure_pursuit) StdoutLine: {'line': b'copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/purepursuit.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit\n'}
+[0.677636] (pure_pursuit) StdoutLine: {'line': b'copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/carla_spawner.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit\n'}
+[0.677881] (pure_pursuit) StdoutLine: {'line': b'byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/carla_global_planner.py to carla_global_planner.cpython-310.pyc\n'}
+[0.679183] (pure_pursuit) StdoutLine: {'line': b'byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/__init__.py to __init__.cpython-310.pyc\n'}
+[0.679384] (pure_pursuit) StdoutLine: {'line': b'byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/purepursuit.py to purepursuit.cpython-310.pyc\n'}
+[0.679610] (pure_pursuit) StdoutLine: {'line': b'byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/carla_spawner.py to carla_spawner.cpython-310.pyc\n'}
+[0.679696] (pure_pursuit) StderrLine: {'line': b'Sorry: TabError: inconsistent use of tabs and spaces in indentation (purepursuit.py, line 29)\n'}
+[0.679836] (pure_pursuit) StdoutLine: {'line': b'running install_data\n'}
+[0.680131] (pure_pursuit) StdoutLine: {'line': b'creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/ament_index\n'}
+[0.680214] (pure_pursuit) StdoutLine: {'line': b'creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/ament_index/resource_index\n'}
+[0.680398] (pure_pursuit) StdoutLine: {'line': b'creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/ament_index/resource_index/packages\n'}
+[0.680485] (pure_pursuit) StdoutLine: {'line': b'copying resource/pure_pursuit -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/ament_index/resource_index/packages\n'}
+[0.680590] (pure_pursuit) StdoutLine: {'line': b'copying package.xml -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit\n'}
+[0.680661] (pure_pursuit) StdoutLine: {'line': b'copying launch/purepursuit_simulation_standalone.launch.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit\n'}
+[0.680801] (pure_pursuit) StdoutLine: {'line': b'copying launch/purepursuit.launch.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit\n'}
+[0.680876] (pure_pursuit) StdoutLine: {'line': b'copying launch/purepursuit_simulation.launch.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit\n'}
+[0.681113] (pure_pursuit) StdoutLine: {'line': b'creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit/example_waypoints\n'}
+[0.681221] (pure_pursuit) StdoutLine: {'line': b'running install_egg_info\n'}
+[0.682264] (pure_pursuit) StdoutLine: {'line': b'Copying ../build/pure_pursuit/pure_pursuit.egg-info to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit-0.0.0-py3.10.egg-info\n'}
+[0.682985] (pure_pursuit) StdoutLine: {'line': b'running install_scripts\n'}
+[0.698259] (pure_pursuit) StdoutLine: {'line': b'Installing carla_global_planner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit\n'}
+[0.698480] (pure_pursuit) StdoutLine: {'line': b'Installing carla_spawner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit\n'}
+[0.698556] (pure_pursuit) StdoutLine: {'line': b'Installing carla_spawner_local_planner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit\n'}
+[0.698618] (pure_pursuit) StdoutLine: {'line': b'Installing purepursuit script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit\n'}
+[0.698742] (pure_pursuit) StdoutLine: {'line': b"writing list of installed files to '/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/install.log'\n"}
+[0.700261] (-) TimerEvent: {}
+[0.714193] (pure_pursuit) CommandEnded: {'returncode': 0}
+[0.724168] (pure_pursuit) JobEnded: {'identifier': 'pure_pursuit', 'rc': 0}
+[0.724754] (-) EventReactorShutdown: {}

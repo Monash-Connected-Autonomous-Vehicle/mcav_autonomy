@@ -1,0 +1,51 @@
+[0.497s] Invoking command in '/home/mcav/mcav_ws/src/mcav_autonomy/pure_pursuit': PS1=\[]0;\u@docker: \w\]\[[01;32m\]\u@docker\[[00m\]:\[[01;34m\]\w\[[00m\]$ PYTHONPATH=/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/prefix_override:/home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/pure_pursuit build --build-base /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build install --record /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/install.log --single-version-externally-managed
+[0.671s] running egg_info
+[0.671s] creating ../build/pure_pursuit/pure_pursuit.egg-info
+[0.671s] writing ../build/pure_pursuit/pure_pursuit.egg-info/PKG-INFO
+[0.672s] writing dependency_links to ../build/pure_pursuit/pure_pursuit.egg-info/dependency_links.txt
+[0.672s] writing entry points to ../build/pure_pursuit/pure_pursuit.egg-info/entry_points.txt
+[0.672s] writing requirements to ../build/pure_pursuit/pure_pursuit.egg-info/requires.txt
+[0.672s] writing top-level names to ../build/pure_pursuit/pure_pursuit.egg-info/top_level.txt
+[0.672s] writing manifest file '../build/pure_pursuit/pure_pursuit.egg-info/SOURCES.txt'
+[0.673s] reading manifest file '../build/pure_pursuit/pure_pursuit.egg-info/SOURCES.txt'
+[0.674s] writing manifest file '../build/pure_pursuit/pure_pursuit.egg-info/SOURCES.txt'
+[0.674s] running build
+[0.674s] running build_py
+[0.674s] creating /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build
+[0.674s] creating /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib
+[0.674s] creating /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit
+[0.674s] copying pure_pursuit/carla_global_planner.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit
+[0.675s] copying pure_pursuit/__init__.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit
+[0.675s] copying pure_pursuit/purepursuit.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit
+[0.675s] copying pure_pursuit/carla_spawner.py -> /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit
+[0.675s] running install
+[0.675s] running install_lib
+[0.676s] creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit
+[0.676s] copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/carla_global_planner.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit
+[0.676s] copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/__init__.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit
+[0.676s] copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/purepursuit.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit
+[0.676s] copying /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build/lib/pure_pursuit/carla_spawner.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit
+[0.677s] byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/carla_global_planner.py to carla_global_planner.cpython-310.pyc
+[0.678s] byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/__init__.py to __init__.cpython-310.pyc
+[0.678s] byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/purepursuit.py to purepursuit.cpython-310.pyc
+[0.678s] byte-compiling /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit/carla_spawner.py to carla_spawner.cpython-310.pyc
+[0.679s] Sorry: TabError: inconsistent use of tabs and spaces in indentation (purepursuit.py, line 29)
+[0.679s] running install_data
+[0.679s] creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/ament_index
+[0.679s] creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/ament_index/resource_index
+[0.679s] creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/ament_index/resource_index/packages
+[0.679s] copying resource/pure_pursuit -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/ament_index/resource_index/packages
+[0.679s] copying package.xml -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit
+[0.679s] copying launch/purepursuit_simulation_standalone.launch.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit
+[0.680s] copying launch/purepursuit.launch.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit
+[0.680s] copying launch/purepursuit_simulation.launch.py -> /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit
+[0.680s] creating /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/share/pure_pursuit/example_waypoints
+[0.680s] running install_egg_info
+[0.681s] Copying ../build/pure_pursuit/pure_pursuit.egg-info to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages/pure_pursuit-0.0.0-py3.10.egg-info
+[0.682s] running install_scripts
+[0.697s] Installing carla_global_planner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit
+[0.697s] Installing carla_spawner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit
+[0.697s] Installing carla_spawner_local_planner script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit
+[0.697s] Installing purepursuit script to /home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/pure_pursuit
+[0.698s] writing list of installed files to '/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/install.log'
+[0.713s] Invoked command in '/home/mcav/mcav_ws/src/mcav_autonomy/pure_pursuit' returned '0': PS1=\[]0;\u@docker: \w\]\[[01;32m\]\u@docker\[[00m\]:\[[01;34m\]\w\[[00m\]$ PYTHONPATH=/home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/prefix_override:/home/mcav/mcav_ws/src/mcav_autonomy/install/pure_pursuit/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/pure_pursuit build --build-base /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/build install --record /home/mcav/mcav_ws/src/mcav_autonomy/build/pure_pursuit/install.log --single-version-externally-managed
