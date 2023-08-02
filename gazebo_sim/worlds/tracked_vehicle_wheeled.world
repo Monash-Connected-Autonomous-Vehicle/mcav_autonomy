@@ -990,9 +990,10 @@
             </joint>
 
             <!-- ****************************** LIDAR *****************************    -->
+            
             <link name="lidar_link">    
                 <inertial>
-                <pose frame=''>0.215 0 0.13 0 0 0</pose>
+                <pose frame=''>0.215 0 0.33 0 0 0</pose>
                 <inertia>
                     <ixx>0.001</ixx>
                     <ixy>0.000</ixy>
@@ -1033,7 +1034,7 @@
                 <sensor name="lidar" type="ray">
                 <pose frame=''>0.215 0 0.215 0 0 0</pose>
                 <always_on>true</always_on>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
                 <update_rate>5</update_rate>
                 <ray>
                     <scan>
@@ -1046,7 +1047,7 @@
                     <vertical>
                         <samples>16</samples>
                         <resolution>1</resolution>
-                        <min_angle>-0.261799</min_angle>
+                        <min_angle>-0.361799</min_angle>
                         <max_angle>0.261799</max_angle>
                     </vertical>
                     </scan>
@@ -1069,12 +1070,11 @@
                     <frame_name>lidar_link</frame_name>
                 </plugin>
                 </sensor>
-                <kinematic> true </kinematic>
             </link>
-            <gazebo reference="lidar_link" >
-  <!-- other properties you want to define for the base link -->
-            <kinematic> true </kinematic>
-            </gazebo>
+            <joint name="lidar_joint" type="fixed">
+                <parent>base_link</parent>
+                <child>lidar_link</child>
+            </joint>
 
             <plugin name='wheel_tracked_vehicle_controller' filename='libWheelTrackedVehiclePlugin.so'>
                 <left_joint>left_track_wheel1_j</left_joint>
