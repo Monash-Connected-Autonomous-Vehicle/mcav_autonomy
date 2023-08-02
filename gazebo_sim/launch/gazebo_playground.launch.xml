@@ -5,6 +5,6 @@
     </node>
 
     <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py" >
-        <arg name="gz_args" value="$(find-pkg-share gazebo_sim)/lidar_playground.sdf" />
+        <arg name="gz_args" value="$(find-pkg-share gazebo_sim)/lidar_friendly.world" />
     </include>
 </launch>

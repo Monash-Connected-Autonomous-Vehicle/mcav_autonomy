@@ -7,12 +7,12 @@
     <arg name="foxglove" default="true" />
 
     <!-- Gazebo sim -->
-    <include file="$(find-pkg-share gazebo_sim)/gazebo_playground.launch.xml"/>
+    <include file="$(find-pkg-share gazebo_sim)/load_test_world.launch.py"/>
 
     <!-- Simulation Topic Converter -->
     <node pkg="gazebo_sim" exec="sim_converter" name="converter">
-        <!-- <remap from="twist_stamped_topic" to="twist_cmd"/> -->
-        <!-- <remap from="twist_topic" to="simulated_vehicle/cmd_vel"/> -->
+        <remap from="twist_stamped_topic" to="twist_cmd"/>
+        <remap from="twist_topic" to="demo/cmd_vel"/> 
     </node>
     
     <!-- Perception -->
@@ -22,7 +22,7 @@
 
     <!-- Localisation -->
     <include file="$(find-pkg-share kiss_icp)/launch/odometry.launch.py" >
-	    <arg name="topic" value="/lidar/points" />
+	    <arg name="topic" value="/scan" />
         <arg name="visualize" value="false" />
     </include>
     <!-- This setup uses odometry only, no localisation, so we publish an identity transform

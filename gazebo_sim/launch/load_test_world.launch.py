@@ -21,7 +21,7 @@ def generate_launch_description():
   pkg_share = FindPackageShare(package='gazebo_sim').find('gazebo_sim')
  
   # Set the path to the world file
-  world_file_name = 'lidar_friendly.sdf'
+  world_file_name = 'lidar_friendly.world'
   world_path = os.path.join(pkg_share, 'worlds', world_file_name)
 
   world_path = '/home/mcav/anthony_ws/src/mcav_autonomy/gazebo_sim/worlds/' + world_file_name
