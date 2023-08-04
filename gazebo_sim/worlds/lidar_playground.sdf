@@ -820,7 +820,7 @@
             </box>
           </geometry>
         </visual>
-        <sensor name='gpu_lidar' type='gpu_lidar'>
+        <sensor name='gpu_lidaar' type='gpu_lidar'>
           <topic>lidar</topic>
           <update_rate>10</update_rate>
           <lidar>
