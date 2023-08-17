@@ -3,7 +3,7 @@
     <arg name="max_velocity" default="10.6" description="Velocity to use for global plan in m/s" />
     <node pkg="velocity_planner" exec="velocity_planner" name="velocity_planner" >
         <remap from="/current_pose" to="$(var pose_topic)" />
-        <param name="max_acceleration" value="$(var max_velocity)" />
+	<param name="max_acceleration" value="$(var max_velocity)" />
         <param name="local_plan_max_length" value="25" />
         <param name="max_velocity" value="$(var max_velocity)" />
     </node>

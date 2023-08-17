@@ -66,7 +66,9 @@ class PurePursuitNode(Node):
         else:
                 #self.Lfc = self.lookahead_ratio * self.abs_velocity
                 self.Lfc = self.abs_velocity
-    
+
+        self.Lfc = 10.0
+
     def waypoints_callback(self, wp_msg: WaypointArray):
         """Waypoint subscriber callback function.
 
@@ -171,7 +173,7 @@ class PurePursuitNode(Node):
         vlinear = self.waypoints[nearest_wp].velocity.linear.x
 
         #THIS HAS BEEN HARDCODED IN!!!
-        vlinear = 3.0
+        vlinear = 5.0
         #-------
         v_angular = vlinear*gamma
         

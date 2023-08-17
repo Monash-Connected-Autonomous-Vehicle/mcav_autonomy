@@ -1,6 +1,6 @@
 <launch>
     <!-- Arguments -->
-	<arg name="waypoints_file" default="/home/mcav/mcav_ws/src/mcav_autonomy/data/waypoints/points.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
+	<arg name="waypoints_file" default="/home/mcav/mcav_ws/src/mcav_autonomy/data/waypoints/straight.csv" description="Absolute path of a csv file containing waypoints with columns x, y, z, yaw velocity as floats" />
     <arg name="pcd_path" default="/home/mcav/mcav_ws/src/mcav_autonomy/pointclouds/n1level4-autoware-221006.pcd" description="Absolute path of a .pcd file" />
     <arg name="launch_lidar" default="true" />
     <arg name="rviz" default="false" />

@@ -74,8 +74,6 @@ class VelocityPlanner(Node):
 
         self.position = np.array([odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y])
 
-    
-
     def waypoints_callback(self, msg: WaypointArray):
         # TODO: transform so that they can be in different coordinate systems
         if len(self.global_wp_coords) == 0:
@@ -204,6 +202,9 @@ class VelocityPlanner(Node):
         for wp in capped_waypoints:
             wp.velocity.linear.x = min(max_velocity, wp.velocity.linear.x) # Velocity cap for pure pursuit
             wp.velocity.linear.x = max(self.get_parameter('min_velocity').get_parameter_value().double_value, wp.velocity.linear.x) # Velocity cap for pure pursuit
+            
+            #hardcoded in
+            wp.velocity.linear.x = 3.0
                          
         return capped_waypoints
 
@@ -231,6 +232,7 @@ class VelocityPlanner(Node):
             #
 
             slowed_waypoints[i].velocity.linear.x = math.sqrt(1/curvature) * self.get_parameter('turning_speed_scalar').get_parameter_value().double_value
+
 
         return slowed_waypoints
 
