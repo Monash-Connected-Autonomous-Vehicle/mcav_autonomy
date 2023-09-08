@@ -1,0 +1,26 @@
+[0.683s] Invoking command in '/home/pham/ultrasonic/src/ultrasonic': PYTHONPATH=/home/pham/ultrasonic/build/ultrasonic/prefix_override:/home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/ultrasonic build --build-base /home/pham/ultrasonic/build/ultrasonic/build install --record /home/pham/ultrasonic/build/ultrasonic/install.log --single-version-externally-managed
+[0.909s] running egg_info
+[0.910s] writing ../../build/ultrasonic/ultrasonic.egg-info/PKG-INFO
+[0.910s] writing dependency_links to ../../build/ultrasonic/ultrasonic.egg-info/dependency_links.txt
+[0.910s] writing entry points to ../../build/ultrasonic/ultrasonic.egg-info/entry_points.txt
+[0.910s] writing requirements to ../../build/ultrasonic/ultrasonic.egg-info/requires.txt
+[0.910s] writing top-level names to ../../build/ultrasonic/ultrasonic.egg-info/top_level.txt
+[0.911s] reading manifest file '../../build/ultrasonic/ultrasonic.egg-info/SOURCES.txt'
+[0.927s] writing manifest file '../../build/ultrasonic/ultrasonic.egg-info/SOURCES.txt'
+[0.927s] running build
+[0.927s] running build_py
+[0.927s] copying ultrasonic/ultrasonic.py -> /home/pham/ultrasonic/build/ultrasonic/build/lib/ultrasonic
+[0.927s] running install
+[0.927s] running install_lib
+[0.927s] copying /home/pham/ultrasonic/build/ultrasonic/build/lib/ultrasonic/ultrasonic.py -> /home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages/ultrasonic
+[0.927s] byte-compiling /home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages/ultrasonic/ultrasonic.py to ultrasonic.cpython-310.pyc
+[0.928s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[0.928s]   warnings.warn(
+[0.928s] running install_data
+[0.933s] running install_egg_info
+[0.933s] removing '/home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages/ultrasonic-0.0.0-py3.10.egg-info' (and everything under it)
+[0.933s] Copying ../../build/ultrasonic/ultrasonic.egg-info to /home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages/ultrasonic-0.0.0-py3.10.egg-info
+[0.933s] running install_scripts
+[0.961s] Installing reader script to /home/pham/ultrasonic/install/ultrasonic/lib/ultrasonic
+[0.962s] writing list of installed files to '/home/pham/ultrasonic/build/ultrasonic/install.log'
+[1.000s] Invoked command in '/home/pham/ultrasonic/src/ultrasonic' returned '0': PYTHONPATH=/home/pham/ultrasonic/build/ultrasonic/prefix_override:/home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/ultrasonic build --build-base /home/pham/ultrasonic/build/ultrasonic/build install --record /home/pham/ultrasonic/build/ultrasonic/install.log --single-version-externally-managed

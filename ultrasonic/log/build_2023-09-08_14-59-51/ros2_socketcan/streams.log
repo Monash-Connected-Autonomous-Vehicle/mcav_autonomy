@@ -1,0 +1,60 @@
+[0.089s] Invoking command in '/home/pham/ultrasonic/build/ros2_socketcan': AMENT_PREFIX_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/pham/ultrasonic/build/ros2_socketcan -- -j4 -l4
+[0.569s] [35m[1mConsolidate compiler generated dependencies of target socket_can_receiver_node_exe[0m
+[0.570s] [35m[1mConsolidate compiler generated dependencies of target ros2_socketcan[0m
+[0.584s] [35m[1mConsolidate compiler generated dependencies of target socket_can_sender_node_exe[0m
+[0.590s] [35m[1mConsolidate compiler generated dependencies of target gtest_main[0m
+[0.649s] [ 23%] Built target ros2_socketcan
+[0.657s] [ 33%] Built target gtest_main
+[0.697s] [35m[1mConsolidate compiler generated dependencies of target gtest[0m
+[0.714s] [ 42%] Built target socket_can_receiver_node_exe
+[0.714s] [ 52%] Built target socket_can_sender_node_exe
+[0.719s] [ 61%] Built target gtest
+[0.742s] [35m[1mConsolidate compiler generated dependencies of target socket_can_receiver_node[0m
+[0.774s] [35m[1mConsolidate compiler generated dependencies of target ros2_socketcan_test[0m
+[0.817s] [ 80%] Built target ros2_socketcan_test
+[0.819s] [ 90%] Built target socket_can_receiver_node
+[0.852s] [35m[1mConsolidate compiler generated dependencies of target socket_can_sender_node[0m
+[0.879s] [100%] Built target socket_can_sender_node
+[0.899s] Invoked command in '/home/pham/ultrasonic/build/ros2_socketcan' returned '0': AMENT_PREFIX_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/pham/ultrasonic/build/ros2_socketcan -- -j4 -l4
+[1.065s] Invoking command in '/home/pham/ultrasonic/build/ros2_socketcan': AMENT_PREFIX_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/pham/ultrasonic/build/ros2_socketcan
+[1.075s] -- Install configuration: ""
+[1.110s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/lib/ros2_socketcan/socket_can_receiver_node_exe
+[1.125s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/lib/ros2_socketcan/socket_can_sender_node_exe
+[1.125s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include
+[1.126s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include/ros2_socketcan
+[1.128s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include/ros2_socketcan/socket_can_common.hpp
+[1.128s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include/ros2_socketcan/socket_can_receiver.hpp
+[1.128s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include/ros2_socketcan/visibility_control.hpp
+[1.128s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include/ros2_socketcan/socket_can_sender_node.hpp
+[1.128s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include/ros2_socketcan/socket_can_receiver_node.hpp
+[1.128s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include/ros2_socketcan/socket_can_id.hpp
+[1.128s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/include/ros2_socketcan/socket_can_sender.hpp
+[1.136s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/environment/library_path.sh
+[1.137s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/environment/library_path.dsv
+[1.154s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/lib/libros2_socketcan.so
+[1.189s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/lib/libsocket_can_receiver_node.so
+[1.230s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/lib/libsocket_can_sender_node.so
+[1.230s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/launch
+[1.235s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/launch/socket_can_sender.launch.py
+[1.235s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/launch/socket_can_receiver.launch.py
+[1.235s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/launch/socket_can_bridge.launch.xml
+[1.238s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ament_index/resource_index/package_run_dependencies/ros2_socketcan
+[1.239s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ament_index/resource_index/parent_prefix_path/ros2_socketcan
+[1.239s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/environment/ament_prefix_path.sh
+[1.240s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/environment/ament_prefix_path.dsv
+[1.240s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/environment/path.sh
+[1.240s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/environment/path.dsv
+[1.241s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/local_setup.bash
+[1.241s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/local_setup.sh
+[1.241s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/local_setup.zsh
+[1.241s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/local_setup.dsv
+[1.241s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/package.dsv
+[1.252s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ament_index/resource_index/packages/ros2_socketcan
+[1.254s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ament_index/resource_index/rclcpp_components/ros2_socketcan
+[1.254s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/cmake/ament_cmake_export_dependencies-extras.cmake
+[1.255s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/cmake/ament_cmake_export_include_directories-extras.cmake
+[1.255s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/cmake/ament_cmake_export_libraries-extras.cmake
+[1.255s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/cmake/ros2_socketcanConfig.cmake
+[1.255s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/cmake/ros2_socketcanConfig-version.cmake
+[1.255s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan/share/ros2_socketcan/package.xml
+[1.266s] Invoked command in '/home/pham/ultrasonic/build/ros2_socketcan' returned '0': AMENT_PREFIX_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/pham/ultrasonic/build/ros2_socketcan

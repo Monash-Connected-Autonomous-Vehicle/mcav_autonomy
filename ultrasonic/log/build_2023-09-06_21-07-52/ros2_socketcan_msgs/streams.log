@@ -1,0 +1,230 @@
+[0.144s] Invoking command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/pham/ultrasonic/src/ros2_socketcan/ros2_socketcan_msgs -DCMAKE_INSTALL_PREFIX=/home/pham/ultrasonic/install/ros2_socketcan_msgs
+[1.906s] -- The C compiler identification is GNU 11.4.0
+[2.775s] -- The CXX compiler identification is GNU 11.4.0
+[2.859s] -- Detecting C compiler ABI info
+[3.106s] -- Detecting C compiler ABI info - done
+[3.112s] -- Check for working C compiler: /usr/bin/cc - skipped
+[3.113s] -- Detecting C compile features
+[3.123s] -- Detecting C compile features - done
+[3.146s] -- Detecting CXX compiler ABI info
+[3.316s] -- Detecting CXX compiler ABI info - done
+[3.323s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[3.324s] -- Detecting CXX compile features
+[3.324s] -- Detecting CXX compile features - done
+[3.423s] -- Found ament_cmake_auto: 1.3.5 (/opt/ros/humble/share/ament_cmake_auto/cmake)
+[3.938s] -- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+[4.458s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[4.559s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[4.931s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[5.659s] -- Found ament_cmake_cppcheck: 0.12.7 (/opt/ros/humble/share/ament_cmake_cppcheck/cmake)
+[5.666s] -- Found ament_cmake_cpplint: 0.12.7 (/opt/ros/humble/share/ament_cmake_cpplint/cmake)
+[5.703s] -- Found ament_cmake_uncrustify: 0.12.7 (/opt/ros/humble/share/ament_cmake_uncrustify/cmake)
+[5.710s] -- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+[6.048s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[6.445s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[6.492s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") 
+[6.521s] -- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)
+[6.677s] -- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") 
+[6.678s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[6.678s] -- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10
+[6.678s] -- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.10.so
+[6.699s] -- Found PythonExtra: .so  
+[6.801s] -- Found ament_cmake_flake8: 0.12.7 (/opt/ros/humble/share/ament_cmake_flake8/cmake)
+[6.829s] -- Found ament_cmake_pep257: 0.12.7 (/opt/ros/humble/share/ament_cmake_pep257/cmake)
+[6.876s] -- Found ament_lint_auto: 0.12.7 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[7.013s] -- Added test 'copyright' to check source files copyright and LICENSE
+[7.013s] -- Added test 'lint_cmake' to check CMake code style
+[7.030s] -- Added test 'xmllint' to check XML markup files
+[7.040s] -- Configuring done
+[7.142s] -- Generating done
+[7.147s] -- Build files have been written to: /home/pham/ultrasonic/build/ros2_socketcan_msgs
+[7.158s] Invoked command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/pham/ultrasonic/src/ros2_socketcan/ros2_socketcan_msgs -DCMAKE_INSTALL_PREFIX=/home/pham/ultrasonic/install/ros2_socketcan_msgs
+[7.161s] Invoking command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/pham/ultrasonic/build/ros2_socketcan_msgs -- -j4 -l4
+[7.255s] [  3%] [34m[1mGenerating C code for ROS interfaces[0m
+[7.264s] [  6%] [34m[1mGenerating C++ code for ROS interfaces[0m
+[7.276s] [  6%] Built target ament_cmake_python_copy_ros2_socketcan_msgs
+[7.596s] running egg_info
+[7.597s] creating ros2_socketcan_msgs.egg-info
+[7.597s] writing ros2_socketcan_msgs.egg-info/PKG-INFO
+[7.597s] writing dependency_links to ros2_socketcan_msgs.egg-info/dependency_links.txt
+[7.597s] writing top-level names to ros2_socketcan_msgs.egg-info/top_level.txt
+[7.598s] writing manifest file 'ros2_socketcan_msgs.egg-info/SOURCES.txt'
+[7.601s] reading manifest file 'ros2_socketcan_msgs.egg-info/SOURCES.txt'
+[7.602s] writing manifest file 'ros2_socketcan_msgs.egg-info/SOURCES.txt'
+[7.640s] [  6%] Built target ament_cmake_python_build_ros2_socketcan_msgs_egg
+[7.641s] [  6%] Built target ros2_socketcan_msgs__cpp
+[7.657s] [  9%] [34m[1mGenerating C++ type support dispatch for ROS interfaces[0m
+[7.660s] [ 12%] [34m[1mGenerating C++ type support for eProsima Fast-RTPS[0m
+[7.666s] [ 16%] [34m[1mGenerating C++ introspection for ROS interfaces[0m
+[7.683s] [ 19%] [32mBuilding C object CMakeFiles/ros2_socketcan_msgs__rosidl_generator_c.dir/rosidl_generator_c/ros2_socketcan_msgs/msg/detail/fd_frame__functions.c.o[0m
+[7.963s] [ 22%] [32mBuilding CXX object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ros2_socketcan_msgs/msg/fd_frame__type_support.cpp.o[0m
+[8.046s] [ 25%] [32mBuilding CXX object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ros2_socketcan_msgs/msg/detail/dds_fastrtps/fd_frame__type_support.cpp.o[0m
+[8.056s] [ 29%] [32mBuilding CXX object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ros2_socketcan_msgs/msg/detail/fd_frame__type_support.cpp.o[0m
+[8.579s] [ 32%] [32m[1mLinking C shared library libros2_socketcan_msgs__rosidl_generator_c.so[0m
+[8.901s] [ 32%] Built target ros2_socketcan_msgs__rosidl_generator_c
+[8.929s] [ 35%] [34m[1mGenerating C type support for eProsima Fast-RTPS[0m
+[9.386s] [ 38%] [32mBuilding CXX object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ros2_socketcan_msgs/msg/detail/fd_frame__type_support_c.cpp.o[0m
+[9.612s] [ 41%] [32m[1mLinking CXX shared library libros2_socketcan_msgs__rosidl_typesupport_cpp.so[0m
+[9.782s] [ 41%] Built target ros2_socketcan_msgs__rosidl_typesupport_cpp
+[9.799s] [ 48%] [32m[1mLinking CXX shared library libros2_socketcan_msgs__rosidl_typesupport_introspection_cpp.so[0m
+[9.800s] [ 48%] [34m[1mGenerating C introspection for ROS interfaces[0m
+[9.937s] [ 51%] [32m[1mLinking CXX shared library libros2_socketcan_msgs__rosidl_typesupport_fastrtps_c.so[0m
+[9.994s] [ 54%] [32m[1mLinking CXX shared library libros2_socketcan_msgs__rosidl_typesupport_fastrtps_cpp.so[0m
+[9.999s] [ 54%] Built target ros2_socketcan_msgs__rosidl_typesupport_introspection_cpp
+[10.021s] [ 58%] [34m[1mGenerating C type support dispatch for ROS interfaces[0m
+[10.158s] [ 58%] Built target ros2_socketcan_msgs__rosidl_typesupport_fastrtps_cpp
+[10.168s] [ 58%] Built target ros2_socketcan_msgs__rosidl_typesupport_fastrtps_c
+[10.182s] [ 61%] [32mBuilding C object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ros2_socketcan_msgs/msg/detail/fd_frame__type_support.c.o[0m
+[10.259s] [ 64%] [32m[1mLinking C shared library libros2_socketcan_msgs__rosidl_typesupport_introspection_c.so[0m
+[10.331s] [ 64%] Built target ros2_socketcan_msgs__rosidl_typesupport_introspection_c
+[10.349s] [ 67%] [32mBuilding CXX object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/ros2_socketcan_msgs/msg/fd_frame__type_support.cpp.o[0m
+[10.403s] [ 70%] [32m[1mLinking CXX shared library libros2_socketcan_msgs__rosidl_typesupport_c.so[0m
+[10.480s] [ 70%] Built target ros2_socketcan_msgs__rosidl_typesupport_c
+[10.531s] [ 70%] Built target ros2_socketcan_msgs
+[10.563s] [ 74%] [34m[1mGenerating Python code for ROS interfaces[0m
+[10.950s] [ 74%] Built target ros2_socketcan_msgs__py
+[10.984s] [ 77%] [32mBuilding C object CMakeFiles/ros2_socketcan_msgs__rosidl_generator_py.dir/rosidl_generator_py/ros2_socketcan_msgs/msg/_fd_frame_s.c.o[0m
+[11.539s] [ 80%] [32m[1mLinking C shared library rosidl_generator_py/ros2_socketcan_msgs/libros2_socketcan_msgs__rosidl_generator_py.so[0m
+[11.663s] [ 80%] Built target ros2_socketcan_msgs__rosidl_generator_py
+[11.703s] [ 83%] [32mBuilding C object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/ros2_socketcan_msgs/_ros2_socketcan_msgs_s.ep.rosidl_typesupport_introspection_c.c.o[0m
+[11.709s] [ 87%] [32mBuilding C object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/ros2_socketcan_msgs/_ros2_socketcan_msgs_s.ep.rosidl_typesupport_fastrtps_c.c.o[0m
+[11.710s] [ 90%] [32mBuilding C object CMakeFiles/ros2_socketcan_msgs__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/ros2_socketcan_msgs/_ros2_socketcan_msgs_s.ep.rosidl_typesupport_c.c.o[0m
+[11.835s] [ 93%] [32m[1mLinking C shared library rosidl_generator_py/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so[0m
+[11.837s] [ 96%] [32m[1mLinking C shared library rosidl_generator_py/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so[0m
+[11.853s] [100%] [32m[1mLinking C shared library rosidl_generator_py/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so[0m
+[11.892s] [100%] Built target ros2_socketcan_msgs__rosidl_typesupport_introspection_c__pyext
+[11.898s] [100%] Built target ros2_socketcan_msgs__rosidl_typesupport_fastrtps_c__pyext
+[11.926s] [100%] Built target ros2_socketcan_msgs__rosidl_typesupport_c__pyext
+[11.945s] Invoked command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/pham/ultrasonic/build/ros2_socketcan_msgs -- -j4 -l4
+[12.184s] Invoking command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/pham/ultrasonic/build/ros2_socketcan_msgs
+[12.197s] -- Install configuration: ""
+[12.197s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ament_index/resource_index/rosidl_interfaces/ros2_socketcan_msgs
+[12.202s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs
+[12.202s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg
+[12.202s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/rosidl_generator_c__visibility_control.h
+[12.202s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/fd_frame.h
+[12.202s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail
+[12.202s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__struct.h
+[12.203s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__functions.c
+[12.203s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__functions.h
+[12.203s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__type_support.h
+[12.203s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/environment/library_path.sh
+[12.203s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/environment/library_path.dsv
+[12.204s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_generator_c.so
+[12.204s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_generator_c.so" to ""
+[12.204s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs
+[12.204s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg
+[12.205s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[12.205s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail
+[12.205s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__rosidl_typesupport_fastrtps_c.h
+[12.205s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_fastrtps_c.so
+[12.205s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_fastrtps_c.so" to ""
+[12.206s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs
+[12.206s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg
+[12.206s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[12.206s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail
+[12.206s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__rosidl_typesupport_introspection_c.h
+[12.207s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__type_support.c
+[12.207s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_introspection_c.so
+[12.207s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_introspection_c.so" to ""
+[12.210s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_c.so
+[12.210s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_c.so" to ""
+[12.210s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs
+[12.210s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg
+[12.210s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail
+[12.210s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__struct.hpp
+[12.211s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__traits.hpp
+[12.211s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__builder.hpp
+[12.211s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/fd_frame.hpp
+[12.211s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs
+[12.211s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg
+[12.211s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[12.212s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail
+[12.212s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__rosidl_typesupport_fastrtps_cpp.hpp
+[12.212s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/dds_fastrtps
+[12.212s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_fastrtps_cpp.so
+[12.213s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_fastrtps_cpp.so" to ""
+[12.214s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs
+[12.214s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg
+[12.214s] -- Up-to-date: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail
+[12.214s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__rosidl_typesupport_introspection_cpp.hpp
+[12.214s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/include/ros2_socketcan_msgs/ros2_socketcan_msgs/msg/detail/fd_frame__type_support.cpp
+[12.215s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_introspection_cpp.so
+[12.230s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_introspection_cpp.so" to ""
+[12.230s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_cpp.so
+[12.230s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_typesupport_cpp.so" to ""
+[12.230s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/environment/pythonpath.sh
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/environment/pythonpath.dsv
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs-1.2.0-py3.10.egg-info
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs-1.2.0-py3.10.egg-info/dependency_links.txt
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs-1.2.0-py3.10.egg-info/PKG-INFO
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs-1.2.0-py3.10.egg-info/SOURCES.txt
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs-1.2.0-py3.10.egg-info/top_level.txt
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/__init__.py
+[12.231s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/libros2_socketcan_msgs__rosidl_generator_py.so
+[12.232s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/_ros2_socketcan_msgs_s.ep.rosidl_typesupport_c.c
+[12.232s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so
+[12.232s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/msg
+[12.232s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/msg/__init__.py
+[12.232s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/msg/_fd_frame.py
+[12.233s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/msg/_fd_frame_s.c
+[12.233s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/_ros2_socketcan_msgs_s.ep.rosidl_typesupport_introspection_c.c
+[12.233s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/_ros2_socketcan_msgs_s.ep.rosidl_typesupport_fastrtps_c.c
+[12.384s] Listing '/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs'...
+[12.384s] Compiling '/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/__init__.py'...
+[12.384s] Listing '/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/msg'...
+[12.384s] Compiling '/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/msg/__init__.py'...
+[12.384s] Compiling '/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/msg/_fd_frame.py'...
+[12.389s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so
+[12.389s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so" to ""
+[12.389s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so
+[12.389s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so" to ""
+[12.389s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so
+[12.389s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/local/lib/python3.10/dist-packages/ros2_socketcan_msgs/ros2_socketcan_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so" to ""
+[12.390s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_generator_py.so
+[12.390s] -- Set runtime path of "/home/pham/ultrasonic/install/ros2_socketcan_msgs/lib/libros2_socketcan_msgs__rosidl_generator_py.so" to ""
+[12.390s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/msg/FdFrame.idl
+[12.390s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/msg/FdFrame.msg
+[12.392s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ament_index/resource_index/package_run_dependencies/ros2_socketcan_msgs
+[12.392s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ament_index/resource_index/parent_prefix_path/ros2_socketcan_msgs
+[12.393s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/environment/ament_prefix_path.sh
+[12.393s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/environment/ament_prefix_path.dsv
+[12.393s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/environment/path.sh
+[12.393s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/environment/path.dsv
+[12.393s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/local_setup.bash
+[12.394s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/local_setup.sh
+[12.394s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/local_setup.zsh
+[12.394s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/local_setup.dsv
+[12.394s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/package.dsv
+[12.394s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ament_index/resource_index/packages/ros2_socketcan_msgs
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_generator_cExport.cmake
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_generator_cExport-noconfig.cmake
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_typesupport_fastrtps_cExport.cmake
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgs__rosidl_typesupport_introspection_cExport.cmake
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgs__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgs__rosidl_typesupport_cExport.cmake
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgs__rosidl_typesupport_cExport-noconfig.cmake
+[12.395s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_generator_cppExport.cmake
+[12.396s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_typesupport_fastrtps_cppExport.cmake
+[12.396s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[12.396s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgs__rosidl_typesupport_introspection_cppExport.cmake
+[12.396s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgs__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[12.396s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgs__rosidl_typesupport_cppExport.cmake
+[12.396s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgs__rosidl_typesupport_cppExport-noconfig.cmake
+[12.397s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_generator_pyExport.cmake
+[12.397s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/export_ros2_socketcan_msgs__rosidl_generator_pyExport-noconfig.cmake
+[12.397s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/rosidl_cmake-extras.cmake
+[12.397s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ament_cmake_export_dependencies-extras.cmake
+[12.397s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ament_cmake_export_include_directories-extras.cmake
+[12.397s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ament_cmake_export_libraries-extras.cmake
+[12.398s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ament_cmake_export_targets-extras.cmake
+[12.398s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[12.398s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[12.398s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgsConfig.cmake
+[12.398s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/cmake/ros2_socketcan_msgsConfig-version.cmake
+[12.398s] -- Installing: /home/pham/ultrasonic/install/ros2_socketcan_msgs/share/ros2_socketcan_msgs/package.xml
+[12.403s] Invoked command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/pham/ultrasonic/build/ros2_socketcan_msgs

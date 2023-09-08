@@ -1,0 +1,24 @@
+running egg_info
+/usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+writing ../../build/ultrasonic/ultrasonic.egg-info/PKG-INFO
+writing dependency_links to ../../build/ultrasonic/ultrasonic.egg-info/dependency_links.txt
+writing entry points to ../../build/ultrasonic/ultrasonic.egg-info/entry_points.txt
+writing requirements to ../../build/ultrasonic/ultrasonic.egg-info/requires.txt
+writing top-level names to ../../build/ultrasonic/ultrasonic.egg-info/top_level.txt
+reading manifest file '../../build/ultrasonic/ultrasonic.egg-info/SOURCES.txt'
+writing manifest file '../../build/ultrasonic/ultrasonic.egg-info/SOURCES.txt'
+running build
+running build_py
+copying ultrasonic/ultrasonic.py -> /home/pham/ultrasonic/build/ultrasonic/build/lib/ultrasonic
+running install
+running install_lib
+copying /home/pham/ultrasonic/build/ultrasonic/build/lib/ultrasonic/ultrasonic.py -> /home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages/ultrasonic
+byte-compiling /home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages/ultrasonic/ultrasonic.py to ultrasonic.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages/ultrasonic-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/ultrasonic/ultrasonic.egg-info to /home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages/ultrasonic-0.0.0-py3.10.egg-info
+running install_scripts
+Installing reader script to /home/pham/ultrasonic/install/ultrasonic/lib/ultrasonic
+writing list of installed files to '/home/pham/ultrasonic/build/ultrasonic/install.log'

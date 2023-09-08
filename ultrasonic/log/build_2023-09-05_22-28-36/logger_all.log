@@ -1,0 +1,126 @@
+[6.903s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[6.903s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=4, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f15da556e60>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f15dad531f0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f15dad531f0>>)
+[7.360s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[7.360s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[7.360s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[7.360s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[7.360s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[7.360s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[7.361s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/pham/ultrasonic'
+[7.361s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[7.362s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[7.362s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[7.362s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[7.362s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[7.362s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[7.362s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[7.362s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[7.362s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[7.408s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[7.408s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[7.408s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[7.408s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[7.408s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[7.409s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extensions ['ignore', 'ignore_ament_install']
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extension 'ignore'
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extension 'ignore_ament_install'
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extensions ['colcon_pkg']
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extension 'colcon_pkg'
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extensions ['colcon_meta']
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extension 'colcon_meta'
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extensions ['ros']
+[7.410s] Level 1:colcon.colcon_core.package_identification:_identify(src/ultrasonic) by extension 'ros'
+[7.439s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ultrasonic' with type 'ros.ament_python' and name 'ultrasonic'
+[7.439s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[7.439s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[7.439s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[7.439s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[7.439s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[7.626s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[7.627s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[7.639s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 299 installed packages in /opt/ros/humble
+[7.641s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'cmake_args' from command line to 'None'
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'cmake_target' from command line to 'None'
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'cmake_clean_cache' from command line to 'False'
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'cmake_clean_first' from command line to 'False'
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'cmake_force_configure' from command line to 'False'
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'ament_cmake_args' from command line to 'None'
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'catkin_cmake_args' from command line to 'None'
+[7.735s] Level 5:colcon.colcon_core.verb:set package 'ultrasonic' build argument 'catkin_skip_building_tests' from command line to 'False'
+[7.735s] DEBUG:colcon.colcon_core.verb:Building package 'ultrasonic' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/pham/ultrasonic/build/ultrasonic', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/pham/ultrasonic/install/ultrasonic', 'merge_install': False, 'path': '/home/pham/ultrasonic/src/ultrasonic', 'symlink_install': False, 'test_result_base': None}
+[7.736s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[7.739s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[7.739s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/pham/ultrasonic/src/ultrasonic' with build type 'ament_python'
+[7.740s] Level 1:colcon.colcon_core.shell:create_environment_hook('ultrasonic', 'ament_prefix_path')
+[7.808s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[7.809s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/hook/ament_prefix_path.ps1'
+[7.843s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/hook/ament_prefix_path.dsv'
+[7.854s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/hook/ament_prefix_path.sh'
+[7.857s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[7.857s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[8.380s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/pham/ultrasonic/src/ultrasonic'
+[8.381s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[8.381s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[9.248s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/pham/ultrasonic/src/ultrasonic': PYTHONPATH=/home/pham/ultrasonic/build/ultrasonic/prefix_override:/home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/ultrasonic build --build-base /home/pham/ultrasonic/build/ultrasonic/build install --record /home/pham/ultrasonic/build/ultrasonic/install.log --single-version-externally-managed
+[9.665s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/pham/ultrasonic/src/ultrasonic' returned '0': PYTHONPATH=/home/pham/ultrasonic/build/ultrasonic/prefix_override:/home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/ultrasonic build --build-base /home/pham/ultrasonic/build/ultrasonic/build install --record /home/pham/ultrasonic/build/ultrasonic/install.log --single-version-externally-managed
+[9.777s] Level 1:colcon.colcon_core.environment:checking '/home/pham/ultrasonic/install/ultrasonic' for CMake module files
+[9.777s] Level 1:colcon.colcon_core.environment:checking '/home/pham/ultrasonic/install/ultrasonic' for CMake config files
+[9.779s] Level 1:colcon.colcon_core.environment:checking '/home/pham/ultrasonic/install/ultrasonic/lib'
+[9.779s] Level 1:colcon.colcon_core.environment:checking '/home/pham/ultrasonic/install/ultrasonic/bin'
+[9.779s] Level 1:colcon.colcon_core.environment:checking '/home/pham/ultrasonic/install/ultrasonic/lib/pkgconfig/ultrasonic.pc'
+[9.780s] Level 1:colcon.colcon_core.environment:checking '/home/pham/ultrasonic/install/ultrasonic/lib/python3.10/site-packages'
+[9.780s] Level 1:colcon.colcon_core.shell:create_environment_hook('ultrasonic', 'pythonpath')
+[9.781s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/hook/pythonpath.ps1'
+[9.781s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/hook/pythonpath.dsv'
+[9.783s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/hook/pythonpath.sh'
+[9.785s] Level 1:colcon.colcon_core.environment:checking '/home/pham/ultrasonic/install/ultrasonic/bin'
+[9.785s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ultrasonic)
+[9.786s] INFO:colcon.colcon_core.shell:Creating package script '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/package.ps1'
+[9.792s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/package.dsv'
+[9.799s] INFO:colcon.colcon_core.shell:Creating package script '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/package.sh'
+[9.803s] INFO:colcon.colcon_core.shell:Creating package script '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/package.bash'
+[9.816s] INFO:colcon.colcon_core.shell:Creating package script '/home/pham/ultrasonic/install/ultrasonic/share/ultrasonic/package.zsh'
+[9.830s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/pham/ultrasonic/install/ultrasonic/share/colcon-core/packages/ultrasonic)
+[9.831s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[9.831s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[9.831s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[9.831s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[9.901s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[9.902s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[9.902s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[9.949s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[9.950s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/pham/ultrasonic/install/local_setup.ps1'
+[9.962s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/pham/ultrasonic/install/_local_setup_util_ps1.py'
+[9.966s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/pham/ultrasonic/install/setup.ps1'
+[9.969s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/pham/ultrasonic/install/local_setup.sh'
+[9.971s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/pham/ultrasonic/install/_local_setup_util_sh.py'
+[9.974s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/pham/ultrasonic/install/setup.sh'
+[9.987s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/pham/ultrasonic/install/local_setup.bash'
+[9.989s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/pham/ultrasonic/install/setup.bash'
+[9.991s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/pham/ultrasonic/install/local_setup.zsh'
+[9.994s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/pham/ultrasonic/install/setup.zsh'

@@ -1,0 +1,6 @@
+{
+  "package_name": "ros2_socketcan_msgs",
+  "non_idl_tuples": [
+    "/home/pham/ultrasonic/src/ros2_socketcan/ros2_socketcan_msgs:msg/FdFrame.msg"
+  ]
+}
