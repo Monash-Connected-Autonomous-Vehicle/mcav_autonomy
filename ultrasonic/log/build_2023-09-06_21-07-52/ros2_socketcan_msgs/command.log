@@ -1,6 +1,0 @@
-Invoking command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/pham/ultrasonic/src/ros2_socketcan/ros2_socketcan_msgs -DCMAKE_INSTALL_PREFIX=/home/pham/ultrasonic/install/ros2_socketcan_msgs
-Invoked command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/pham/ultrasonic/src/ros2_socketcan/ros2_socketcan_msgs -DCMAKE_INSTALL_PREFIX=/home/pham/ultrasonic/install/ros2_socketcan_msgs
-Invoking command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/pham/ultrasonic/build/ros2_socketcan_msgs -- -j4 -l4
-Invoked command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/pham/ultrasonic/build/ros2_socketcan_msgs -- -j4 -l4
-Invoking command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/pham/ultrasonic/build/ros2_socketcan_msgs
-Invoked command in '/home/pham/ultrasonic/build/ros2_socketcan_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/pham/ultrasonic/build/ros2_socketcan_msgs

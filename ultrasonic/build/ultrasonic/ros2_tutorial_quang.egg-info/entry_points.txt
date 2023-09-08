@@ -1,3 +1,0 @@
-[console_scripts]
-reader = tutorial.ultrasonic:main
-
