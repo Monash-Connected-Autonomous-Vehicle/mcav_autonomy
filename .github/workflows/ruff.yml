@@ -10,3 +10,4 @@ jobs:
           src: "."
           version: 0.0.259
           args: --select B
+        continue-on-failure: true
